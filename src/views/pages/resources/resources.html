@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>资源馆 · 数据服务原子工具市场 - 数擎平台</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        void: {
+                            900: '#02040a',
+                            800: '#050b14',
+                            700: '#0a1525'
+                        },
+                        aurora: {
+                            green: '#00ffa3',
+                            cyan: '#00d2ff',
+                            purple: '#7000ff',
+                            red: '#ff4757',
+                            blue: '#3742fa',
+                            nav: '#0b1021'
+                        },
+                        glass: {
+                            surface: 'rgba(255, 255, 255, 0.03)',
+                            stroke: 'rgba(255, 255, 255, 0.08)',
+                            highlight: 'rgba(255, 255, 255, 0.15)'
+                        }
+                    },
+                    fontFamily: {
+                        display: ['system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'sans-serif'],
+                        body: ['system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'sans-serif']
+                    },
+                    boxShadow: {
+                        'glow-sm': '0 0 10px rgba(0, 255, 163, 0.2)',
+                        'glow-md': '0 0 20px rgba(0, 210, 255, 0.3)',
+                        'glow-lg': '0 0 30px rgba(0, 255, 163, 0.4)',
+                        'glass': '0 8px 32px 0 rgba(0, 0, 0, 0.36)'
+                    },
+                    backgroundImage: {
+                        'aurora-gradient': 'linear-gradient(135deg, #050b14 0%, #0a1525 100%)',
+                        'accent-gradient': 'linear-gradient(90deg, #00d2ff 0%, #00ffa3 100%)',
+                        'api-gradient': 'linear-gradient(90deg, #00d2ff 0%, #00ffa3 100%)',
+                        'mcp-gradient': 'linear-gradient(90deg, #ff4757 0%, #ffa502 100%)',
+                        'skill-gradient': 'linear-gradient(90deg, #7000ff 0%, #a29bfe 100%)',
+                        'dataset-gradient': 'linear-gradient(90deg, #3742fa 0%, #5352ed 100%)'
+                    }
+                }
+            }
+        };
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .bg-stars {
+                background-color: #02040a;
+                background-image: 
+                    radial-gradient(white, rgba(255,255,255,.2) 2px, transparent 3px),
+                    radial-gradient(white, rgba(255,255,255,.15) 1px, transparent 2px),
+                    radial-gradient(white, rgba(255,255,255,.1) 2px, transparent 3px);
+                background-size: 550px 550px, 350px 350px, 250px 250px;
+                background-position: 0 0, 40px 60px, 130px 270px;
+            }
+            .text-gradient {
+                background: linear-gradient(to right, #00d2ff, #00ffa3);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+                color: transparent;
+            }
+            .text-gradient-api {
+                background: linear-gradient(to right, #00d2ff, #00ffa3);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+                color: transparent;
+            }
+            .text-gradient-mcp {
+                background: linear-gradient(to right, #ff4757, #ffa502);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+                color: transparent;
+            }
+            .text-gradient-skill {
+                background: linear-gradient(to right, #7000ff, #a29bfe);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+                color: transparent;
+            }
+            .text-gradient-dataset {
+                background: linear-gradient(to right, #3742fa, #5352ed);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+                color: transparent;
+            }
+            .aurora-blur {
+                position: absolute;
+                filter: blur(80px);
+                opacity: 0.4;
+                z-index: 0;
+                border-radius: 50%;
+                pointer-events: none;
+            }
+            .glass-panel-base {
+                background: rgba(11, 16, 33, 0.95);
+                backdrop-filter: blur(12px);
+                -webkit-backdrop-filter: blur(12px);
+                border: 1px solid rgba(255, 255, 255, 0.08);
+                box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            }
+        }
+        @layer components {
+            .btn-primary {
+                @apply relative overflow-hidden inline-flex items-center justify-center px-8 py-3 rounded-full font-bold text-void-900 transition-all duration-300;
+                background: linear-gradient(90deg, #00d2ff 0%, #00ffa3 100%);
+            }
+            .btn-primary:hover {
+                @apply shadow-glow-md transform -translate-y-0.5 scale-105;
+            }
+            .card-glass {
+                @apply glass-panel-base rounded-2xl p-6 transition-all duration-300 hover:bg-white/5 hover:border-aurora-cyan/30 hover:shadow-glow-sm;
+            }
+            .badge {
+                @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider bg-white/5 border border-white/10 text-aurora-cyan;
+            }
+            .badge-api {
+                @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-gradient-to-r from-aurora-cyan to-aurora-green text-void-900;
+            }
+            .badge-mcp {
+                @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-gradient-to-r from-aurora-red to-orange-500 text-white;
+            }
+            .badge-skill {
+                @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-gradient-to-r from-aurora-purple to-purple-500 text-white;
+            }
+            .badge-dataset {
+                @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-gradient-to-r from-aurora-blue to-blue-500 text-white;
+            }
+        }
+        body {
+            @apply selection:bg-aurora-cyan/30 selection:text-white font-body;
+        }
+    </style>
+</head>
+<body class="bg-stars text-slate-300 min-h-screen relative overflow-x-hidden">
+    <!-- 全局背景光晕 -->
+    <div class="fixed top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
+        <div class="aurora-blur bg-aurora-cyan w-[500px] h-[500px] top-[-100px] left-[-100px]"></div>
+        <div class="aurora-blur bg-aurora-red w-[400px] h-[400px] bottom-[-50px] right-[-50px] opacity-20"></div>
+        <div class="aurora-blur bg-aurora-purple w-[600px] h-[600px] top-[40%] left-[30%] opacity-10 blur-[120px]"></div>
+    </div>
+
+    <!-- 顶部导航栏 -->
+    <header class="relative z-20 glass-panel-base border-x-0 border-t-0 sticky top-0 bg-void-900/80">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <a href="../index.html" class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-lg bg-accent-gradient flex items-center justify-center shadow-glow-sm">
+                        <i class="fa-solid fa-dog text-void-900 text-lg"></i>
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="text-xl font-bold text-white tracking-wide">数擎平台</span>
+                        <span class="opacity-50 text-[10px] tracking-wide">企业级数据服务平台</span>
+                    </div>
+                </a>
+            </div>
+            <nav class="hidden md:flex gap-8 text-sm font-medium flex-1 justify-center">
+                <a href="../index.html" class="hover:text-aurora-cyan transition-colors">首页</a>
+                <a href="../apps/apps.html" class="hover:text-aurora-cyan transition-colors">应用馆</a>
+                <a href="resources.html" class="text-aurora-cyan font-semibold">资源馆</a>   
+                <a href="../cases/cases.html" class="hover:text-aurora-cyan transition-colors">案例馆</a>
+            </nav>
+            <div class="flex items-center gap-4">
+                <a href="../workspace.html" class="text-sm font-medium hover:text-aurora-cyan transition-colors hidden md:block">工作空间</a>
+                <!-- 用户头像下拉菜单 -->
+                <div class="relative">
+                    <button class="flex items-center gap-2 focus:outline-none" id="user-menu-button">
+                        <div class="w-8 h-8 rounded-full bg-gradient-to-br from-aurora-cyan to-aurora-green flex items-center justify-center">
+                            <span class="text-void-900 font-bold">黄</span>
+                        </div>
+                    </button>
+                    <!-- 下拉菜单 -->
+                    <div class="absolute right-0 mt-2 w-80 glass-panel-base rounded-xl p-4 border border-white/10 shadow-lg z-99999 hidden" id="user-menu">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="w-12 h-12 rounded-full bg-gradient-to-br from-aurora-cyan to-aurora-green flex items-center justify-center">
+                                <span class="text-void-900 text-xl font-bold">黄</span>
+                            </div>
+                            <div>
+                                <p class="text-white font-medium">18****48</p>
+                                <div class="flex items-center gap-1 mt-1">
+                                    <span class="text-xs bg-yellow-500/20 text-yellow-500 px-2 py-0.5 rounded-full">VIP试用</span>
+                                </div>
+                            </div>
+                            <a href="../profile.html" class="ml-auto text-sm text-aurora-cyan hover:text-aurora-green transition">进入个人中心 &gt;</a>
+                        </div>
+                        <div class="border-t border-white/10 py-3 mb-3">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-slate-400 text-sm">客户类型：</span>
+                                <span class="text-white font-medium" id="current-client-type">投资类客户</span>
+                            </div>
+                            <div class="grid grid-cols-2 gap-2 mt-2">
+                                <button class="py-2 px-3 rounded-lg text-sm bg-white/5 border border-white/10 hover:border-aurora-cyan/50 hover:bg-aurora-cyan/10 transition client-type-option" data-type="investment">投资类客户</button>
+                                <button class="py-2 px-3 rounded-lg text-sm bg-white/5 border border-white/10 hover:border-aurora-cyan/50 hover:bg-aurora-cyan/10 transition client-type-option" data-type="market">市场类客户</button>
+                                <button class="py-2 px-3 rounded-lg text-sm bg-white/5 border border-white/10 hover:border-aurora-cyan/50 hover:bg-aurora-cyan/10 transition client-type-option" data-type="enterprise">企业类客户</button>
+                                <button class="py-2 px-3 rounded-lg text-sm bg-white/5 border border-white/10 hover:border-aurora-cyan/50 hover:bg-aurora-cyan/10 transition client-type-option" data-type="government">政府类客户</button>
+                            </div>
+                        </div>
+                        <div class="border-t border-white/10 py-3 mb-3">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-slate-400 text-sm">剩余点数：</span>
+                                <span class="text-aurora-green font-bold">1,234</span>
+                            </div>
+                            <button class="w-full py-2 rounded-lg bg-aurora-cyan/20 text-aurora-cyan border border-aurora-cyan/30 hover:bg-aurora-cyan/30 transition text-sm">充值</button>
+                        </div>
+                        <div class="grid grid-cols-3 gap-2 mb-4">
+                            <a href="#" class="flex flex-col items-center p-2 rounded-lg hover:bg-white/5 transition">
+                                <i class="fa-solid fa-download text-aurora-cyan mb-1"></i>
+                                <span class="text-xs text-slate-300">下载记录</span>
+                            </a>
+                            <a href="#" class="flex flex-col items-center p-2 rounded-lg hover:bg-white/5 transition">
+                                <i class="fa-solid fa-history text-aurora-cyan mb-1"></i>
+                                <span class="text-xs text-slate-300">浏览历史</span>
+                            </a>
+                            <a href="#" class="flex flex-col items-center p-2 rounded-lg hover:bg-white/5 transition">
+                                <i class="fa-solid fa-heart text-aurora-cyan mb-1"></i>
+                                <span class="text-xs text-slate-300">我的关注</span>
+                            </a>
+                        </div>
+                        <div class="grid grid-cols-3 gap-2">
+                            <a href="#" class="flex flex-col items-center p-2 rounded-lg hover:bg-white/5 transition">
+                                <i class="fa-solid fa-building text-aurora-cyan mb-1"></i>
+                                <span class="text-xs text-slate-300">我的企业</span>
+                            </a>
+                            <a href="#" class="flex flex-col items-center p-2 rounded-lg hover:bg-white/5 transition">
+                                <i class="fa-solid fa-shopping-cart text-aurora-cyan mb-1"></i>
+                                <span class="text-xs text-slate-300">我的订单</span>
+                            </a>
+                            <a href="#" class="flex flex-col items-center p-2 rounded-lg hover:bg-white/5 transition">
+                                <i class="fa-solid fa-file-invoice text-aurora-cyan mb-1"></i>
+                                <span class="text-xs text-slate-300">我的发票</span>
+                            </a>
+                        </div>
+                        <div class="border-t border-white/10 mt-4 pt-4 flex justify-between">
+                            <a href="#" class="text-sm text-slate-400 hover:text-white transition">客服中心</a>
+                            <a href="#" class="text-sm text-slate-400 hover:text-white transition">我的反馈</a>
+                            <a href="#" class="text-sm text-slate-400 hover:text-white transition">退出登录</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主内容区 -->
+    <main class="relative z-10 max-w-7xl mx-auto px-6 py-8">
+        <!-- 页面标题 -->
+        <div class="text-center mb-12">
+            <div class="inline-block mb-4">
+                <span class="badge">
+                    <i class="fa-solid fa-rocket mr-1"></i>全链路数据服务原子工具
+                </span>
+            </div>
+            <h1 class="text-4xl font-bold text-white mb-4">
+                资源馆 ·
+                <span class="text-gradient">数据服务原子工具与资源市场</span>
+            </h1>
+            <p class="text-xl text-slate-400 max-w-3xl mx-auto">
+                4大核心服务模块，覆盖企业全维度数据能力，统一接入标准，企业/Agent一键调用
+            </p>
+        </div>
+
+        <!-- 四大分类入口卡片 -->
+        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
+            <a href="api-market.html" class="card-glass group text-center">
+                <div class="w-20 h-20 rounded-xl bg-api-gradient mx-auto mb-6 flex items-center justify-center shadow-glow-sm group-hover:shadow-glow-md transition-shadow">
+                    <i class="fa-solid fa-code text-3xl text-void-900"></i>
+                </div>
+                <h3 class="text-xl font-bold text-white mb-2">
+                    <span class="text-gradient-api">API集市</span>
+                </h3>
+                <p class="text-slate-400 text-sm mb-4">RESTful API接口，覆盖工商、司法、舆情等数据服务，开发者直接调用</p>
+                <div class="flex items-center justify-center gap-2">
+                    <span class="text-slate-500 text-sm">125个API</span>
+                    <span class="text-aurora-green text-sm font-bold">热门</span>
+                </div>
+            </a>
+
+            <a href="mcp-market.html" class="card-glass group text-center">
+                <div class="w-20 h-20 rounded-xl bg-mcp-gradient mx-auto mb-6 flex items-center justify-center shadow-glow-sm group-hover:shadow-glow-md transition-shadow">
+                    <i class="fa-solid fa-plug text-3xl text-white"></i>
+                </div>
+                <h3 class="text-xl font-bold text-white mb-2">
+                    <span class="text-gradient-mcp">MCP集市</span>
+                </h3>
+                <p class="text-slate-400 text-sm mb-4">模型上下文协议工具，扩展AI Agent能力，支持复杂任务编排</p>
+                <div class="flex items-center justify-center gap-2">
+                    <span class="text-slate-500 text-sm">68个MCP</span>
+                    <span class="text-aurora-purple text-sm font-bold">新上线</span>
+                </div>
+            </a>
+
+            <a href="skill-market.html" class="card-glass group text-center">
+                <div class="w-20 h-20 rounded-xl bg-skill-gradient mx-auto mb-6 flex items-center justify-center shadow-glow-sm group-hover:shadow-glow-md transition-shadow">
+                    <i class="fa-solid fa-wand-magic-sparkles text-3xl text-white"></i>
+                </div>
+                <h3 class="text-xl font-bold text-white mb-2">
+                    <span class="text-gradient-skill">Skill广场</span>
+                </h3>
+                <p class="text-slate-400 text-sm mb-4">预训练AI技能，开箱即用，支持自然语言交互，无需编码</p>
+                <div class="flex items-center justify-center gap-2">
+                    <span class="text-slate-500 text-sm">42个Skill</span>
+                    <span class="text-aurora-cyan text-sm font-bold">易用</span>
+                </div>
+            </a>
+
+            <a href="./resources.html" class="card-glass group text-center">
+                <div class="w-20 h-20 rounded-xl bg-dataset-gradient mx-auto mb-6 flex items-center justify-center shadow-glow-sm group-hover:shadow-glow-md transition-shadow">
+                    <i class="fa-solid fa-database text-3xl text-white"></i>
+                </div>
+                <h3 class="text-xl font-bold text-white mb-2">
+                    <span class="text-gradient-dataset">高质量数据集</span>
+                </h3>
+                <p class="text-slate-400 text-sm mb-4">清洗标注的行业数据集，支持批量下载或API订阅，用于模型训练</p>
+                <div class="flex items-center justify-center gap-2">
+                    <span class="text-slate-500 text-sm">23个数据集</span>
+                    <span class="text-aurora-blue text-sm font-bold">专业</span>
+                </div>
+            </a>
+        </div>
+
+        <!-- 热门资源推荐 -->
+        <div class="mb-16">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-2xl font-bold text-white">热门资源推荐</h2>
+                <a href="#" class="text-sm text-aurora-cyan hover:text-aurora-green transition">查看全部 <i class="fa-solid fa-arrow-right ml-1"></i></a>
+            </div>
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- 热门API -->
+                <a href="resource-detail.html" class="card-glass">
+                    <div class="flex items-start justify-between mb-4">
+                        <span class="badge-api">API</span>
+                        <span class="text-xs text-slate-500">本月调用 12.5K次</span>
+                    </div>
+                    <h3 class="text-lg font-bold text-white mb-2">企业模糊搜索API</h3>
+                    <p class="text-slate-400 text-sm mb-4">通过企业名称关键词模糊搜索企业列表，返回基础工商信息</p>
+                    <div class="flex items-center justify-between">
+                        <span class="text-slate-400 text-sm">5点/次</span>
+                        <button class="px-3 py-1 rounded-full text-xs bg-aurora-cyan/20 text-aurora-cyan border border-aurora-cyan/30 hover:bg-aurora-cyan/30 transition">免费测试</button>
+                    </div>
+                </a>
+
+                <!-- 热门MCP -->
+                <a href="resource-detail.html" class="card-glass">
+                    <div class="flex items-start justify-between mb-4">
+                        <span class="badge-mcp">MCP</span>
+                        <span class="text-xs text-slate-500">本月使用 8.2K次</span>
+                    </div>
+                    <h3 class="text-lg font-bold text-white mb-2">企业风险分析MCP</h3>
+                    <p class="text-slate-400 text-sm mb-4">AI Agent插件，支持自然语言查询企业风险信息，生成分析报告</p>
+                    <div class="flex items-center justify-between">
+                        <span class="text-slate-400 text-sm">10点/次</span>
+                        <button class="px-3 py-1 rounded-full text-xs bg-aurora-red/20 text-aurora-red border border-aurora-red/30 hover:bg-aurora-red/30 transition">免费测试</button>
+                    </div>
+                </a>
+
+                <!-- 热门Skill -->
+                <a href="resource-detail.html" class="card-glass">
+                    <div class="flex items-start justify-between mb-4">
+                        <span class="badge-skill">Skill</span>
+                        <span class="text-xs text-slate-500">本月使用 15.3K次</span>
+                    </div>
+                    <h3 class="text-lg font-bold text-white mb-2">舆情监控Skill</h3>
+                    <p class="text-slate-400 text-sm mb-4">智能舆情监控技能，自动识别负面舆情，生成监控日报</p>
+                    <div class="flex items-center justify-between">
+                        <span class="text-aurora-green text-sm font-bold">VIP免费</span>
+                        <button class="px-3 py-1 rounded-full text-xs bg-aurora-purple/20 text-aurora-purple border border-aurora-purple/30 hover:bg-aurora-purple/30 transition">立即体验</button>
+                    </div>
+                </a>
+
+                <!-- 热门数据集 -->
+                <a href="resource-detail.html" class="card-glass">
+                    <div class="flex items-start justify-between mb-4">
+                        <span class="badge-dataset">数据集</span>
+                        <span class="text-xs text-slate-500">本月下载 3.4K次</span>
+                    </div>
+                    <h3 class="text-lg font-bold text-white mb-2">中国企业工商信息数据集</h3>
+                    <p class="text-slate-400 text-sm mb-4">包含全国1亿+企业工商信息，每月更新，支持API订阅或批量下载</p>
+                    <div class="flex items-center justify-between">
+                        <span class="text-slate-400 text-sm">500点/月</span>
+                        <button class="px-3 py-1 rounded-full text-xs bg-aurora-blue/20 text-aurora-blue border border-aurora-blue/30 hover:bg-aurora-blue/30 transition">查看详情</button>
+                    </div>
+                </a>
+
+                <!-- 更多热门资源 -->
+                <a href="resource-detail.html" class="card-glass">
+                    <div class="flex items-start justify-between mb-4">
+                        <span class="badge-api">API</span>
+                        <span class="text-xs text-slate-500">本月调用 9.8K次</span>
+                    </div>
+                    <h3 class="text-lg font-bold text-white mb-2">司法诉讼查询API</h3>
+                    <p class="text-slate-400 text-sm mb-4">查询企业司法诉讼信息，包含案件类型、审理状态、判决结果</p>
+                    <div class="flex items-center justify-between">
+                        <span class="text-slate-400 text-sm">8点/次</span>
+                        <button class="px-3 py-1 rounded-full text-xs bg-aurora-cyan/20 text-aurora-cyan border border-aurora-cyan/30 hover:bg-aurora-cyan/30 transition">免费测试</button>
+                    </div>
+                </a>
+
+                <a href="resource-detail.html" class="card-glass">
+                    <div class="flex items-start justify-between mb-4">
+                        <span class="badge-mcp">MCP</span>
+                        <span class="text-xs text-slate-500">本月使用 6.7K次</span>
+                    </div>
+                    <h3 class="text-lg font-bold text-white mb-2">产业链分析MCP</h3>
+                    <p class="text-slate-400 text-sm mb-4">分析产业链上下游关系，识别关键节点企业，可视化展示</p>
+                    <div class="flex items-center justify-between">
+                        <span class="text-slate-400 text-sm">15点/次</span>
+                        <button class="px-3 py-1 rounded-full text-xs bg-aurora-red/20 text-aurora-red border border-aurora-red/30 hover:bg-aurora-red/30 transition">免费测试</button>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <!-- 资源使用引导 -->
+        <div class="card-glass">
+            <h2 class="text-2xl font-bold text-white mb-6">资源使用三步指南</h2>
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="text-center">
+                    <div class="w-16 h-16 rounded-full bg-api-gradient mx-auto mb-4 flex items-center justify-center text-void-900 font-bold text-xl">1</div>
+                    <h3 class="font-bold text-white mb-2">选择资源</h3>
+                    <p class="text-slate-400 text-sm">浏览四大资源市场，根据需求选择合适的API、MCP、Skill或数据集</p>
+                </div>
+                <div class="text-center">
+                    <div class="w-16 h-16 rounded-full bg-mcp-gradient mx-auto mb-4 flex items-center justify-center text-white font-bold text-xl">2</div>
+                    <h3 class="font-bold text-white mb-2">测试体验</h3>
+                    <p class="text-slate-400 text-sm">每个资源提供免费测试次数，确认功能符合预期后再正式调用</p>
+                </div>
+                <div class="text-center">
+                    <div class="w-16 h-16 rounded-full bg-skill-gradient mx-auto mb-4 flex items-center justify-center text-white font-bold text-xl">3</div>
+                    <h3 class="font-bold text-white mb-2">一键接入</h3>
+                    <p class="text-slate-400 text-sm">获取API Key、MCP配置或Skill ID，按照接入指南快速集成到您的系统</p>
+                </div>
+            </div>
+            <div class="mt-8 pt-6 border-t border-white/10">
+                <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+                    <div>
+                        <h4 class="font-bold text-white mb-1">开发者支持</h4>
+                        <p class="text-slate-400 text-sm">提供详细的API文档、SDK、代码示例和技术支持</p>
+                    </div>
+                    <a href="#" class="px-6 py-2 rounded-full text-sm bg-aurora-cyan/20 text-aurora-cyan border border-aurora-cyan/30 hover:bg-aurora-cyan/30 transition">
+                        查看开发者文档 <i class="fa-solid fa-book-open ml-2"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="relative z-10 max-w-7xl mx-auto px-6 py-8 mt-12 border-t border-white/10">
+        <div class="flex flex-col md:flex-row justify-between items-center">
+            <div class="text-slate-500 text-sm">
+                © 2025 数擎平台 · 企业级数据服务平台
+            </div>
+            <div class="flex gap-6 mt-4 md:mt-0 text-sm">
+                <a href="#" class="text-slate-400 hover:text-white transition">服务协议</a>
+                <a href="#" class="text-slate-400 hover:text-white transition">隐私政策</a>
+                <a href="#" class="text-slate-400 hover:text-white transition">帮助中心</a>
+                <a href="#" class="text-slate-400 hover:text-white transition">联系我们</a>
+            </div>
+        </div>
+    </footer>
+    <!-- 用户菜单和客户类型下拉功能 -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 客户类型切换
+            const clientTypeOptions = document.querySelectorAll('.client-type-option');
+            const currentClientType = document.getElementById('current-client-type');
+            
+            // 加载保存的客户类型
+            const savedClientType = localStorage.getItem('clientType') || 'investment';
+            
+            // 更新当前客户类型显示
+            if (currentClientType) {
+                let typeText = '投资类客户';
+                switch(savedClientType) {
+                    case 'investment':
+                        typeText = '投资类客户';
+                        break;
+                    case 'market':
+                        typeText = '市场类客户';
+                        break;
+                    case 'enterprise':
+                        typeText = '企业类客户';
+                        break;
+                    case 'government':
+                        typeText = '政府类客户';
+                        break;
+                }
+                currentClientType.textContent = typeText;
+            }
+            
+            // 客户类型切换
+            clientTypeOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    const clientType = this.getAttribute('data-type');
+                    
+                    // 保存客户类型到本地存储
+                    localStorage.setItem('clientType', clientType);
+                    
+                    // 更新当前客户类型显示
+                    if (currentClientType) {
+                        let typeText = '投资类客户';
+                        switch(clientType) {
+                            case 'investment':
+                                typeText = '投资类客户';
+                                break;
+                            case 'market':
+                                typeText = '市场类客户';
+                                break;
+                            case 'enterprise':
+                                typeText = '企业类客户';
+                                break;
+                            case 'government':
+                                typeText = '政府类客户';
+                                break;
+                        }
+                        currentClientType.textContent = typeText;
+                    }
+                    
+                    switchClientType(clientType);
+                });
+            });
+
+            // 用户菜单下拉
+            const userMenuButton = document.getElementById('user-menu-button');
+            const userMenu = document.getElementById('user-menu');
+
+            if (userMenuButton && userMenu) {
+                userMenuButton.addEventListener('click', function() {
+                    userMenu.classList.toggle('hidden');
+                });
+
+                // 点击页面其他地方关闭菜单
+                document.addEventListener('click', function(event) {
+                    if (!userMenuButton.contains(event.target) && !userMenu.contains(event.target)) {
+                        userMenu.classList.add('hidden');
+                    }
+                });
+            }
+        });
+
+        // 切换客户类型
+        function switchClientType(clientType) {
+            // 根据客户类型显示不同的内容
+            console.log('切换到客户类型:', clientType);
+            
+            // 这里可以根据客户类型修改页面内容
+            // 例如：显示不同的推荐资源、调整布局等
+            
+            // 示例：修改页面标题
+            const pageTitle = document.querySelector('header .text-xl');
+            if (pageTitle) {
+                let title = '数擎平台';
+                switch(clientType) {
+                    case 'investment':
+                        title = '数擎平台 - 投资分析';
+                        break;
+                    case 'market':
+                        title = '数擎平台 - 市场洞察';
+                        break;
+                    case 'enterprise':
+                        title = '数擎平台 - 企业服务';
+                        break;
+                    case 'government':
+                        title = '数擎平台 - 政府决策';
+                        break;
+                }
+                pageTitle.textContent = title;
+            }
+        }
+    </script>
+</body>
+</html>

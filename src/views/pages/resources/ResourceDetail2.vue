@@ -1,0 +1,649 @@
+<template>
+  <div class="pages-container bg-stars text-slate-300 min-h-screen relative overflow-x-hidden">
+    <!-- 全局背景光晕 -->
+    <div class="fixed top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
+      <div class="aurora-blur bg-aurora-cyan w-[500px] h-[500px] top-[-100px] left-[-100px] animate-pulse-slow"></div>
+      <div class="aurora-blur bg-aurora-red w-[400px] h-[400px] bottom-[-50px] right-[-50px] opacity-20 animate-pulse-slow animation-delay-1000"></div>
+      <div class="aurora-blur bg-aurora-purple w-[600px] h-[600px] top-[40%] left-[30%] opacity-10 blur-[120px] animate-pulse-slow animation-delay-2000"></div>
+    </div>
+
+    <!-- 主内容 -->
+    <main class="relative z-10 max-w-7xl mx-auto px-6 py-8">
+      <div class="fixed top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
+              <div class="aurora-blur bg-aurora-cyan w-[500px] h-[500px] top-[-100px] left-[-100px]"></div>
+              <div class="aurora-blur bg-aurora-red w-[400px] h-[400px] bottom-[-50px] right-[-50px] opacity-20"></div>
+          </div>
+      
+          
+          <header class="relative z-10 glass-panel-base border-x-0 border-t-0 sticky top-0 bg-void-900/80">
+              <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+                  <div class="flex items-center gap-3">
+                      <router-link to="/pages/index" class="flex items-center gap-3">
+                          <div class="w-8 h-8 rounded-lg bg-accent-gradient flex items-center justify-center shadow-glow-sm">
+                              <i class="fa-solid fa-cube text-void-900 text-lg"></i>
+                          </div>
+                          <div class="flex flex-col">
+                              <span class="text-xl font-bold text-white tracking-wide">数擎平台</span>
+                              <span class="opacity-50 text-[10px] tracking-wide">企业级数据服务平台</span>
+                          </div>
+                      </router-link>
+                  </div>
+                  <nav class="hidden md:flex gap-6 text-sm font-medium">
+                      <router-link to="/pages/index" class="hover:text-aurora-cyan transition-colors">首页</router-link>
+                      <router-link to="/pages/apps/list" class="hover:text-aurora-cyan transition-colors">应用馆</router-link>
+                      <router-link to="/pages/resources/list" class="hover:text-aurora-cyan transition-colors">资源馆</router-link>
+                      <router-link to="/pages/cases/list" class="hover:text-aurora-cyan transition-colors">案例馆</router-link>
+                      <router-link to="/pages/workspace" class="hover:text-aurora-cyan transition-colors">工作空间</router-link>
+                      <router-link to="/pages/profile" class="hover:text-aurora-cyan transition-colors">个人中心</router-link>
+                  </nav>
+                  <div class="flex items-center gap-4">
+                      <div class="hidden md:flex items-center gap-2 text-sm">
+                          <span class="text-slate-400">剩余点数：</span>
+                          <span class="text-aurora-green font-bold">1,234</span>
+                          <button class="ml-2 px-3 py-1 rounded-full text-xs bg-aurora-cyan/20 text-aurora-cyan border border-aurora-cyan/30 hover:bg-aurora-cyan/30 transition">充值</button>
+                      </div>
+                      <button class="btn-primary py-2 px-6">免费试用</button>
+                  </div>
+              </div>
+          </header>
+      
+          
+          <main class="relative z-10 max-w-7xl mx-auto px-6 py-8">
+              
+              <div class="mb-6">
+                  <router-link to="/pages/resources/list" class="inline-flex items-center text-slate-400 hover:text-white transition">
+                      <i class="fa-solid fa-arrow-left mr-2"></i> 返回资源馆
+                  </router-link>
+              </div>
+      
+              <div class="grid lg:grid-cols-3 gap-8">
+                  
+                  <div class="lg:col-span-1">
+                      <div class="card-glass sticky top-24">
+                          <div class="text-center mb-6">
+                              <div class="w-20 h-20 rounded-xl bg-api-gradient mx-auto mb-4 flex items-center justify-center shadow-glow-sm">
+                                  <i class="fa-solid fa-code text-3xl text-void-900"></i>
+                              </div>
+                              <h1 class="text-2xl font-bold text-white mb-2">企业模糊搜索API</h1>
+                              <span class="badge-api">API</span>
+                          </div>
+                          
+                          <div class="space-y-4 mb-6">
+                              <p class="text-slate-400 text-sm">
+                                  通过企业名称关键词模糊搜索企业列表，返回基础工商信息，支持分页和排序。
+                              </p>
+                              <div class="flex items-center gap-2">
+                                  <i class="fa-solid fa-bolt text-slate-500"></i>
+                                  <span class="text-slate-400 text-sm">响应时间: &lt; 500ms</span>
+                              </div>
+                              <div class="flex items-center gap-2">
+                                  <i class="fa-solid fa-chart-line text-slate-500"></i>
+                                  <span class="text-slate-400 text-sm">本月调用: 12,543次</span>
+                              </div>
+                              <div class="flex items-center gap-2">
+                                  <i class="fa-solid fa-check-circle text-slate-500"></i>
+                                  <span class="text-slate-400 text-sm">成功率: 99.8%</span>
+                              </div>
+                          </div>
+      
+                          <div class="border-t border-white/10 pt-6">
+                              <div class="flex items-center justify-between mb-4">
+                                  <div>
+                                      <div class="text-xl font-bold text-white mb-1">5点/次</div>
+                                      <p class="text-slate-500 text-xs">基础调用价格</p>
+                                  </div>
+                                  <div class="text-right">
+                                      <div class="text-aurora-green text-sm font-bold mb-1">免费测试 3次/日</div>
+                                      <p class="text-slate-500 text-xs">剩余: 3次</p>
+                                  </div>
+                              </div>
+                              <button class="btn-primary w-full py-3 mb-3" ref="test-button">
+                                  <i class="fa-solid fa-play mr-2"></i>发送测试请求
+                              </button>
+                              <button class="w-full py-3 rounded-full text-sm bg-aurora-cyan/20 text-aurora-cyan border border-aurora-cyan/30 hover:bg-aurora-cyan/30 transition">
+                                  申请API Key
+                              </button>
+                          </div>
+                      </div>
+                  </div>
+      
+                  
+                  <div class="lg:col-span-2">
+                      
+                      <div class="flex border-b border-white/10 mb-6">
+                          <button class="tab-button active" data-tab="docs">文档</button>
+                          <button class="tab-button" data-tab="test">在线测试</button>
+                          <button class="tab-button" data-tab="pricing">定价套餐</button>
+                          <button class="tab-button" data-tab="guide">接入指南</button>
+                      </div>
+      
+                      
+                      <div ref="docs-tab" class="space-y-6">
+                          <div>
+                              <h2 class="text-xl font-bold text-white mb-4">API文档</h2>
+                              <p class="text-slate-400 mb-4">
+                                  企业模糊搜索API允许您通过企业名称关键词搜索匹配的企业列表，返回企业基础工商信息，包括企业名称、统一社会信用代码、法定代表人、注册资本、成立日期等。
+                              </p>
+                          </div>
+      
+                          <div>
+                              <h3 class="text-lg font-bold text-white mb-3">请求参数</h3>
+                              <div class="overflow-x-auto">
+                                  <table class="w-full text-sm">
+                                      <thead>
+                                          <tr class="border-b border-white/10">
+                                              <th class="py-3 text-left text-slate-400 font-medium">参数名</th>
+                                              <th class="py-3 text-left text-slate-400 font-medium">类型</th>
+                                              <th class="py-3 text-left text-slate-400 font-medium">必填</th>
+                                              <th class="py-3 text-left text-slate-400 font-medium">示例</th>
+                                              <th class="py-3 text-left text-slate-400 font-medium">说明</th>
+                                          </tr>
+                                      </thead>
+                                      <tbody>
+                                          <tr class="border-b border-white/10">
+                                              <td class="py-3 text-white">keyword</td>
+                                              <td class="py-3 text-slate-400">string</td>
+                                              <td class="py-3 text-slate-400">是</td>
+                                              <td class="py-3 text-slate-400">"腾讯"</td>
+                                              <td class="py-3 text-slate-400">企业名称关键词，支持模糊匹配</td>
+                                          </tr>
+                                          <tr class="border-b border-white/10">
+                                              <td class="py-3 text-white">page</td>
+                                              <td class="py-3 text-slate-400">integer</td>
+                                              <td class="py-3 text-slate-400">否</td>
+                                              <td class="py-3 text-slate-400">1</td>
+                                              <td class="py-3 text-slate-400">页码，默认1</td>
+                                          </tr>
+                                          <tr class="border-b border-white/10">
+                                              <td class="py-3 text-white">page_size</td>
+                                              <td class="py-3 text-slate-400">integer</td>
+                                              <td class="py-3 text-slate-400">否</td>
+                                              <td class="py-3 text-slate-400">10</td>
+                                              <td class="py-3 text-slate-400">每页数量，默认10，最大50</td>
+                                          </tr>
+                                          <tr>
+                                              <td class="py-3 text-white">order_by</td>
+                                              <td class="py-3 text-slate-400">string</td>
+                                              <td class="py-3 text-slate-400">否</td>
+                                              <td class="py-3 text-slate-400">"relevance"</td>
+                                              <td class="py-3 text-slate-400">排序字段：relevance(相关度)、capital(注册资本)、date(成立日期)</td>
+                                          </tr>
+                                      </tbody>
+                                  </table>
+                              </div>
+                          </div>
+      
+                          <div>
+                              <h3 class="text-lg font-bold text-white mb-3">响应示例</h3>
+                              <div class="bg-void-800/50 border border-white/10 rounded-xl p-4">
+                                  <div class="flex items-center justify-between mb-2">
+                                      <span class="text-slate-400 text-sm">成功响应 (HTTP 200)</span>
+                                      <button class="text-xs text-aurora-cyan hover:text-aurora-green transition" onclick="copyCode(this)">复制代码</button>
+                                  </div>
+                                  <pre class="text-slate-300 text-sm overflow-x-auto" ref="response-example">
+      {
+        "code": 0,
+        "message": "success",
+        "data": {
+          "total": 245,
+          "page": 1,
+          "page_size": 10,
+          "items": [
+            {
+              "company_name": "腾讯科技（深圳）有限公司",
+              "credit_code": "91440300708461136T",
+              "legal_person": "马化腾",
+              "registered_capital": "6500万美元",
+              "establish_date": "2000-02-24",
+              "status": "在营",
+              "province": "广东省",
+              "city": "深圳市"
+            },
+            {
+              "company_name": "深圳市腾讯计算机系统有限公司",
+              "credit_code": "91440300749543358N",
+              "legal_person": "马化腾",
+              "registered_capital": "6500万元",
+              "establish_date": "1998-11-11",
+              "status": "在营",
+              "province": "广东省",
+              "city": "深圳市"
+            }
+          ]
+        }
+      }</pre>
+                              </div>
+                          </div>
+      
+                          <div>
+                              <h3 class="text-lg font-bold text-white mb-3">错误码</h3>
+                              <div class="grid md:grid-cols-2 gap-4">
+                                  <div class="bg-void-800/30 rounded-lg p-4">
+                                      <div class="text-aurora-red font-bold mb-1">4001</div>
+                                      <p class="text-slate-400 text-sm">参数错误，keyword不能为空</p>
+                                  </div>
+                                  <div class="bg-void-800/30 rounded-lg p-4">
+                                      <div class="text-aurora-red font-bold mb-1">4002</div>
+                                      <p class="text-slate-400 text-sm">参数错误，page_size超出范围(1-50)</p>
+                                  </div>
+                                  <div class="bg-void-800/30 rounded-lg p-4">
+                                      <div class="text-aurora-red font-bold mb-1">5001</div>
+                                      <p class="text-slate-400 text-sm">系统内部错误，请稍后重试</p>
+                                  </div>
+                                  <div class="bg-void-800/30 rounded-lg p-4">
+                                      <div class="text-aurora-red font-bold mb-1">6001</div>
+                                      <p class="text-slate-400 text-sm">点数不足，请充值</p>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+      
+                      
+                      <div ref="test-tab" class="space-y-6 hidden">
+                          <div>
+                              <h2 class="text-xl font-bold text-white mb-4">在线测试</h2>
+                              <p class="text-slate-400 mb-6">
+                                  填写测试参数，发送请求查看实时响应结果。每日提供3次免费测试机会。
+                              </p>
+                          </div>
+      
+                          <div class="card-glass">
+                              <h3 class="font-bold text-white mb-4">测试参数</h3>
+                              <div class="space-y-4">
+                                  <div>
+                                      <label class="block text-sm text-slate-400 mb-2">关键词 (keyword)</label>
+                                      <input type="text" class="input-glass" placeholder="输入企业名称关键词，如'腾讯'" value="科技" />
+                                  </div>
+                                  <div class="grid md:grid-cols-2 gap-4">
+                                      <div>
+                                          <label class="block text-sm text-slate-400 mb-2">页码 (page)</label>
+                                          <input type="number" class="input-glass" value="1" min="1" />
+                                      </div>
+                                      <div>
+                                          <label class="block text-sm text-slate-400 mb-2">每页数量 (page_size)</label>
+                                          <input type="number" class="input-glass" value="10" min="1" max="50" />
+                                      </div>
+                                  </div>
+                                  <div>
+                                      <label class="block text-sm text-slate-400 mb-2">排序字段 (order_by)</label>
+                                      <select class="input-glass">
+                                          <option value="relevance">相关度</option>
+                                          <option value="capital">注册资本</option>
+                                          <option value="date">成立日期</option>
+                                      </select>
+                                  </div>
+                              </div>
+      
+                              <div class="mt-6 pt-6 border-t border-white/10">
+                                  <div class="flex items-center justify-between mb-4">
+                                      <div>
+                                          <p class="text-slate-400 text-sm">本次测试将消耗</p>
+                                          <p class="text-aurora-green font-bold">0点数 (免费测试)</p>
+                                      </div>
+                                      <button class="btn-primary px-8" ref="send-test-button">
+                                          <i class="fa-solid fa-paper-plane mr-2"></i>发送测试请求
+                                      </button>
+                                  </div>
+                                  <p class="text-slate-500 text-xs">
+                                      今日剩余免费测试次数: <span class="text-aurora-green font-bold">3次</span>
+                                  </p>
+                              </div>
+                          </div>
+      
+                          <div class="card-glass">
+                              <h3 class="font-bold text-white mb-4">测试结果</h3>
+                              <div class="bg-void-900/50 border border-white/10 rounded-xl p-4 min-h-[200px]">
+                                  <div class="text-center py-8 text-slate-500" ref="test-result-placeholder">
+                                      <i class="fa-solid fa-code text-3xl mb-3 opacity-50"></i>
+                                      <p>填写参数后点击"发送测试请求"查看结果</p>
+                                  </div>
+                                  <pre class="text-slate-300 text-sm overflow-x-auto hidden" ref="test-result"></pre>
+                              </div>
+                          </div>
+                      </div>
+      
+                      
+                      <div ref="pricing-tab" class="space-y-6 hidden">
+                          <div>
+                              <h2 class="text-xl font-bold text-white mb-4">定价套餐</h2>
+                              <p class="text-slate-400 mb-6">
+                                  根据您的使用需求选择合适的套餐，VIP用户享受特定套餐免费权益。
+                              </p>
+                          </div>
+      
+                          <div class="grid md:grid-cols-3 gap-6">
+                              <div class="card-glass">
+                                  <div class="text-center mb-6">
+                                      <div class="text-2xl font-bold text-white mb-2">按次计费</div>
+                                      <div class="text-3xl font-bold text-aurora-cyan mb-1">5<span class="text-lg text-slate-400">点/次</span></div>
+                                      <p class="text-slate-500 text-sm">适合低频使用场景</p>
+                                  </div>
+                                  <ul class="space-y-3 mb-6">
+                                      <li class="flex items-start gap-2">
+                                          <i class="fa-solid fa-check text-aurora-green mt-1"></i>
+                                          <span class="text-slate-400 text-sm">无最低消费</span>
+                                      </li>
+                                      <li class="flex items-start gap-2">
+                                          <i class="fa-solid fa-check text-aurora-green mt-1"></i>
+                                          <span class="text-slate-400 text-sm">按实际调用次数扣点</span>
+                                      </li>
+                                      <li class="flex items-start gap-2">
+                                          <i class="fa-solid fa-check text-aurora-green mt-1"></i>
+                                          <span class="text-slate-400 text-sm">每日3次免费测试</span>
+                                      </li>
+                                  </ul>
+                                  <button class="w-full py-3 rounded-full text-sm bg-aurora-cyan/20 text-aurora-cyan border border-aurora-cyan/30 hover:bg-aurora-cyan/30 transition">
+                                      选择此套餐
+                                  </button>
+                              </div>
+      
+                              <div class="card-glass relative">
+                                  <div class="absolute top-0 right-0">
+                                      <span class="badge-vip">VIP免费</span>
+                                  </div>
+                                  <div class="text-center mb-6">
+                                      <div class="text-2xl font-bold text-white mb-2">包月套餐</div>
+                                      <div class="text-3xl font-bold text-aurora-green mb-1">2,000<span class="text-lg text-slate-400">点/月</span></div>
+                                      <p class="text-slate-500 text-sm">适合中等使用频率</p>
+                                  </div>
+                                  <ul class="space-y-3 mb-6">
+                                      <li class="flex items-start gap-2">
+                                          <i class="fa-solid fa-check text-aurora-green mt-1"></i>
+                                          <span class="text-slate-400 text-sm">每月最多2,000次调用</span>
+                                      </li>
+                                      <li class="flex items-start gap-2">
+                                          <i class="fa-solid fa-check text-aurora-green mt-1"></i>
+                                          <span class="text-slate-400 text-sm">超出部分按5点/次</span>
+                                      </li>
+                                      <li class="flex items-start gap-2">
+                                          <i class="fa-solid fa-check text-aurora-green mt-1"></i>
+                                          <span class="text-slate-400 text-sm">VIP用户免费</span>
+                                      </li>
+                                  </ul>
+                                  <button class="w-full py-3 rounded-full text-sm bg-accent-gradient text-void-900 font-bold hover:shadow-glow-sm transition">
+                                      选择此套餐
+                                  </button>
+                              </div>
+      
+                              <div class="card-glass">
+                                  <div class="text-center mb-6">
+                                      <div class="text-2xl font-bold text-white mb-2">包年套餐</div>
+                                      <div class="text-3xl font-bold text-aurora-purple mb-1">20,000<span class="text-lg text-slate-400">点/年</span></div>
+                                      <p class="text-slate-500 text-sm">适合高频稳定使用</p>
+                                  </div>
+                                  <ul class="space-y-3 mb-6">
+                                      <li class="flex items-start gap-2">
+                                          <i class="fa-solid fa-check text-aurora-green mt-1"></i>
+                                          <span class="text-slate-400 text-sm">每年最多20,000次调用</span>
+                                      </li>
+                                      <li class="flex items-start gap-2">
+                                          <i class="fa-solid fa-check text-aurora-green mt-1"></i>
+                                          <span class="text-slate-400 text-sm">平均低至1点/次</span>
+                                      </li>
+                                      <li class="flex items-start gap-2">
+                                          <i class="fa-solid fa-check text-aurora-green mt-1"></i>
+                                          <span class="text-slate-400 text-sm">优先技术支持</span>
+                                      </li>
+                                  </ul>
+                                  <button class="w-full py-3 rounded-full text-sm bg-aurora-purple/20 text-aurora-purple border border-aurora-purple/30 hover:bg-aurora-purple/30 transition">
+                                      选择此套餐
+                                  </button>
+                              </div>
+                          </div>
+                      </div>
+      
+                      
+                      <div ref="guide-tab" class="space-y-6 hidden">
+                          <div>
+                              <h2 class="text-xl font-bold text-white mb-4">接入指南</h2>
+                              <p class="text-slate-400 mb-6">
+                                  快速将API集成到您的应用中，支持多种编程语言和框架。
+                              </p>
+                          </div>
+      
+                          <div>
+                              <h3 class="text-lg font-bold text-white mb-3">1. 获取API Key</h3>
+                              <div class="card-glass">
+                                  <p class="text-slate-400 text-sm mb-4">
+                                      在个人中心 → API密钥管理页面，点击"新建API密钥"生成专属密钥。
+                                  </p>
+                                  <div class="flex items-center justify-between">
+                                      <div class="flex items-center gap-3">
+                                          <div class="px-3 py-1 rounded-lg bg-void-900/50 border border-white/10">
+                                              <code class="text-slate-300 text-sm">sk_live_1234567890abcdef</code>
+                                          </div>
+                                          <button class="text-xs text-aurora-cyan hover:text-aurora-green transition">复制</button>
+                                      </div>
+                                      <a href="#" class="text-sm text-aurora-cyan hover:text-aurora-green transition">
+                                          前往个人中心 <i class="fa-solid fa-external-link ml-1"></i>
+                                      </a>
+                                  </div>
+                              </div>
+                          </div>
+      
+                          <div>
+                              <h3 class="text-lg font-bold text-white mb-3">2. 代码示例</h3>
+                              <div class="space-y-4">
+                                  <div>
+                                      <div class="flex items-center gap-2 mb-2">
+                                          <i class="fa-brands fa-js text-yellow-500"></i>
+                                          <span class="text-white font-medium">JavaScript (Fetch)</span>
+                                      </div>
+                                      <div class="bg-void-900/50 border border-white/10 rounded-xl p-4">
+                                          <pre class="text-slate-300 text-sm overflow-x-auto">
+      const response = await fetch('https://api.shueq.com/v1/search/company', {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer sk_live_1234567890abcdef'
+          },
+          body: JSON.stringify({
+              keyword: '腾讯',
+              page: 1,
+              page_size: 10
+          })
+      });
+      const data = await response.json();</pre>
+                                      </div>
+                                  </div>
+      
+                                  <div>
+                                      <div class="flex items-center gap-2 mb-2">
+                                          <i class="fa-brands fa-python text-blue-500"></i>
+                                          <span class="text-white font-medium">Python (Requests)</span>
+                                      </div>
+                                      <div class="bg-void-900/50 border border-white/10 rounded-xl p-4">
+                                          <pre class="text-slate-300 text-sm overflow-x-auto">
+      import requests
+      
+      headers = {
+          'Authorization': 'Bearer sk_live_1234567890abcdef',
+          'Content-Type': 'application/json'
+      }
+      
+      data = {
+          'keyword': '腾讯',
+          'page': 1,
+          'page_size': 10
+      }
+      
+      response = requests.post(
+          'https://api.shueq.com/v1/search/company',
+          headers=headers,
+          json=data
+      )
+      result = response.json()</pre>
+                                      </div>
+                                  </div>
+                              </div>
+                          </div>
+      
+                          <div class="card-glass">
+                              <h3 class="font-bold text-white mb-3">技术支持</h3>
+                              <p class="text-slate-400 text-sm mb-4">
+                                  如果在接入过程中遇到问题，可以通过以下方式获取帮助：
+                              </p>
+                              <div class="grid md:grid-cols-3 gap-4">
+                                  <a href="#" class="flex items-center gap-3 p-3 rounded-lg bg-white/5 hover:bg-white/10 transition">
+                                      <i class="fa-solid fa-book text-aurora-cyan"></i>
+                                      <span class="text-white text-sm">API文档中心</span>
+                                  </a>
+                                  <a href="#" class="flex items-center gap-3 p-3 rounded-lg bg-white/5 hover:bg-white/10 transition">
+                                      <i class="fa-solid fa-comments text-aurora-green"></i>
+                                      <span class="text-white text-sm">技术社区</span>
+                                  </a>
+                                  <a href="#" class="flex items-center gap-3 p-3 rounded-lg bg-white/5 hover:bg-white/10 transition">
+                                      <i class="fa-solid fa-headset text-aurora-purple"></i>
+                                      <span class="text-white text-sm">在线客服</span>
+                                  </a>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </main>
+      
+          <footer class="relative z-10 max-w-7xl mx-auto px-6 py-8 mt-12 border-t border-white/10">
+              <div class="flex flex-col md:flex-row justify-between items-center">
+                  <div class="text-slate-500 text-sm">
+                      © 2025 数擎平台 · 企业级数据服务平台
+                  </div>
+                  <div class="flex gap-6 mt-4 md:mt-0 text-sm">
+                      <a href="#" class="text-slate-400 hover:text-white transition">服务协议</a>
+                      <a href="#" class="text-slate-400 hover:text-white transition">隐私政策</a>
+                      <a href="#" class="text-slate-400 hover:text-white transition">帮助中心</a>
+                      <a href="#" class="text-slate-400 hover:text-white transition">联系我们</a>
+                  </div>
+              </div>
+          </footer>
+    </main>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref, onMounted, nextTick } from 'vue'
+import { useRouter } from 'vue-router'
+import Icon from '@/components/Icon/src/Icon.vue'
+
+const router = useRouter()
+
+// 页面状态
+const loading = ref(false)
+
+// 导航方法
+const navigateTo = (path: string) => {
+  const routeMap: Record<string, string> = {
+    'index.html': '/pages/index',
+    'dashboard.html': '/pages/dashboard',
+    'workspace.html': '/pages/workspace',
+    'profile.html': '/pages/profile',
+    'search-results.html': '/pages/search-results',
+    'apps/apps.html': '/pages/apps/list',
+    'cases/cases.html': '/pages/cases/list',
+    'resources/resources.html': '/pages/resources/list'
+  }
+  const route = routeMap[path] || path.replace('.html', '')
+  router.push(route)
+}
+
+onMounted(() => {
+  // 页面初始化
+  console.log('资源详情 页面加载完成')
+})
+</script>
+
+<style scoped lang="scss">
+
+
+@layer utilities {
+            .bg-stars {
+                background-color: #02040a;
+                background-image: 
+                    radial-gradient(white, rgb(255 255 255 / 20%) 2px, transparent 3px),
+                    radial-gradient(white, rgb(255 255 255 / 15%) 1px, transparent 2px),
+                    radial-gradient(white, rgb(255 255 255 / 10%) 2px, transparent 3px);
+                background-position: 0 0, 40px 60px, 130px 270px;
+                background-size: 550px 550px, 350px 350px, 250px 250px;
+            }
+
+            .text-gradient {
+                color: transparent;
+                background: linear-gradient(to right, #00d2ff, #00ffa3);
+                background-clip: text;
+                background-clip: text;
+                -webkit-text-fill-color: transparent;
+            }
+
+            .aurora-blur {
+                position: absolute;
+                z-index: 0;
+                pointer-events: none;
+                border-radius: 50%;
+                opacity: 0.4;
+                filter: blur(80px);
+            }
+
+            .glass-panel-base {
+                background: rgb(255 255 255 / 3%);
+                border: 1px solid rgb(255 255 255 / 8%);
+                box-shadow: 0 4px 30px rgb(0 0 0 / 10%);
+                backdrop-filter: blur(12px);
+                backdrop-filter: blur(12px);
+            }
+        }
+
+        @layer components {
+            .btn-primary {
+                @apply relative overflow-hidden inline-flex items-center justify-center px-8 py-3 rounded-full font-bold text-void-900 transition-all duration-300;
+
+                background: linear-gradient(90deg, #00d2ff 0%, #00ffa3 100%);
+            }
+
+            .btn-primary:hover {
+                @apply shadow-glow-md transform -translate-y-0.5 scale-105;
+            }
+
+            .card-glass {
+                @apply glass-panel-base rounded-2xl p-6 transition-all duration-300 hover:bg-white/5 hover:border-aurora-cyan/30 hover:shadow-glow-sm;
+            }
+
+            .badge {
+                @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider bg-white/5 border border-white/10 text-aurora-cyan;
+            }
+
+            .badge-api {
+                @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-gradient-to-r from-aurora-cyan to-aurora-green text-void-900;
+            }
+
+            .badge-vip {
+                @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-gradient-to-r from-yellow-500 to-orange-500 text-void-900;
+            }
+
+            .tab-button {
+                @apply px-4 py-2 text-sm font-medium transition-all cursor-pointer border-b-2 border-transparent text-slate-400;
+            }
+
+            .tab-button.active {
+                @apply text-aurora-cyan border-aurora-cyan;
+            }
+
+            .input-glass {
+                @apply w-full bg-void-900/50 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-aurora-cyan/50 focus:ring-1 focus:ring-aurora-cyan/50 transition-all;
+            }
+        }
+
+        body {
+            @apply selection:bg-aurora-cyan/30 selection:text-white font-body;
+        }
+
+        pre {
+            font-family: Monaco, Menlo, Consolas, monospace;
+        }
+
+// 页面特定样式
+.pages-container {
+  min-height: calc(100vh - 84px);
+}
+
+
+</style>

@@ -1,0 +1,1225 @@
+<html lang='zh-CN'>
+        <head >
+        <meta charset='UTF-8'/>
+<meta name='viewport' content='width=device-width, initial-scale=1.0'/>
+<title >企业合规风险审查平台</title>
+<script src='https://res.gemcoder.com/js/reload.js'></script>
+<script src='https://cdn.tailwindcss.com'></script>
+<link href='https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css' rel='stylesheet'/>
+<script src='https://cdn.bootcdn.net/ajax/libs/echarts/5.4.3/echarts.min.js'></script>
+<script >tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        primary: '#1677FF',
+        danger: '#F5222D',
+        warning: '#FA8C16',
+        caution: '#FADB14',
+        info: '#40A9FF',
+        success: '#52C41A',
+        'text-dark': '#1D2129',
+        'text-gray': '#86909C',
+        'border-light': '#E5E6EB',
+        'bg-gray': '#F5F7FA'
+      },
+      fontFamily: {
+        sans: ['Inter', 'system-ui', 'sans-serif']
+      },
+      boxShadow: {
+        'card': '0 2px 14px 0 rgba(0, 0, 0, 0.06)'
+      }
+    }
+  }
+};</script>
+<style type='text/tailwindcss'>
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .bg-grid {
+                background-image: 
+                    linear-gradient(rgba(0, 0, 0, 0.03) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(0, 0, 0, 0.03) 1px, transparent 1px);
+                background-size: 24px 24px;
+            }
+            .progress-ring-circle {
+                transition: stroke-dashoffset 0.35s;
+                transform: rotate(-90deg);
+                transform-origin: 50% 50%;
+            }
+        }
+        .modal-overlay {
+            background-color: rgba(0, 0, 0, 0.45);
+        }
+        .modal-overlay.hidden {
+            display: none !important;
+        }
+        .risk-table-container {
+            overflow-x: auto;
+        }
+    </style>
+    </head>
+<body class='bg-white font-sans text-text-dark'>
+        <!-- [MODULE] 78x_整个应用容器 -->
+<div id='app' class='min-h-screen'>
+        <!-- [MODULE] 1a2_起始页模块 -->
+<div id='start-page' class='min-h-screen bg-white bg-grid' style='background-color:rgb(255, 255, 255);background-image:url(linear-gradient(rgba(0, 0, 0, 0.03) 1px, rgba(0, 0, 0, 0) 1px), linear-gradient(90deg, rgba(0, 0, 0, 0.03) 1px, rgba(0, 0, 0, 0) 1px);background-size:cover;background-position:center'>
+        <!-- [MODULE] 4f5_起始页:顶部品牌区 -->
+<div class='container mx-auto px-4 pt-6'>
+        <div class='flex items-center'>
+        <i class='fas fa-shield-alt text-primary text-3xl mr-3'>
+        </i>
+<div >
+        <h1 class='text-xl font-bold text-text-dark'>
+        企业合规风险审查
+    </h1>
+<p class='text-text-gray text-sm'>
+        精准核查·合规风控·风险预警
+    </p>
+    </div>
+    </div>
+    </div>
+<!-- [/MODULE] 4f5_起始页:顶部品牌区 -- 展示平台logo和品牌信息 -->
+<!-- [MODULE] 8c9_起始页:核心查询区 -->
+<div class='container mx-auto px-4 flex items-center justify-center min-h-[calc(100vh-100px)]' style>
+        <div class='w-full max-w-3xl text-center'>
+        <h2 class='text-[clamp(1.8rem,4vw,2.5rem)] font-bold text-text-dark mb-3'>
+        企业合规风险审查
+    </h2>
+<p class='text-text-gray text-lg mb-8'>
+        获取专业企业合规风险评分与审查报告
+    </p>
+<div class='flex flex-col sm:flex-row gap-3 mb-4'>
+        <input type='text' id='company-input' placeholder='请输入企业名称或统一社会信用代码' class='flex-1 px-5 py-3 rounded-lg border border-border-light bg-white/80 backdrop-blur-sm focus:outline-none focus:border-primary focus:bg-primary/5 transition-all'/>
+<button id='search-btn' class='px-8 py-3 bg-primary text-white rounded-lg hover:bg-primary/90 active:scale-95 transition-all shadow-card flex items-center justify-center'>
+        <i class='fas fa-search mr-2'>
+        </i>
+<span >
+        查询
+    </span>
+    </button>
+    </div>
+<div class='text-text-gray text-sm flex items-center justify-center' style='padding-right:0px'>
+        <i class='fas fa-info-circle mr-2'>
+        </i>
+<span style='padding-right:0px'>
+        支持企业全称、关键字、统一社会信用代码精准匹配
+    </span>
+    </div>
+    </div>
+    </div>
+<!-- [/MODULE] 8c9_起始页:核心查询区 -- 包含查询标题、输入框、查询按钮和提示文字 -->
+    </div>
+<!-- [/MODULE] 1a2_起始页模块 -- 起始查询页面 -->
+<!-- [MODULE] 3b7_加载页模块 -->
+<div id='loading-page' class='hidden min-h-screen bg-bg-gray flex items-center justify-center'>
+        <div class='text-center max-w-md mx-auto px-4'>
+        <p class='text-text-dark text-lg mb-6'>
+        正在分析企业合规风险数据，请稍候
+    </p>
+<div class='relative w-32 h-32 mx-auto mb-6'>
+        <svg class='w-full h-full' viewBox='0 0 100 100'>
+        <circle cx='50' cy='50' r='45' fill='none' stroke='#E5E6EB' stroke-width='8'>
+        </circle>
+<circle id='progress-ring' cx='50' cy='50' r='45' fill='none' stroke='#1677FF' stroke-width='8' stroke-linecap='round' class='progress-ring-circle' stroke-dasharray='283 283' stroke-dashoffset='283'>
+        </circle>
+    </svg>
+<div class='absolute inset-0 flex items-center justify-center'>
+        <span id='progress-text' class='text-xl font-semibold text-primary'>
+        0%
+    </span>
+    </div>
+    </div>
+<div class='text-left mb-6'>
+        <div class='flex items-center mb-2' id='step-1'>
+        <span class='w-5 h-5 rounded-full bg-bg-gray border border-border-light flex items-center justify-center mr-3 text-xs text-text-gray'>
+        <i class='fas fa-check hidden'>
+        </i>
+    </span>
+<span class='text-text-gray'>
+        核验企业基本信息
+    </span>
+    </div>
+<div class='flex items-center mb-2' id='step-2'>
+        <span class='w-5 h-5 rounded-full bg-bg-gray border border-border-light flex items-center justify-center mr-3 text-xs text-text-gray'>
+        <i class='fas fa-check hidden'>
+        </i>
+    </span>
+<span class='text-text-gray'>
+        查询风险违规记录
+    </span>
+    </div>
+<div class='flex items-center mb-2' id='step-3'>
+        <span class='w-5 h-5 rounded-full bg-bg-gray border border-border-light flex items-center justify-center mr-3 text-xs text-text-gray'>
+        <i class='fas fa-check hidden'>
+        </i>
+    </span>
+<span class='text-text-gray'>
+        分析经营异常数据
+    </span>
+    </div>
+<div class='flex items-center mb-2' id='step-4'>
+        <span class='w-5 h-5 rounded-full bg-bg-gray border border-border-light flex items-center justify-center mr-3 text-xs text-text-gray'>
+        <i class='fas fa-check hidden'>
+        </i>
+    </span>
+<span class='text-text-gray'>
+        筛查司法诉讼风险
+    </span>
+    </div>
+<div class='flex items-center' id='step-5'>
+        <span class='w-5 h-5 rounded-full bg-bg-gray border border-border-light flex items-center justify-center mr-3 text-xs text-text-gray'>
+        <i class='fas fa-check hidden'>
+        </i>
+    </span>
+<span class='text-text-gray'>
+        统计失信处罚信息
+    </span>
+    </div>
+    </div>
+<p class='text-text-gray text-sm'>
+        正在整合多维度数据生成合规风险分析报告...
+    </p>
+    </div>
+    </div>
+<!-- [/MODULE] 3b7_加载页模块 -- 数据加载过渡页面 -->
+<!-- [MODULE] 9d2_结果页模块 -->
+<div id='result-page' class='hidden min-h-screen bg-bg-gray'>
+        <!-- [MODULE] 2e4_结果页:顶部导航栏 -->
+<header class='bg-white/80 backdrop-blur-md border-b border-border-light sticky top-0 z-10'>
+        <div class='container mx-auto px-4 py-4'>
+        <div class='flex items-center'>
+        <i class='fas fa-shield-alt text-primary text-2xl mr-3'>
+        </i>
+<h1 class='text-lg font-bold text-text-dark'>
+        企业合规风险审查
+    </h1>
+    </div>
+    </div>
+    </header>
+<!-- [/MODULE] 2e4_结果页:顶部导航栏 -- 平台标题导航 -->
+<!-- [MODULE] 5f1_结果页:主体内容 -->
+<main class='container mx-auto px-4 py-6'>
+        <div class='flex flex-col lg:flex-row gap-6'>
+        <!-- [MODULE] 6a3_结果页:左侧企业信息 -->
+<div class='lg:w-1/3 lg:sticky lg:top-24 lg:self-start'>
+        <div class='bg-white rounded-xl shadow-card p-5'>
+        <h3 class='text-lg font-bold mb-4 pb-3 border-b border-border-light'>
+        企业基础信息
+    </h3>
+<div class='space-y-4'>
+        <div class='flex'>
+        <span class='w-28 text-text-gray flex-shrink-0'>
+        企业名称
+    </span>
+<span class='font-medium' id='info-company-name'>
+        北京字节跳动网络技术有限公司
+    </span>
+    </div>
+<div class='flex'>
+        <span class='w-28 text-text-gray flex-shrink-0'>
+        统一社会信用代码
+    </span>
+<span >
+        91110108MA0080GM5F
+    </span>
+    </div>
+<div class='flex'>
+        <span class='w-28 text-text-gray flex-shrink-0'>
+        法定代表人
+    </span>
+<span >
+        张一鸣
+    </span>
+    </div>
+<div class='flex'>
+        <span class='w-28 text-text-gray flex-shrink-0'>
+        登记状态
+    </span>
+<span >
+        <span class='px-2 py-0.5 bg-success/10 text-success rounded text-sm'>
+        存续
+    </span>
+    </span>
+    </div>
+<div class='flex'>
+        <span class='w-28 text-text-gray flex-shrink-0'>
+        成立日期
+    </span>
+<span >
+        2012-03-12
+    </span>
+    </div>
+<div class='flex'>
+        <span class='w-28 text-text-gray flex-shrink-0'>
+        注册资本
+    </span>
+<span >
+        200000 万元人民币
+    </span>
+    </div>
+<div class='flex'>
+        <span class='w-28 text-text-gray flex-shrink-0'>
+        所属行业
+    </span>
+<span >
+        互联网和相关服务
+    </span>
+    </div>
+<div class='flex'>
+        <span class='w-28 text-text-gray flex-shrink-0'>
+        注册地址
+    </span>
+<span >
+        北京市海淀区知春路甲48号B座3层301室
+    </span>
+    </div>
+<div class='flex'>
+        <span class='w-28 text-text-gray flex-shrink-0'>
+        经营范围
+    </span>
+<span class='text-sm leading-relaxed'>
+        互联网技术推广、技术开发、技术转让、技术咨询、技术服务；设计、制作、代理、发布广告；从事互联网文化活动；广播电视节目制作等
+    </span>
+    </div>
+<div class='pt-3 border-t border-border-light'>
+        <div class='flex items-center'>
+        <span class='text-text-gray mr-2'>
+        合规结论：
+    </span>
+<span class='px-3 py-1 bg-success/10 text-success rounded-full text-sm font-medium'>
+        合规通过
+    </span>
+    </div>
+    </div>
+    </div>
+    </div>
+    </div>
+<!-- [/MODULE] 6a3_结果页:左侧企业信息 -- 可滚动展示完整企业工商信息 -->
+<!-- [MODULE] 4d5_结果页:右侧风险分析 -->
+<div class='lg:w-2/3'>
+        <!-- [MODULE] 7g8_风险综合评分卡片 -->
+<div class='bg-white rounded-xl shadow-card p-6 mb-6'>
+        <div class='flex flex-col md:flex-row gap-6'>
+        <!-- 左侧得分区域 -->
+<div class='md:w-1/2 flex flex-col items-center justify-center border-b md:border-b-0 md:border-r border-border-light pb-4 md:pb-0 md:pr-6'>
+        <h4 class='text-lg font-semibold mb-4 w-full text-left'>
+        企业综合风险得分
+    </h4>
+<div id='score-chart' class='w-48 h-48 mb-4'>
+        </div>
+<div class='text-center'>
+        <div class='flex items-center justify-center gap-3 mb-1'>
+        <span class='text-4xl font-bold' id='total-score'>
+        12
+    </span>
+<span class='px-3 py-1 rounded-full text-sm font-medium bg-success/10 text-success' id='risk-level'>
+        低风险
+    </span>
+    </div>
+<p class='text-text-gray text-sm'>
+        评估日期：
+<span id='eval-date'>
+        2024年5月20日
+    </span>
+    </p>
+    </div>
+    </div>
+<!-- 右侧风险解读 -->
+<div class='md:w-1/2'>
+        <div class='flex items-center justify-between mb-4'>
+        <h4 class='text-lg font-semibold'>
+        风险等级解读
+    </h4>
+<button id='rule-btn' class='px-3 py-1 border border-primary text-primary rounded-lg hover:bg-primary/5 transition-colors text-sm flex items-center'>
+        <i class='fas fa-info-circle mr-1'>
+        </i>
+规则说明
+    </button>
+    </div>
+<p class='mb-4 text-text-gray leading-relaxed'>
+        根据大数据多维度综合分析，该企业当前综合风险等级为
+<span class='font-semibold text-success'>
+        低风险
+    </span>
+，
+                                    暂无
+<span class='font-semibold text-danger'>
+        重大违规风险
+    </span>
+记录，符合合规准入基本要求。
+    </p>
+<!-- 金字塔风险图示 -->
+<div class='w-full max-w-[240px] mx-auto mt-6'>
+        <div class='overflow-hidden'>
+        <!-- 高风险 -->
+<div class='bg-danger h-10 flex items-center pl-4 text-white font-medium clip-triangle-top'>
+        <span >
+        高风险
+    </span>
+    </div>
+<!-- 较高风险 -->
+<div class='bg-warning h-10 flex items-center pl-8 text-white font-medium clip-triangle-middle'>
+        <span >
+        较高风险
+    </span>
+    </div>
+<!-- 中风险 -->
+<div class='bg-caution h-10 flex items-center pl-12 text-text-dark font-medium clip-triangle-middle'>
+        <span >
+        中风险
+    </span>
+    </div>
+<!-- 较低风险 -->
+<div class='bg-info h-10 flex items-center pl-16 text-white font-medium clip-triangle-middle'>
+        <span >
+        较低风险
+    </span>
+    </div>
+<!-- 低风险 -->
+<div class='bg-success h-10 flex items-center pl-20 text-white font-medium clip-triangle-bottom'>
+        <span >
+        低风险
+    </span>
+<i class='fas fa-check ml-auto mr-4'>
+        </i>
+    </div>
+    </div>
+    </div>
+    </div>
+    </div>
+    </div>
+<!-- [/MODULE] 7g8_风险综合评分卡片 -- 综合得分和风险等级金字塔图示 -->
+<!-- [MODULE] 8h2_风险详情表格 -->
+<div class='bg-white rounded-xl shadow-card p-6 mb-6'>
+        <div class='flex items-center justify-between mb-4'>
+        <h3 class='text-lg font-bold'>
+        合规风险指标详情
+    </h3>
+<div class='relative' id='export-dropdown-container'>
+        <button id='export-btn' class='px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors flex items-center'>
+        <i class='fas fa-download mr-2'>
+        </i>
+报告导出
+<i class='fas fa-chevron-down ml-2 text-xs'>
+        </i>
+    </button>
+<div id='export-dropdown' class='hidden absolute right-0 mt-2 w-60 bg-white rounded-lg shadow-card border border-border-light z-20 py-2'>
+        <a href='javascript:void(0);' class='export-option block px-4 py-2 hover:bg-bg-gray transition-colors' data-type='pdf'>
+        <i class='fas fa-file-pdf mr-2 text-danger'>
+        </i>
+PDF完整版合规风险报告
+    </a>
+<a href='javascript:void(0);' class='export-option block px-4 py-2 hover:bg-bg-gray transition-colors' data-type='excel'>
+        <i class='fas fa-file-excel mr-2 text-success'>
+        </i>
+Excel指标明细报表
+    </a>
+    </div>
+    </div>
+    </div>
+<div class='risk-table-container'>
+        <table class='w-full border-collapse'>
+        <thead >
+        <tr class='bg-bg-gray'>
+        <th class='px-4 py-3 text-left border border-border-light font-semibold text-sm'>
+        风险类型
+    </th>
+<th class='px-4 py-3 text-left border border-border-light font-semibold text-sm'>
+        风险标签
+    </th>
+<th class='px-4 py-3 text-left border border-border-light font-semibold text-sm'>
+        指标等级
+    </th>
+<th class='px-4 py-3 text-left border border-border-light font-semibold text-sm'>
+        指标得分
+    </th>
+<th class='px-4 py-3 text-left border border-border-light font-semibold text-sm'>
+        指标说明
+    </th>
+    </tr>
+    </thead>
+<tbody >
+        <tr class='hover:bg-bg-gray/50'>
+        <td class='px-4 py-3 border border-border-light text-sm' rowspan='6'>
+        涉及采购不良行为
+    </td>
+<td class='px-4 py-3 border border-border-light text-sm'>
+        假冒中央企业
+    </td>
+<td class='px-4 py-3 border border-border-light text-sm'>
+        <span class='px-2 py-1 rounded-full text-xs font-medium bg-success/10 text-success'>
+        无风险
+    </span>
+    </td>
+<td class='px-4 py-3 border border-border-light text-sm font-medium text-success'>
+        0
+    </td>
+<td class='px-4 py-3 border border-border-light text-sm text-text-gray'>
+        未检测到相关不良记录
+    </td>
+    </tr>
+<tr class='hover:bg-bg-gray/50'>
+        <td class='px-4 py-3 border border-border-light text-sm'>
+        中央企业不良行为
+    </td>
+<td class='px-4 py-3 border border-border-light text-sm'>
+        <span class='px-2 py-1 rounded-full text-xs font-medium bg-success/10 text-success'>
+        无风险
+    </span>
+    </td>
+<td class='px-4 py-3 border border-border-light text-sm font-medium text-success'>
+        0
+    </td>
+<td class='px-4 py-3 border border-border-light text-sm text-text-gray'>
+        未检测到相关不良记录
+    </td>
+    </tr>
+<tr class='hover:bg-bg-gray/50'>
+        <td class='px-4 py-3 border border-border-light text-sm'>
+        政府采购严重违法失信行为
+    </td>
+<td class='px-4 py-3 border border-border-light text-sm'>
+        <span class='px-2 py-1 rounded-full text-xs font-medium bg-success/10 text-success'>
+        无风险
+    </span>
+    </td>
+<td class='px-4 py-3 border border-border-light text-sm font-medium text-success'>
+        0
+    </td>
+<td class='px-4 py-3 border border-border-light text-sm text-text-gray'>
+        未检测到相关不良记录
+    </td>
+    </tr>
+<tr class='hover:bg-bg-gray/50'>
+        <td class='px-4 py-3 border border-border-light text-sm'>
+        重大税收违法失信案件
+    </td>
+<td class='px-4 py-3 border border-border-light text-sm'>
+        <span class='px-2 py-1 rounded-full text-xs font-medium bg-success/10 text-success'>
+        无风险
+    </span>
+    </td>
+<td class='px-4 py-3 border border-border-light text-sm font-medium text-success'>
+        0
+    </td>
+<td class='px-4 py-3 border border-border-light text-sm text-text-gray'>
+        未检测到相关不良记录
+    </td>
+    </tr>
+<tr class='hover:bg-bg-gray/50'>
+        <td class='px-4 py-3 border border-border-light text-sm'>
+        军队采购失信
+    </td>
+<td class='px-4 py-3 border border-border-light text-sm'>
+        <span class='px-2 py-1 rounded-full text-xs font-medium bg-success/10 text-success'>
+        无风险
+    </span>
+    </td>
+<td class='px-4 py-3 border border-border-light text-sm font-medium text-success'>
+        0
+    </td>
+<td class='px-4 py-3 border border-border-light text-sm text-text-gray'>
+        未检测到相关不良记录
+    </td>
+    </tr>
+<tr class='hover:bg-bg-gray/50'>
+        <td class='px-4 py-3 border border-border-light text-sm'>
+        军队采购暂停
+    </td>
+<td class='px-4 py-3 border border-border-light text-sm'>
+        <span class='px-2 py-1 rounded-full text-xs font-medium bg-success/10 text-success'>
+        无风险
+    </span>
+    </td>
+<td class='px-4 py-3 border border-border-light text-sm font-medium text-success'>
+        0
+    </td>
+<td class='px-4 py-3 border border-border-light text-sm text-text-gray'>
+        未检测到相关不良记录
+    </td>
+    </tr>
+<tr class='hover:bg-bg-gray/50 bg-bg-gray/20'>
+        <td class='px-4 py-3 border border-border-light text-sm' rowspan='4'>
+        涉及违法行为
+    </td>
+<td class='px-4 py-3 border border-border-light text-sm'>
+        失信被执行人
+    </td>
+<td class='px-4 py-3 border border-border-light text-sm'>
+        <span class='px-2 py-1 rounded-full text-xs font-medium bg-success/10 text-success'>
+        无风险
+    </span>
+    </td>
+<td class='px-4 py-3 border border-border-light text-sm font-medium text-success'>
+        0
+    </td>
+<td class='px-4 py-3 border border-border-light text-sm text-text-gray'>
+        未检测到相关记录
+    </td>
+    </tr>
+<tr class='hover:bg-bg-gray/50 bg-bg-gray/20'>
+        <td class='px-4 py-3 border border-border-light text-sm'>
+        限制高消费
+    </td>
+<td class='px-4 py-3 border border-border-light text-sm'>
+        <span class='px-2 py-1 rounded-full text-xs font-medium bg-success/10 text-success'>
+        无风险
+    </span>
+    </td>
+<td class='px-4 py-3 border border-border-light text-sm font-medium text-success'>
+        0
+    </td>
+<td class='px-4 py-3 border border-border-light text-sm text-text-gray'>
+        未检测到相关记录
+    </td>
+    </tr>
+<tr class='hover:bg-bg-gray/50 bg-bg-gray/20'>
+        <td class='px-4 py-3 border border-border-light text-sm'>
+        被执行人
+    </td>
+<td class='px-4 py-3 border border-border-light text-sm'>
+        <span class='px-2 py-1 rounded-full text-xs font-medium bg-success/10 text-success'>
+        无风险
+    </span>
+    </td>
+<td class='px-4 py-3 border border-border-light text-sm font-medium text-success'>
+        0
+    </td>
+<td class='px-4 py-3 border border-border-light text-sm text-text-gray'>
+        未检测到相关记录
+    </td>
+    </tr>
+<tr class='hover:bg-bg-gray/50 bg-bg-gray/20'>
+        <td class='px-4 py-3 border border-border-light text-sm'>
+        终本案件
+    </td>
+<td class='px-4 py-3 border border-border-light text-sm'>
+        <span class='px-2 py-1 rounded-full text-xs font-medium bg-success/10 text-success'>
+        无风险
+    </span>
+    </td>
+<td class='px-4 py-3 border border-border-light text-sm font-medium text-success'>
+        0
+    </td>
+<td class='px-4 py-3 border border-border-light text-sm text-text-gray'>
+        未检测到相关记录
+    </td>
+    </tr>
+<tr class='hover:bg-bg-gray/50'>
+        <td class='px-4 py-3 border border-border-light text-sm' rowspan='3'>
+        涉及经营风险
+    </td>
+<td class='px-4 py-3 border border-border-light text-sm'>
+        经营状态非存续
+    </td>
+<td class='px-4 py-3 border border-border-light text-sm'>
+        <span class='px-2 py-1 rounded-full text-xs font-medium bg-success/10 text-success'>
+        无风险
+    </span>
+    </td>
+<td class='px-4 py-3 border border-border-light text-sm font-medium text-success'>
+        0
+    </td>
+<td class='px-4 py-3 border border-border-light text-sm text-text-gray'>
+        企业当前经营状态为存续
+    </td>
+    </tr>
+<tr class='hover:bg-bg-gray/50'>
+        <td class='px-4 py-3 border border-border-light text-sm'>
+        经营异常
+    </td>
+<td class='px-4 py-3 border border-border-light text-sm'>
+        <span class='px-2 py-1 rounded-full text-xs font-medium bg-success/10 text-success'>
+        无风险
+    </span>
+    </td>
+<td class='px-4 py-3 border border-border-light text-sm font-medium text-success'>
+        0
+    </td>
+<td class='px-4 py-3 border border-border-light text-sm text-text-gray'>
+        未列入经营异常名录
+    </td>
+    </tr>
+<tr class='hover:bg-bg-gray/50'>
+        <td class='px-4 py-3 border border-border-light text-sm'>
+        股权冻结/破产重整
+    </td>
+<td class='px-4 py-3 border border-border-light text-sm'>
+        <span class='px-2 py-1 rounded-full text-xs font-medium bg-success/10 text-success'>
+        无风险
+    </span>
+    </td>
+<td class='px-4 py-3 border border-border-light text-sm font-medium text-success'>
+        0
+    </td>
+<td class='px-4 py-3 border border-border-light text-sm text-text-gray'>
+        未检测到相关记录
+    </td>
+    </tr>
+<tr class='hover:bg-bg-gray/50 bg-bg-gray/20'>
+        <td class='px-4 py-3 border border-border-light text-sm' rowspan='3'>
+        涉及内部黑名单
+    </td>
+<td class='px-4 py-3 border border-border-light text-sm'>
+        被列入集团级黑名单
+    </td>
+<td class='px-4 py-3 border border-border-light text-sm'>
+        <span class='px-2 py-1 rounded-full text-xs font-medium bg-success/10 text-success'>
+        无风险
+    </span>
+    </td>
+<td class='px-4 py-3 border border-border-light text-sm font-medium text-success'>
+        0
+    </td>
+<td class='px-4 py-3 border border-border-light text-sm text-text-gray'>
+        不在内部黑名单中
+    </td>
+    </tr>
+<tr class='hover:bg-bg-gray/50 bg-bg-gray/20'>
+        <td class='px-4 py-3 border border-border-light text-sm'>
+        被列入二级单位重点关注
+    </td>
+<td class='px-4 py-3 border border-border-light text-sm'>
+        <span class='px-2 py-1 rounded-full text-xs font-medium bg-success/10 text-success'>
+        无风险
+    </span>
+    </td>
+<td class='px-4 py-3 border border-border-light text-sm font-medium text-success'>
+        0
+    </td>
+<td class='px-4 py-3 border border-border-light text-sm text-text-gray'>
+        不在重点关注名单中
+    </td>
+    </tr>
+<tr class='hover:bg-bg-gray/50 bg-bg-gray/20'>
+        <td class='px-4 py-3 border border-border-light text-sm'>
+        被列入三级单位重点关注
+    </td>
+<td class='px-4 py-3 border border-border-light text-sm'>
+        <span class='px-2 py-1 rounded-full text-xs font-medium bg-success/10 text-success'>
+        无风险
+    </span>
+    </td>
+<td class='px-4 py-3 border border-border-light text-sm font-medium text-success'>
+        0
+    </td>
+<td class='px-4 py-3 border border-border-light text-sm text-text-gray'>
+        不在重点关注名单中
+    </td>
+    </tr>
+<tr class='hover:bg-bg-gray/50'>
+        <td class='px-4 py-3 border border-border-light text-sm' rowspan='4'>
+        涉及供应商马甲
+    </td>
+<td class='px-4 py-3 border border-border-light text-sm'>
+        董监高关联黑名单
+    </td>
+<td class='px-4 py-3 border border-border-light text-sm'>
+        <span class='px-2 py-1 rounded-full text-xs font-medium bg-success/10 text-success'>
+        无风险
+    </span>
+    </td>
+<td class='px-4 py-3 border border-border-light text-sm font-medium text-success'>
+        0
+    </td>
+<td class='px-4 py-3 border border-border-light text-sm text-text-gray'>
+        未检测到关联匹配
+    </td>
+    </tr>
+<tr class='hover:bg-bg-gray/50'>
+        <td class='px-4 py-3 border border-border-light text-sm'>
+        联系电话关联黑名单
+    </td>
+<td class='px-4 py-3 border border-border-light text-sm'>
+        <span class='px-2 py-1 rounded-full text-xs font-medium bg-success/10 text-success'>
+        无风险
+    </span>
+    </td>
+<td class='px-4 py-3 border border-border-light text-sm font-medium text-success'>
+        0
+    </td>
+<td class='px-4 py-3 border border-border-light text-sm text-text-gray'>
+        未检测到关联匹配
+    </td>
+    </tr>
+<tr class='hover:bg-bg-gray/50'>
+        <td class='px-4 py-3 border border-border-light text-sm'>
+        注册地址关联黑名单
+    </td>
+<td class='px-4 py-3 border border-border-light text-sm'>
+        <span class='px-2 py-1 rounded-full text-xs font-medium bg-success/10 text-success'>
+        无风险
+    </span>
+    </td>
+<td class='px-4 py-3 border border-border-light text-sm font-medium text-success'>
+        0
+    </td>
+<td class='px-4 py-3 border border-border-light text-sm text-text-gray'>
+        未检测到关联匹配
+    </td>
+    </tr>
+<tr class='hover:bg-bg-gray/50'>
+        <td class='px-4 py-3 border border-border-light text-sm'>
+        邮箱关联黑名单
+    </td>
+<td class='px-4 py-3 border border-border-light text-sm'>
+        <span class='px-2 py-1 rounded-full text-xs font-medium bg-success/10 text-success'>
+        无风险
+    </span>
+    </td>
+<td class='px-4 py-3 border border-border-light text-sm font-medium text-success'>
+        0
+    </td>
+<td class='px-4 py-3 border border-border-light text-sm text-text-gray'>
+        未检测到关联匹配
+    </td>
+    </tr>
+<tr class='hover:bg-bg-gray/50 bg-bg-gray/20'>
+        <td class='px-4 py-3 border border-border-light text-sm' rowspan='6'>
+        涉及历史违法不良行为
+    </td>
+<td class='px-4 py-3 border border-border-light text-sm'>
+        历史失信被执行人（近3年）
+    </td>
+<td class='px-4 py-3 border border-border-light text-sm'>
+        <span class='px-2 py-1 rounded-full text-xs font-medium bg-success/10 text-success'>
+        无风险
+    </span>
+    </td>
+<td class='px-4 py-3 border border-border-light text-sm font-medium text-success'>
+        0
+    </td>
+<td class='px-4 py-3 border border-border-light text-sm text-text-gray'>
+        未检测到历史记录
+    </td>
+    </tr>
+<tr class='hover:bg-bg-gray/50 bg-bg-gray/20'>
+        <td class='px-4 py-3 border border-border-light text-sm'>
+        历史限制高消费（近3年）
+    </td>
+<td class='px-4 py-3 border border-border-light text-sm'>
+        <span class='px-2 py-1 rounded-full text-xs font-medium bg-success/10 text-success'>
+        无风险
+    </span>
+    </td>
+<td class='px-4 py-3 border border-border-light text-sm font-medium text-success'>
+        0
+    </td>
+<td class='px-4 py-3 border border-border-light text-sm text-text-gray'>
+        未检测到历史记录
+    </td>
+    </tr>
+<tr class='hover:bg-bg-gray/50 bg-bg-gray/20'>
+        <td class='px-4 py-3 border border-border-light text-sm'>
+        历史被执行人（近3年）
+    </td>
+<td class='px-4 py-3 border border-border-light text-sm'>
+        <span class='px-2 py-1 rounded-full text-xs font-medium bg-success/10 text-success'>
+        无风险
+    </span>
+    </td>
+<td class='px-4 py-3 border border-border-light text-sm font-medium text-success'>
+        0
+    </td>
+<td class='px-4 py-3 border border-border-light text-sm text-text-gray'>
+        未检测到历史记录
+    </td>
+    </tr>
+<tr class='hover:bg-bg-gray/50 bg-bg-gray/20'>
+        <td class='px-4 py-3 border border-border-light text-sm'>
+        历史终本案件（近3年）
+    </td>
+<td class='px-4 py-3 border border-border-light text-sm'>
+        <span class='px-2 py-1 rounded-full text-xs font-medium bg-success/10 text-success'>
+        无风险
+    </span>
+    </td>
+<td class='px-4 py-3 border border-border-light text-sm font-medium text-success'>
+        0
+    </td>
+<td class='px-4 py-3 border border-border-light text-sm text-text-gray'>
+        未检测到历史记录
+    </td>
+    </tr>
+<tr class='hover:bg-bg-gray/50 bg-bg-gray/20'>
+        <td class='px-4 py-3 border border-border-light text-sm'>
+        历史中央企业不良行为
+    </td>
+<td class='px-4 py-3 border border-border-light text-sm'>
+        <span class='px-2 py-1 rounded-full text-xs font-medium bg-success/10 text-success'>
+        无风险
+    </span>
+    </td>
+<td class='px-4 py-3 border border-border-light text-sm font-medium text-success'>
+        0
+    </td>
+<td class='px-4 py-3 border border-border-light text-sm text-text-gray'>
+        未检测到历史记录
+    </td>
+    </tr>
+<tr class='hover:bg-bg-gray/50 bg-bg-gray/20'>
+        <td class='px-4 py-3 border border-border-light text-sm'>
+        历史围串标记录
+    </td>
+<td class='px-4 py-3 border border-border-light text-sm'>
+        <span class='px-2 py-1 rounded-full text-xs font-medium bg-success/10 text-success'>
+        无风险
+    </span>
+    </td>
+<td class='px-4 py-3 border border-border-light text-sm font-medium text-success'>
+        0
+    </td>
+<td class='px-4 py-3 border border-border-light text-sm text-text-gray'>
+        未检测到历史记录
+    </td>
+    </tr>
+    </tbody>
+    </table>
+    </div>
+    </div>
+<!-- [/MODULE] 8h2_风险详情表格 -- 完整风险指标表格列表展示 -->
+    </div>
+<!-- [/MODULE] 4d5_结果页:右侧风险分析 -- 包含评分卡片和指标表格 -->
+    </div>
+    </main>
+<!-- [/MODULE] 5f1_结果页:主体内容 -- 双栏布局主体内容 -->
+    </div>
+<!-- [/MODULE] 9d2_结果页模块 -- 审查结果详情页面 -->
+<!-- 规则说明弹窗 -->
+<div id='rule-modal' class='modal-overlay hidden fixed inset-0 z-50 flex items-center justify-center p-4'>
+        <div class='bg-white rounded-xl shadow-card max-w-lg w-full max-h-[80vh] overflow-y-auto p-6 relative'>
+        <button id='close-rule-modal' class='absolute top-4 right-4 text-text-gray hover:text-text-dark'>
+        <i class='fas fa-times text-xl'>
+        </i>
+    </button>
+<h3 class='text-xl font-bold mb-4'>
+        风险评级规则说明
+    </h3>
+<p class='text-text-gray mb-4 leading-relaxed'>
+        企业合规风险得分依据多维度合规、经营、司法、失信处罚数据综合计算，满分100分，分值越高合规风险越高，分值越低合规风险越低。
+    </p>
+<div class='space-y-3'>
+        <div class='p-3 rounded-lg bg-danger/5 border border-danger/20'>
+        <div class='font-semibold text-danger mb-1'>
+        高风险 【80-100分】
+    </div>
+<p class='text-sm text-text-dark'>
+        该企业处于高风险等级，建议谨慎与之建立业务关系
+    </p>
+    </div>
+<div class='p-3 rounded-lg bg-warning/5 border border-warning/20'>
+        <div class='font-semibold text-warning mb-1'>
+        较高风险 【60-80分）
+    </div>
+<p class='text-sm text-text-dark'>
+        该企业风险等级处于较高水平，建议采取进一步的强化尽职调查
+    </p>
+    </div>
+<div class='p-3 rounded-lg bg-caution/5 border border-caution/20'>
+        <div class='font-semibold text-text-dark mb-1'>
+        中风险 【40-60分）
+    </div>
+<p class='text-sm text-text-dark'>
+        该企业当前风险等级处于中等水平
+    </p>
+    </div>
+<div class='p-3 rounded-lg bg-info/5 border border-info/20'>
+        <div class='font-semibold text-info mb-1'>
+        较低风险 【20-40分）
+    </div>
+<p class='text-sm text-text-dark'>
+        该企业当前时间点，存在个别风险特征项目
+    </p>
+    </div>
+<div class='p-3 rounded-lg bg-success/5 border border-success/20'>
+        <div class='font-semibold text-success mb-1'>
+        低风险 【0-20分）
+    </div>
+<p class='text-sm text-text-dark'>
+        该企业当前时间点，暂无明显风险特征项目
+    </p>
+    </div>
+    </div>
+    </div>
+    </div>
+<!-- 导出弹窗 -->
+<div id='export-modal' class='modal-overlay hidden fixed inset-0 z-50 flex items-center justify-center p-4'>
+        <div class='bg-white rounded-xl shadow-card max-w-md w-full p-6 relative'>
+        <button id='close-export-modal' class='absolute top-4 right-4 text-text-gray hover:text-text-dark'>
+        <i class='fas fa-times text-xl'>
+        </i>
+    </button>
+<h3 class='text-xl font-bold mb-4'>
+        导出报告
+    </h3>
+<div class='space-y-4'>
+        <div >
+        <label class='block text-text-gray mb-2 text-sm'>
+        文件名称
+    </label>
+<input type='text' id='export-filename' value='企业合规风险审查报告' class='w-full px-4 py-2 rounded-lg border border-border-light focus:outline-none focus:border-primary'/>
+    </div>
+<div class='space-y-2'>
+        <label class='flex items-center'>
+        <input type='checkbox' class='form-checkbox rounded text-primary' checked/>
+<span class='ml-2 text-sm'>
+        添加防篡改水印
+    </span>
+    </label>
+<label class='flex items-center'>
+        <input type='checkbox' class='form-checkbox rounded text-primary' checked/>
+<span class='ml-2 text-sm'>
+        添加核验二维码
+    </span>
+    </label>
+    </div>
+<div class='pt-2'>
+        <button id='confirm-export-btn' class='w-full py-3 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors'>
+        开始生成导出
+    </button>
+    </div>
+    </div>
+    </div>
+    </div>
+<!-- 导出成功提示 -->
+<div id='export-toast' class='hidden fixed bottom-6 left-1/2 -translate-x-1/2 bg-success text-white px-6 py-3 rounded-lg shadow-card z-50 flex items-center'>
+        <i class='fas fa-check-circle mr-2'>
+        </i>
+<span id='toast-message'>
+        报告导出成功！
+    </span>
+    </div>
+    </div>
+<!-- [/MODULE] 78x_整个应用容器 -- 包含所有页面模块 -->
+<!-- 自定义样式 -->
+<style >
+        .clip-triangle-top {
+        clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+    }
+    .clip-triangle-middle {
+        clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+    }
+    .clip-triangle-bottom {
+        clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+    }
+    </style>
+<!-- [JSMOD] page_nav_页面切换导航逻辑 -->
+<script id='page-navigation'>// 页面元素
+var startPage = document.getElementById('start-page');
+var loadingPage = document.getElementById('loading-page');
+var resultPage = document.getElementById('result-page');
+var searchBtn = document.getElementById('search-btn');
+var companyInput = document.getElementById('company-input');
+// 搜索按钮点击事件
+searchBtn.addEventListener('click', function () {
+  if (!companyInput.value.trim()) {
+    alert('请输入企业名称或统一社会信用代码');
+    return;
+  }
+  // 更新企业名称
+  document.getElementById('info-company-name').textContent = companyInput.value;
+
+  // 切换到加载页
+  startPage.classList.add('hidden');
+  loadingPage.classList.remove('hidden');
+  resultPage.classList.add('hidden');
+  // 开始加载动画
+  startLoading();
+});</script>
+<!-- [/JSMOD] page_nav_页面切换导航逻辑 -- 处理页面之间的切换逻辑 -->
+<!-- [JSMOD] loading_加载动画逻辑 -->
+<script id='loading-animation'>var progressRing = document.getElementById('progress-ring');
+var progressText = document.getElementById('progress-text');
+var circumference = 2 * Math.PI * 45;
+var currentProgress = 0;
+var currentStep = 1;
+// 设置圆环初始状态
+progressRing.style.strokeDasharray = "".concat(circumference, "").concat(circumference);
+function setProgress(percent) {
+  var offset = circumference - percent / 100 * circumference;
+  progressRing.style.strokeDashoffset = offset;
+  progressText.textContent = "".concat(Math.round(percent), "%");
+  // 完成步骤
+  if (percent >= 20 * currentStep && currentStep <= 5) {
+    var stepEl = document.getElementById("step-".concat(currentStep));
+    var checkIcon = stepEl.querySelector('i');
+    var circle = stepEl.querySelector('span');
+    checkIcon.classList.remove('hidden');
+    circle.classList.add('bg-success', 'border-success');
+    currentStep++;
+  }
+}
+function startLoading() {
+  currentProgress = 0;
+  currentStep = 1;
+
+  // 重置所有步骤
+  for (var i = 1; i <= 5; i++) {
+    var stepEl = document.getElementById("step-".concat(i));
+    var checkIcon = stepEl.querySelector('i');
+    var circle = stepEl.querySelector('span');
+    checkIcon.classList.add('hidden');
+    circle.classList.remove('bg-success', 'border-success');
+  }
+  setProgress(0);
+  var interval = setInterval(function () {
+    currentProgress += 1;
+    setProgress(currentProgress);
+    if (currentProgress >= 100) {
+      clearInterval(interval);
+      setTimeout(function () {
+        loadingPage.classList.add('hidden');
+        resultPage.classList.remove('hidden');
+      }, 800);
+    }
+  }, 30);
+}</script>
+<!-- [/JSMOD] loading_加载动画逻辑 -- 处理加载进度和步骤完成动画 -->
+<!-- [JSMOD] chart_评分图表初始化 -->
+<script id='score-chart-init'>window.addEventListener('load', function () {
+  // 初始化环形评分图表
+  var scoreChartEl = document.getElementById('score-chart');
+  if (scoreChartEl) {
+    var myChart = echarts.init(scoreChartEl);
+    var totalScore = parseInt(document.getElementById('total-score').textContent);
+    var option = {
+      series: [{
+        type: 'gauge',
+        startAngle: 90,
+        endAngle: -270,
+        pointer: {
+          show: false
+        },
+        progress: {
+          show: true,
+          overlap: false,
+          roundCap: true,
+          clip: false,
+          itemStyle: {
+            color: getRiskColor(totalScore)
+          }
+        },
+        axisLine: {
+          lineStyle: {
+            width: 18,
+            color: [[1, '#E5E6EB']]
+          }
+        },
+        splitLine: {
+          show: false
+        },
+        axisTick: {
+          show: false
+        },
+        axisLabel: {
+          show: false
+        },
+        title: {
+          show: false
+        },
+        detail: {
+          valueAnimation: true,
+          formatter: '{value}',
+          fontSize: 28,
+          fontWeight: 'bold',
+          offsetCenter: [0, 0]
+        },
+        data: [{
+          value: totalScore
+        }]
+      }]
+    };
+    myChart.setOption(option);
+    // 响应式resize
+    window.addEventListener('resize', function () {
+      myChart.resize();
+    });
+  }
+  function getRiskColor(score) {
+    if (score >= 80) return '#F5222D';
+    if (score >= 60) return '#FA8C16';
+    if (score >= 40) return '#FADB14';
+    if (score >= 20) return '#40A9FF';
+    return '#52C41A';
+  }
+});</script>
+<!-- [/JSMOD] chart_评分图表初始化 -- 使用echarts初始化环形得分图表 -->
+<!-- [JSMOD] modal_弹窗交互逻辑 -->
+<script id='modal-interactions'>// 规则说明弹窗
+var ruleModal = document.getElementById('rule-modal');
+var ruleBtn = document.getElementById('rule-btn');
+var closeRuleModal = document.getElementById('close-rule-modal');
+ruleBtn.addEventListener('click', function () {
+  ruleModal.classList.remove('hidden');
+});
+closeRuleModal.addEventListener('click', function () {
+  ruleModal.classList.add('hidden');
+});
+ruleModal.addEventListener('click', function (e) {
+  if (e.target === ruleModal) {
+    ruleModal.classList.add('hidden');
+  }
+});
+// 导出弹窗
+var exportBtn = document.getElementById('export-btn');
+var exportDropdown = document.getElementById('export-dropdown');
+var exportModal = document.getElementById('export-modal');
+var closeExportModal = document.getElementById('close-export-modal');
+var exportToast = document.getElementById('export-toast');
+var confirmExportBtn = document.getElementById('confirm-export-btn');
+var exportType = 'pdf';
+// 导出下拉菜单
+exportBtn.addEventListener('click', function (e) {
+  e.stopPropagation();
+  exportDropdown.classList.toggle('hidden');
+});
+document.addEventListener('click', function () {
+  exportDropdown.classList.add('hidden');
+});
+// 选择导出类型
+document.querySelectorAll('.export-option').forEach(function (el) {
+  el.addEventListener('click', function (e) {
+    exportType = this.dataset.type;
+    exportDropdown.classList.add('hidden');
+    exportModal.classList.remove('hidden');
+  });
+});
+closeExportModal.addEventListener('click', function () {
+  exportModal.classList.add('hidden');
+});
+exportModal.addEventListener('click', function (e) {
+  if (e.target === exportModal) {
+    exportModal.classList.add('hidden');
+  }
+});
+// 确认导出
+confirmExportBtn.addEventListener('click', function () {
+  confirmExportBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>正在生成文件...';
+  confirmExportBtn.disabled = true;
+  setTimeout(function () {
+    exportModal.classList.add('hidden');
+    exportToast.classList.remove('hidden');
+    setTimeout(function () {
+      exportToast.classList.add('hidden');
+      confirmExportBtn.innerHTML = '开始生成导出';
+      confirmExportBtn.disabled = false;
+    }, 3000);
+  }, 1500);
+});
+// ESC关闭弹窗
+document.addEventListener('keydown', function (e) {
+  if (e.key === 'Escape') {
+    ruleModal.classList.add('hidden');
+    exportModal.classList.add('hidden');
+  }
+});</script>
+<!-- [/JSMOD] modal_弹窗交互逻辑 -- 处理规则说明弹窗和导出弹窗交互 -->
+<!-- [JSMOD] custom_css_自定义金字塔样式 -->
+<script id='custom-css'>// 为了兼容所有浏览器，动态添加clip-path样式
+var style = document.createElement('style');
+style.textContent = ".clip-triangle-top {\n            clip-path: polygon(0 0, 100% 0, 96% 100%, 0 100%);\n        }\n        .clip-triangle-middle {\n            clip-path: polygon(0 0, 100% 0, 92% 100%, 0 100%);\n        }\n        .clip-triangle-bottom {\n            clip-path: polygon(0 0, 100% 0, 88% 100%, 0 100%);\n        }";
+document.head.appendChild(style);</script>
+<!-- [/JSMOD] custom_css_自定义金字塔样式 -- 动态添加金字塔形状裁剪样式 -->
+    </body>
+    </html>

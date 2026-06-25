@@ -1,0 +1,51 @@
+@use './color.scss' as *;
+
+:root {
+  --n00: #{$N00};
+
+  // 主题色
+  --brand-1: #{$Brand_1}; // 按钮点击色/修饰色
+  --brand-color: #{$Brand_color}; // 默认色、通用按钮默认色、多选/单选选中色
+  --brand-3: #{$Brand_3}; // 主要按钮选用色/修饰色
+  --brand-4: #{$Brand_4}; // 主按钮悬停色/修饰色
+  --brand-5: #{$Brand_5}; // 次要按钮色/修饰色
+  --brand-6: #{$Brand_6}; // 左侧导航icon默认色
+  --brand-7: #{$Brand_7}; // 全局提示/修饰色/次要按钮色
+  --brand-8: #{$Brand_8}; // 背景色/修饰色
+
+  // 负面、不可行、严重、危险、失败等提示
+  --danger-1: #{$Danger_1}; // 点击色
+  --danger-2: #{$Danger_2}; // 功能色
+  --danger-3: #{$Danger_3}; // 悬停色
+  --danger-4: #{$Danger_4}; // 全局提示/修饰色
+  --danger-5: #{$Danger_5}; // 次要按钮色/背景色
+
+  // 正面、可行、安全、成功等提示
+  --success-1: #{$Success_1}; // 点击色
+  --success-2: #{$Success_2}; // 功能色
+  --success-3: #{$Success_3}; // 悬停色
+  --success-4: #{$Success_4}; // 全局提示/修饰色
+  --success-5: #{$Success_5}; // 次要按钮色/背景色
+
+  // 注意、警告、阻止等提示
+  --warning-1: #{$Warning_1}; // 点击色
+  --warning-2: #{$Warning_2}; // 功能色
+  --warning-3: #{$Warning_3}; // 悬停色
+  --warning-4: #{$Warning_4}; // 全局提示/修饰色
+  --warning-5: #{$Warning_5}; // 次要按钮色/背景色
+
+  // 文字、线框、背景色
+  --grey-1: #{$Grey_1}; // 标题色
+  --grey-2: #{$Grey_2}; // 主要文案
+  --grey-3: #{$Grey_3}; // 次要文案
+  --grey-4: #{$Grey_4}; // 辅助文字/禁用文字
+  --grey-5: #{$Grey_5}; // 边框色
+  --grey-6: #{$Grey_6}; // 分割线/禁用色
+  --grey-7: #{$Grey_7}; // 背景色（区域）
+
+  // 大屏
+  --screen-brand: #{$Screen_brand};
+  --screen-brand1: #{$Screen_brand1};
+  --screen-border: #{$Screen_border};
+  --screen-bg: #{$Screen_bg};
+}

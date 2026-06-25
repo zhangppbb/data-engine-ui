@@ -1,0 +1,60 @@
+@use '../foundation/color/color.scss' as *;
+// @use '../foundation/font/font.scss' as *;
+
+.el-table {
+  --el-table-header-bg-color: #{$Brand_8} !important;
+  --el-table-header-text-color: #{$Grey_1} !important;
+  --el-table-border-color: #{$Grey_6} !important;
+
+  .cell {
+    padding: 0 5px;
+  }
+  .el-table__cell {
+    text-align: center;
+  }
+
+  // 斑马纹
+  // 奇数
+  .even-row {
+    --el-table-tr-bg-color: #fff !important;
+    // --el-bg-color: --el-table-tr-bg-color;
+    td {
+      background-color: var(--el-table-tr-bg-color) !important;
+    }
+  }
+  // 偶数
+  .odd-row {
+    $color: #f5f8fb !important;
+    --el-table-tr-bg-color: #{$color};
+    // --el-bg-color: --el-table-tr-bg-color;
+    // --el-fill-color-lighter: --el-table-tr-bg-color;
+    td {
+      background-color: var(--el-table-tr-bg-color) !important;
+    }
+  }
+
+  thead th {
+    font-weight: 600;
+    font-size: 14px;
+  }
+  .el-table__header {
+    .el-table__cell {
+      height: 50px;
+    }
+  }
+
+  .el-table__body {
+    .el-table__row {
+      .el-table__cell {
+        height: 40px;
+        .cell {
+          color: $Grey_2;
+        }
+      }
+
+      &:hover .el-table__cell {
+        background-color: $Grey_6;
+      }
+    }
+  }
+}

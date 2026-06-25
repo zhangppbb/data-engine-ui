@@ -1,0 +1,71 @@
+@use '../foundation/color/color.scss' as *;
+
+.el-tabs .el-tabs__header {
+  margin-bottom: 0;
+  .el-tabs__nav-wrap {
+    display: flex;
+    align-items: center;
+    .el-tabs__nav-prev,
+    .el-tabs__nav-next {
+      width: 16px;
+      height: 16px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      line-height: 1;
+      border-radius: 50%;
+      color: $Brand_color;
+      background-color: $Brand_7;
+      border: 1px solid $Brand_6;
+    }
+  }
+}
+
+.el-tabs:not(.el-tabs--border-card):not(.el-tabs--card) {
+  border: 1px solid #e9e9e9;
+  background-color: $N00;
+  box-shadow: 0px 0px 13px 0px rgba(0, 0, 0, 0.06);
+
+  .el-tabs__nav-wrap {
+    padding: 0 20px;
+
+    &::after {
+      margin: 0 20px;
+      width: calc(100% - 40px);
+    }
+
+    .el-tabs__item {
+      color: $Grey_2;
+
+      &.is-active {
+        font-weight: bold;
+        color: $Brand_3;
+      }
+    }
+
+    .el-tabs__active-bar {
+      background-color: $Brand_3;
+    }
+  }
+}
+
+.el-tabs.el-tabs--border-card {
+  box-shadow: 0px 0px 13px 0px rgba(0, 0, 0, 0.06);
+
+  .el-tabs__header {
+    background-color: $Grey_6;
+  }
+
+  .el-tabs__item {
+    color: $Grey_3;
+
+    &.is-active {
+      font-weight: bold;
+      color: $Brand_3;
+    }
+  }
+
+  .el-tabs__active-bar {
+    background-color: $Brand_3;
+  }
+}

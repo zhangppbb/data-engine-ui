@@ -1,0 +1,1395 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>应用市场 · 数据轻应用市场- 数擎平台</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        void: {
+                            900: '#02040a',
+                            800: '#050b14',
+                            700: '#0a1525'
+                        },
+                        aurora: {
+                            green: '#00ffa3',
+                            cyan: '#00d2ff',
+                            purple: '#7000ff',
+                            red: '#ff4757',
+                            blue: '#3742fa',
+                            nav: '#0b1021'
+                        },
+                        glass: {
+                            surface: 'rgba(255, 255, 255, 0.03)',
+                            stroke: 'rgba(255, 255, 255, 0.08)',
+                            highlight: 'rgba(255, 255, 255, 0.15)'
+                        }
+                    },
+                    fontFamily: {
+                        display: ['system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'sans-serif'],
+                        body: ['system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'sans-serif']
+                    },
+                    boxShadow: {
+                        'glow-sm': '0 0 10px rgba(0, 255, 163, 0.2)',
+                        'glow-md': '0 0 20px rgba(0, 210, 255, 0.3)',
+                        'glow-lg': '0 0 30px rgba(0, 255, 163, 0.4)',
+                        'glass': '0 8px 32px 0 rgba(0, 0, 0, 0.36)'
+                    },
+                    backgroundImage: {
+                        'aurora-gradient': 'linear-gradient(135deg, #050b14 0%, #0a1525 100%)',
+                        'accent-gradient': 'linear-gradient(90deg, #00d2ff 0%, #00ffa3 100%)'
+                    }
+                }
+            }
+        };
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .bg-stars {
+                background-color: #02040a;
+                background-image: 
+                    radial-gradient(white, rgba(255,255,255,.2) 2px, transparent 3px),
+                    radial-gradient(white, rgba(255,255,255,.15) 1px, transparent 2px),
+                    radial-gradient(white, rgba(255,255,255,.1) 2px, transparent 3px);
+                background-size: 550px 550px, 350px 350px, 250px 250px;
+                background-position: 0 0, 40px 60px, 130px 270px;
+            }
+            .text-gradient {
+                background: linear-gradient(to right, #00d2ff, #00ffa3);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+                color: transparent;
+            }
+            .aurora-blur {
+                position: absolute;
+                filter: blur(80px);
+                opacity: 0.4;
+                z-index: 0;
+                border-radius: 50%;
+                pointer-events: none;
+            }
+            .glass-panel-base {
+                background: rgba(11, 16, 33, 0.95);
+                backdrop-filter: blur(12px);
+                -webkit-backdrop-filter: blur(12px);
+                border: 1px solid rgba(255, 255, 255, 0.08);
+                box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            }
+        }
+        @layer components {
+            .btn-primary {
+                @apply relative overflow-hidden inline-flex items-center justify-center px-8 py-3 rounded-full font-bold text-void-900 transition-all duration-300;
+                background: linear-gradient(90deg, #00d2ff 0%, #00ffa3 100%);
+            }
+            .btn-primary:hover {
+                @apply shadow-glow-md transform -translate-y-0.5 scale-105;
+            }
+            .card-glass {
+                @apply glass-panel-base rounded-2xl p-6 transition-all duration-300 hover:bg-white/5 hover:border-aurora-cyan/30 hover:shadow-glow-sm;
+            }
+            .input-glass {
+                @apply w-full bg-void-900/50 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-aurora-cyan/50 focus:ring-1 focus:ring-aurora-cyan/50 transition-all;
+            }
+            .badge {
+                @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider bg-white/5 border border-white/10 text-aurora-cyan;
+            }
+            .badge-vip {
+                @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-gradient-to-r from-yellow-500 to-orange-500 text-void-900;
+            }
+            .filter-tag {
+                @apply px-4 py-2 rounded-full text-sm font-medium transition-all cursor-pointer border border-white/10 bg-white/5 text-slate-300;
+            }
+            .filter-tag.active {
+                @apply bg-accent-gradient text-void-900 border-transparent shadow-glow-sm;
+            }
+        }
+        body {
+            @apply selection:bg-aurora-cyan/30 selection:text-white font-body;
+        }
+    </style>
+</head>
+<body class="bg-stars text-slate-300 min-h-screen relative overflow-x-hidden">
+    <!-- 全局背景光晕 -->
+    <div class="fixed top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
+        <div class="aurora-blur bg-aurora-cyan w-[500px] h-[500px] top-[-100px] left-[-100px]"></div>
+        <div class="aurora-blur bg-aurora-red w-[400px] h-[400px] bottom-[-50px] right-[-50px] opacity-20"></div>
+    </div>
+
+    <!-- 顶部导航栏 -->
+    <header class="relative z-20 glass-panel-base border-x-0 border-t-0 sticky top-0 bg-void-900/80">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <a href="../index.html" class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-lg bg-accent-gradient flex items-center justify-center shadow-glow-sm">
+                        <i class="fa-solid fa-dog text-void-900 text-lg"></i>
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="text-xl font-bold text-white tracking-wide">数擎平台</span>
+                        <span class="opacity-50 text-[10px] tracking-wide">企业级数据服务平台</span>
+                    </div>
+                </a>
+            </div>
+            <nav class="hidden md:flex gap-8 text-sm font-medium flex-1 justify-center">
+                <a href="../index.html" class="hover:text-aurora-cyan transition-colors relative group">
+                    首页
+                    <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-aurora-cyan transition-all duration-300 group-hover:w-full"></span>
+                </a>
+                <a href="apps.html" class="text-aurora-cyan font-semibold relative group">
+                    应用馆
+                    <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-aurora-cyan transition-all duration-300 group-hover:w-full"></span>
+                </a>
+                <a href="../resources/resources.html" class="hover:text-aurora-cyan transition-colors relative group">
+                    资源馆
+                    <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-aurora-cyan transition-all duration-300 group-hover:w-full"></span>
+                </a>
+                <a href="../cases/cases.html" class="hover:text-aurora-cyan transition-colors relative group">
+                    案例馆
+                    <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-aurora-cyan transition-all duration-300 group-hover:w-full"></span>
+                </a>
+            </nav>
+            <div class="flex items-center gap-4">
+                <a href="../workspace.html" class="text-sm font-medium hover:text-aurora-cyan transition-colors hidden md:block">工作空间</a>
+                <!-- 用户头像下拉菜单 -->
+                <div class="relative">
+                    <button class="flex items-center gap-2 focus:outline-none" id="user-menu-button">
+                        <div class="w-8 h-8 rounded-full bg-gradient-to-br from-aurora-cyan to-aurora-green flex items-center justify-center">
+                            <span class="text-void-900 font-bold">黄</span>
+                        </div>
+                    </button>
+                    <!-- 下拉菜单 -->
+                    <div class="absolute right-0 mt-2 w-80 glass-panel-base rounded-xl p-4 border border-white/10 shadow-lg z-99999 hidden" id="user-menu">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="w-12 h-12 rounded-full bg-gradient-to-br from-aurora-cyan to-aurora-green flex items-center justify-center">
+                                <span class="text-void-900 text-xl font-bold">黄</span>
+                            </div>
+                            <div>
+                                <p class="text-white font-medium">18****48</p>
+                                <div class="flex items-center gap-1 mt-1">
+                                    <span class="text-xs bg-yellow-500/20 text-yellow-500 px-2 py-0.5 rounded-full">VIP试用</span>
+                                </div>
+                            </div>
+                            <a href="../profile.html" class="ml-auto text-sm text-aurora-cyan hover:text-aurora-green transition">进入个人中心 &gt;</a>
+                        </div>
+                        <div class="border-t border-white/10 py-3 mb-3">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-slate-400 text-sm">客户类型：</span>
+                                <span class="text-white font-medium" id="current-client-type">投资类客户</span>
+                            </div>
+                            <div class="grid grid-cols-2 gap-2 mt-2">
+                                <button class="py-2 px-3 rounded-lg text-sm bg-white/5 border border-white/10 hover:border-aurora-cyan/50 hover:bg-aurora-cyan/10 transition client-type-option" data-type="investment">投资类客户</button>
+                                <button class="py-2 px-3 rounded-lg text-sm bg-white/5 border border-white/10 hover:border-aurora-cyan/50 hover:bg-aurora-cyan/10 transition client-type-option" data-type="market">市场类客户</button>
+                                <button class="py-2 px-3 rounded-lg text-sm bg-white/5 border border-white/10 hover:border-aurora-cyan/50 hover:bg-aurora-cyan/10 transition client-type-option" data-type="enterprise">企业类客户</button>
+                                <button class="py-2 px-3 rounded-lg text-sm bg-white/5 border border-white/10 hover:border-aurora-cyan/50 hover:bg-aurora-cyan/10 transition client-type-option" data-type="government">政府类客户</button>
+                            </div>
+                        </div>
+                        <div class="border-t border-white/10 py-3 mb-3">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-slate-400 text-sm">剩余点数</span>
+                                <span class="text-aurora-green font-bold">1,234</span>
+                            </div>
+                            <button class="w-full py-2 rounded-lg bg-aurora-cyan/20 text-aurora-cyan border border-aurora-cyan/30 hover:bg-aurora-cyan/30 transition text-sm">充值</button>
+                        </div>
+                        <div class="grid grid-cols-3 gap-2 mb-4">
+                            <a href="#" class="flex flex-col items-center p-2 rounded-lg hover:bg-white/5 transition">
+                                <i class="fa-solid fa-download text-aurora-cyan mb-1"></i>
+                                <span class="text-xs text-slate-300">下载记录</span>
+                            </a>
+                            <a href="#" class="flex flex-col items-center p-2 rounded-lg hover:bg-white/5 transition">
+                                <i class="fa-solid fa-history text-aurora-cyan mb-1"></i>
+                                <span class="text-xs text-slate-300">浏览历史</span>
+                            </a>
+                            <a href="#" class="flex flex-col items-center p-2 rounded-lg hover:bg-white/5 transition">
+                                <i class="fa-solid fa-heart text-aurora-cyan mb-1"></i>
+                                <span class="text-xs text-slate-300">我的关注</span>
+                            </a>
+                        </div>
+                        <div class="grid grid-cols-3 gap-2">
+                            <a href="#" class="flex flex-col items-center p-2 rounded-lg hover:bg-white/5 transition">
+                                <i class="fa-solid fa-building text-aurora-cyan mb-1"></i>
+                                <span class="text-xs text-slate-300">我的企业</span>
+                            </a>
+                            <a href="#" class="flex flex-col items-center p-2 rounded-lg hover:bg-white/5 transition">
+                                <i class="fa-solid fa-shopping-cart text-aurora-cyan mb-1"></i>
+                                <span class="text-xs text-slate-300">我的订单</span>
+                            </a>
+                            <a href="#" class="flex flex-col items-center p-2 rounded-lg hover:bg-white/5 transition">
+                                <i class="fa-solid fa-file-invoice text-aurora-cyan mb-1"></i>
+                                <span class="text-xs text-slate-300">我的发票</span>
+                            </a>
+                        </div>
+                        <div class="border-t border-white/10 mt-4 pt-4 flex justify-between">
+                            <a href="#" class="text-sm text-slate-400 hover:text-white transition">客服中心</a>
+                            <a href="#" class="text-sm text-slate-400 hover:text-white transition">我的反馈</a>
+                            <a href="#" class="text-sm text-slate-400 hover:text-white transition">退出登录</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+
+    <!-- 主内容区 -->
+<main class='relative z-10 pt-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
+        <!-- [MODULE] x2b_双卡片专区轮播区 -->
+<section id='banner-carousel' class='mt-8 relative overflow-hidden'>
+        <!-- 轮播容器 -->
+<div class='w-full h-full flex gap-6 overflow-hidden'>
+        <!-- 轮播轨道 -->
+<div id='carouselTrack' class='flex gap-6 transition-transform duration-500 ease-in-out'>
+        <!-- 卡片组1 -->
+<div class='flex gap-6 shrink-0 w-full md:w-[1440px]'>
+        <!-- 卡片1 -->
+<a href='app-spec.html' class='flex-1 min-w-[300px] h-[260px] rounded-xl glass-panel-base overflow-hidden group hover:shadow-glow-sm transition-all duration-300 flex flex-col'>
+        <div class='h-[180px] w-full overflow-hidden'>
+        <img src='https://design.gemcoder.com/staticResource/echoAiSystemImages/c93586b7629841175b24923fd73ea8a9.png' alt='产业招商全流程专区' class='w-full h-full object-cover group-hover:scale-105 transition-transform duration-500'/>
+    </div>
+<div class='h-[80px] bg-void-800/80 pl-8 flex flex-col justify-center'>
+        <h3 class='text-[18px] font-bold text-white leading-[24px] mt-4'>
+        产业招商全流程专区
+    </h3>
+<p class='text-[14px] text-slate-400 mt-2 mb-4 max-w-[644px] truncate'>
+        从潜客挖掘到区域分析，一站式助力产业招商落地
+    </p>
+    </div>
+    </a>
+<!-- 卡片2 -->
+<a href='app-spec.html' class='flex-1 min-w-[300px] h-[260px] rounded-xl glass-panel-base overflow-hidden group hover:shadow-glow-sm transition-all duration-300 flex flex-col'>
+        <div class='h-[180px] w-full overflow-hidden'>
+        <img src='https://design.gemcoder.com/staticResource/echoAiSystemImages/f054317332874cfaed6c121c84b16c12.png' alt='AI 智能投标专区' class='w-full h-full object-cover group-hover:scale-105 transition-transform duration-500'/>
+    </div>
+<div class='h-[80px] bg-void-800/80 pl-8 flex flex-col justify-center'>
+        <h3 class='text-[18px] font-bold text-white leading-[24px] mt-4'>
+        AI 智能投标专区
+    </h3>
+<p class='text-[14px] text-slate-400 mt-2 mb-4 max-w-[644px] truncate'>
+        基于大语言模型的智能数据分析师，自动完成数据挖掘与报告生成
+    </p>
+    </div>
+    </a>
+    </div>
+<!-- 卡片组2 -->
+<div class='flex gap-6 shrink-0 w-full md:w-[1440px]'>
+        <!-- 卡片3 -->
+<a href='app-detail.html' class='flex-1 min-w-[300px] h-[260px] rounded-xl glass-panel-base overflow-hidden group hover:shadow-glow-sm transition-all duration-300 flex flex-col'>
+        <div class='h-[180px] w-full overflow-hidden'>
+        <img src='https://design.gemcoder.com/staticResource/echoAiSystemImages/5c3f608860411021adc1dfc69e1fdbfb.png' alt='企业合规审查专区' class='w-full h-full object-cover group-hover:scale-105 transition-transform duration-500'/>
+    </div>
+<div class='h-[80px] bg-void-800/80 pl-8 flex flex-col justify-center'>
+        <h3 class='text-[18px] font-bold text-white leading-[24px] mt-4'>
+        企业合规审查专区
+    </h3>
+<p class='text-[14px] text-slate-400 mt-2 mb-4 max-w-[644px] truncate'>
+        企业风控合规全场景工具集，一站式完成企业信息核验、失信排查全流程
+    </p>
+    </div>
+    </a>
+<!-- 卡片4 -->
+<a href='app-detail.html' class='flex-1 min-w-[300px] h-[260px] rounded-xl glass-panel-base overflow-hidden group hover:shadow-glow-sm transition-all duration-300 flex flex-col'>
+        <div class='h-[180px] w-full overflow-hidden'>
+        <img src='https://design.gemcoder.com/staticResource/echoAiSystemImages/24d3d53500535077ea94eba34b106638.png' alt='市场竞争分析专区' class='w-full h-full object-cover group-hover:scale-105 transition-transform duration-500'/>
+    </div>
+<div class='h-[80px] bg-void-800/80 pl-8 flex flex-col justify-center'>
+        <h3 class='text-[18px] font-bold text-white leading-[24px] mt-4'>
+        市场竞争分析专区
+    </h3>
+<p class='text-[14px] text-slate-400 mt-2 mb-4 max-w-[644px] truncate'>
+        市场洞察全链路工具，覆盖竞品分析、行业报告、招投标数据查询全场景
+    </p>
+    </div>
+    </a>
+    </div>
+    </div>
+    </div>
+<!-- 左切换箭头 -->
+<button id='prevBtn' class='absolute left-4 top-1/2 -translate-y-1/2 w-[48px] h-[48px] rounded-full glass-panel-base flex items-center justify-center text-white hover:bg-white/10 hover:text-aurora-cyan transition-all z-10'>
+        <i class='fa-solid fa-chevron-left'>
+        </i>
+    </button>
+<!-- 右切换箭头 -->
+<button id='nextBtn' class='absolute right-4 top-1/2 -translate-y-1/2 w-[48px] h-[48px] rounded-full glass-panel-base flex items-center justify-center text-white hover:bg-white/10 hover:text-aurora-cyan transition-all z-10'>
+        <i class='fa-solid fa-chevron-right'>
+        </i>
+    </button>
+<!-- 轮播指示器 -->
+<div class='absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2'>
+        <button class='w-[10px] h-[10px] rounded-full bg-aurora-cyan indicator-dot active' data-index='0'>
+        </button>
+<button class='w-[10px] h-[10px] rounded-full bg-white/30 indicator-dot' data-index='1'>
+        </button>
+    </div>
+    </section>
+<!-- [/MODULE] x2b_双卡片专区轮播区 -- 双卡片轮播展示专区入口，支持左右切换循环轮播 -->
+
+<!-- 应用分类导航 -->
+<section class='mt-14'>
+    <div class='flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 gap-4'>
+        <h2 class='text-[24px] font-bold text-white leading-[40px]'>应用分类</h2>
+    </div>
+    <div class='flex flex-wrap gap-4 mb-8'>
+        <button class='px-6 py-3 rounded-full bg-accent-gradient text-void-900 font-medium shadow-glow-sm transition-all hover:scale-105'>
+            全部应用
+        </button>
+        <button class='px-6 py-3 rounded-full bg-white/5 border border-white/10 text-slate-300 font-medium transition-all hover:bg-aurora-cyan/10 hover:border-aurora-cyan/30'>
+            查询类
+        </button>
+        <button class='px-6 py-3 rounded-full bg-white/5 border border-white/10 text-slate-300 font-medium transition-all hover:bg-aurora-cyan/10 hover:border-aurora-cyan/30'>
+            分析类
+        </button>
+        <button class='px-6 py-3 rounded-full bg-white/5 border border-white/10 text-slate-300 font-medium transition-all hover:bg-aurora-cyan/10 hover:border-aurora-cyan/30'>
+            报告类
+        </button>
+    </div>
+</section>
+
+<!-- [MODULE] v5n_热门推荐专栏 -->
+<section id='popular' class='mt-14'>
+        <!-- [MODULE] w4a_专栏头部 -->
+<div class='flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 gap-4'>
+        <div class='flex flex-col sm:flex-row items-start sm:items-center gap-4 w-full sm:w-auto'>
+        <h2 class='text-[24px] font-bold text-white leading-[40px]'>
+        热门推荐
+    </h2>
+<div class='relative w-full sm:w-[320px]'>
+        <i class='fa-solid fa-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-500'>
+        </i>
+<input id='searchInput' type='text' placeholder='搜索应用名称 / 功能' class='w-full h-[36px] rounded-lg pl-10 pr-4 bg-void-900/50 border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:border-aurora-cyan/50 focus:ring-1 focus:ring-aurora-cyan/50 transition-all'/>
+    </div>
+    </div>
+<a href='app-detail.html' class='w-[100px] h-[32px] flex items-center justify-center text-sm text-aurora-cyan hover:text-aurora-green hover:bg-aurora-cyan/10 rounded transition-colors'>
+        查看更多
+<i class='fa-solid fa-arrow-right ml-1'>
+        </i>
+    </a>
+    </div>
+<!-- [/MODULE] w4a_专栏头部 -- 专栏标题、搜索框、查看更多入口 -->
+<!-- [MODULE] z9d_应用卡片网格 -->
+<div id='popularGrid' class='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
+        <!-- 卡片1 -->
+<a href='市场竞争分析.html' class='h-[210px] rounded-xl glass-panel-base px-6 py-6 transition-all duration-300 hover:shadow-glow-sm hover:border-aurora-cyan/30 flex flex-col'>
+        <div class='flex items-center justify-between w-full'>
+        <div class='flex items-center gap-2'>
+        <div class='w-[24px] h-[24px] rounded-md bg-accent-gradient flex items-center justify-center'>
+        <i class='fa-solid fa-chart-pie text-void-900 text-xs'>
+        </i>
+    </div>
+<h3 class='text-[16px] font-bold text-white truncate'>
+        市场竞争分析
+    </h3>
+    </div>
+<div class='flex gap-2'>
+        <span class='badge px-2 py-0.5 text-xs'>
+        20 点
+    </span>
+    </div>
+    </div>
+<p class='mt-3 text-[14px] text-slate-400 line-clamp-2 overflow-hidden'>
+        深入分析公招市场竞争对手中标业绩，多维度评估企业竞争力，挖掘市场机会
+    </p>
+<div class='mt-3 flex gap-3 items-center flex-wrap'>
+        <span class='px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs text-slate-300'>
+        市场分析
+    </span>
+<span class='px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs text-slate-300'>
+        竞争洞察
+    </span>
+<span class='px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs text-slate-300'>
+        业绩对标
+    </span>
+    </div>
+    </a>
+<!-- 卡片2 -->
+<a href='app-detail.html' class='h-[210px] rounded-xl glass-panel-base px-6 py-6 transition-all duration-300 hover:shadow-glow-sm hover:border-aurora-cyan/30 flex flex-col'>
+        <div class='flex items-center justify-between w-full'>
+        <div class='flex items-center gap-2'>
+        <div class='w-[24px] h-[24px] rounded-md bg-accent-gradient flex items-center justify-center'>
+        <i class='fa-solid fa-search text-void-900 text-xs'>
+        </i>
+    </div>
+<h3 class='text-[16px] font-bold text-white truncate'>
+        潜客扫描 - 策略筛选
+    </h3>
+    </div>
+<div class='flex gap-2'>
+        <span class='badge px-2 py-0.5 text-xs bg-aurora-green/10 text-aurora-green'>
+        免费
+    </span>
+    </div>
+    </div>
+<p class='mt-3 text-[14px] text-slate-400 line-clamp-2 overflow-hidden'>
+        根据产业、区域、资质等条件筛选潜在招商企业，助力精准获客与产业招商
+    </p>
+<div class='mt-3 flex gap-3 items-center flex-wrap'>
+        <span class='px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs text-slate-300'>
+        招商筛选
+    </span>
+<span class='px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs text-slate-300'>
+        精准招商
+    </span>
+<span class='px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs text-slate-300'>
+        企业拓客
+    </span>
+    </div>
+    </a>
+<!-- 卡片3 -->
+<a href='app-detail.html' class='h-[210px] rounded-xl glass-panel-base px-6 py-6 transition-all duration-300 hover:shadow-glow-sm hover:border-aurora-cyan/30 flex flex-col'>
+        <div class='flex items-center justify-between w-full'>
+        <div class='flex items-center gap-2'>
+        <div class='w-[24px] h-[24px] rounded-md bg-accent-gradient flex items-center justify-center'>
+        <i class='fa-solid fa-shield-halved text-void-900 text-xs'>
+        </i>
+    </div>
+<h3 class='text-[16px] font-bold text-white truncate'>
+        企业风险审核
+    </h3>
+    </div>
+<div class='flex gap-2'>
+        <span class='badge px-2 py-0.5 text-xs'>
+        免费试用
+    </span>
+    </div>
+    </div>
+<p class='mt-3 text-[14px] text-slate-400 line-clamp-2 overflow-hidden'>
+        覆盖工商、司法、失信、行政处罚多维度企业风险审查，识别合作准入风险
+    </p>
+<div class='mt-3 flex gap-3 items-center flex-wrap'>
+        <span class='px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs text-slate-300'>
+        风险识别
+    </span>
+<span class='px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs text-slate-300'>
+        准入审核
+    </span>
+<span class='px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs text-slate-300'>
+        尽调工具
+    </span>
+    </div>
+    </a>
+<!-- 卡片4 -->
+<a href='市场分析报告 .html' class='h-[210px] rounded-xl glass-panel-base px-6 py-6 transition-all duration-300 hover:shadow-glow-sm hover:border-aurora-cyan/30 flex flex-col'>
+        <div class='flex items-center justify-between w-full'>
+        <div class='flex items-center gap-2'>
+        <div class='w-[24px] h-[24px] rounded-md bg-accent-gradient flex items-center justify-center'>
+        <i class='fa-solid fa-file-lines text-void-900 text-xs'>
+        </i>
+    </div>
+<h3 class='text-[16px] font-bold text-white truncate'>
+        市场分析报告系列
+    </h3>
+    </div>
+<div class='flex gap-2'>
+        <span class='badge px-2 py-0.5 text-xs bg-purple-500/20 text-purple-400'>
+        VIP 免费
+    </span>
+    </div>
+    </div>
+<p class='mt-3 text-[14px] text-slate-400 line-clamp-2 overflow-hidden'>
+        针对建筑行业 / 省份 / 城市 / 领域自动生成专业分析报告，输出趋势研判结论
+    </p>
+<div class='mt-3 flex gap-3 items-center flex-wrap'>
+        <span class='px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs text-slate-300'>
+        行业报告
+    </span>
+<span class='px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs text-slate-300'>
+        区域分析
+    </span>
+<span class='px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs text-slate-300'>
+        趋势研判
+    </span>
+    </div>
+    </a>
+<!-- 卡片5 -->
+<a href='信用评价.html' class='h-[210px] rounded-xl glass-panel-base px-6 py-6 transition-all duration-300 hover:shadow-glow-sm hover:border-aurora-cyan/30 flex flex-col'>
+        <div class='flex items-center justify-between w-full'>
+        <div class='flex items-center gap-2'>
+        <div class='w-[24px] h-[24px] rounded-md bg-accent-gradient flex items-center justify-center'>
+        <i class='fa-solid fa-id-card-clip text-void-900 text-xs'>
+        </i>
+    </div>
+<h3 class='text-[16px] font-bold text-white truncate'>
+        企业信用评价
+    </h3>
+    </div>
+<div class='flex gap-2'>
+        <span class='badge px-2 py-0.5 text-xs bg-green-500/10 text-green-400'>
+        T+0
+    </span>
+    </div>
+    </div>
+<p class='mt-3 text-[14px] text-slate-400 line-clamp-2 overflow-hidden'>
+        查询企业工商注册核心信息，包含法人、注册资本、注册地址、成立日期等内容
+    </p>
+<div class='mt-3 flex gap-3 items-center flex-wrap'>
+        <span class='px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs text-slate-300'>
+        API 集市
+    </span>
+<span class='px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs text-slate-300'>
+        工商登记
+    </span>
+<span class='px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs text-slate-300'>
+        基础信息
+    </span>
+    </div>
+    </a>
+<!-- 卡片6 -->
+<a href='AI智能体.html' class='h-[210px] rounded-xl glass-panel-base px-6 py-6 transition-all duration-300 hover:shadow-glow-sm hover:border-aurora-cyan/30 flex flex-col'>
+        <div class='flex items-center justify-between w-full'>
+        <div class='flex items-center gap-2'>
+        <div class='w-[24px] h-[24px] rounded-md bg-accent-gradient flex items-center justify-center'>
+        <i class='fa-solid fa-robot text-void-900 text-xs'>
+        </i>
+    </div>
+<h3 class='text-[16px] font-bold text-white truncate'>
+        供应商智能信用与风险管控 AI
+    </h3>
+    </div>
+<div class='flex gap-2'>
+        <span class='badge px-2 py-0.5 text-xs'>
+        按次收费
+    </span>
+    </div>
+    </div>
+<p class='mt-3 text-[14px] text-slate-400 line-clamp-2 overflow-hidden'>
+        智能对供应商信用风险进行管理，提供实时风险预警与控制
+    </p>
+<div class='mt-3 flex gap-3 items-center flex-wrap'>
+        <span class='px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs text-slate-300'>
+        标书审查
+    </span>
+<span class='px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs text-slate-300'>
+        合规检查
+    </span>
+<span class='px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs text-slate-300'>
+        投标辅助
+    </span>
+    </div>
+    </a>
+    </div>
+<!-- [/MODULE] z9d_应用卡片网格 -- 6个应用卡片网格布局展示热门推荐应用 -->
+    </section>
+<!-- [/MODULE] v5n_热门推荐专栏 -- 热门推荐应用展示，支持搜索 -->
+<!-- [MODULE] q8m_市场竞争分析专栏 -->
+<section id='market' class='mt-14'>
+        <!-- 专栏头部 -->
+<div class='flex items-center justify-between mb-8'>
+        <h2 class='text-[24px] font-bold text-white leading-[40px]'>
+        市场竞争分析
+    </h2>
+<a href='app-detail.html' class='w-[100px] h-[32px] flex items-center justify-center text-sm text-aurora-cyan hover:text-aurora-green hover:bg-aurora-cyan/10 rounded transition-colors'>
+        查看更多
+<i class='fa-solid fa-arrow-right ml-1'>
+        </i>
+    </a>
+    </div>
+<!-- 应用卡片网格 -->
+<div class='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
+        <!-- 卡片1 -->
+<a href='市场竞争分析.html' class='h-[210px] rounded-xl glass-panel-base px-6 py-6 transition-all duration-300 hover:shadow-glow-sm hover:border-aurora-cyan/30 flex flex-col'>
+        <div class='flex items-center justify-between w-full'>
+        <div class='flex items-center gap-2'>
+        <div class='w-[24px] h-[24px] rounded-md bg-accent-gradient flex items-center justify-center'>
+        <i class='fa-solid fa-chart-pie text-void-900 text-xs'>
+        </i>
+    </div>
+<h3 class='text-[16px] font-bold text-white truncate'>
+        市场竞争分析
+    </h3>
+    </div>
+<div class='flex gap-2'>
+        <span class='badge px-2 py-0.5 text-xs'>
+        20 点
+    </span>
+    </div>
+    </div>
+<p class='mt-3 text-[14px] text-slate-400 line-clamp-2 overflow-hidden'>
+        追踪竞品动态及区域行业数据，自动生成竞争力评估与市场机会分析
+    </p>
+<div class='mt-3 flex gap-3 items-center flex-wrap'>
+        <span class='px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs text-slate-300'>
+        市场分析
+    </span>
+<span class='px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs text-slate-300'>
+        竞争洞察
+    </span>
+<span class='px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs text-slate-300'>
+        业绩对标
+    </span>
+    </div>
+    </a>
+<!-- 卡片2 -->
+<a href='app-detail.html' class='h-[210px] rounded-xl glass-panel-base px-6 py-6 transition-all duration-300 hover:shadow-glow-sm hover:border-aurora-cyan/30 flex flex-col'>
+        <div class='flex items-center justify-between w-full'>
+        <div class='flex items-center gap-2'>
+        <div class='w-[24px] h-[24px] rounded-md bg-accent-gradient flex items-center justify-center'>
+        <i class='fa-solid fa-file-lines text-void-900 text-xs'>
+        </i>
+    </div>
+<h3 class='text-[16px] font-bold text-white truncate'>
+        市场分析报告系列
+    </h3>
+    </div>
+<div class='flex gap-2'>
+        <span class='badge px-2 py-0.5 text-xs bg-purple-500/20 text-purple-400'>
+        VIP 免费
+    </span>
+    </div>
+    </div>
+<p class='mt-3 text-[14px] text-slate-400 line-clamp-2 overflow-hidden'>
+        针对建筑行业 / 省份 / 城市 / 领域自动生成专业分析报告，输出趋势研判
+    </p>
+<div class='mt-3 flex gap-3 items-center flex-wrap'>
+        <span class='px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs text-slate-300'>
+        行业报告
+    </span>
+<span class='px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs text-slate-300'>
+        区域分析
+    </span>
+<span class='px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs text-slate-300'>
+        趋势研判
+    </span>
+    </div>
+    </a>
+<!-- 卡片3 -->
+<a href='app-detail.html' class='h-[210px] rounded-xl glass-panel-base px-6 py-6 transition-all duration-300 hover:shadow-glow-sm hover:border-aurora-cyan/30 flex flex-col'>
+        <div class='flex items-center justify-between w-full'>
+        <div class='flex items-center gap-2'>
+        <div class='w-[24px] h-[24px] rounded-md bg-accent-gradient flex items-center justify-center'>
+        <i class='fa-solid fa-map-location-dot text-void-900 text-xs'>
+        </i>
+    </div>
+<h3 class='text-[16px] font-bold text-white truncate'>
+        土地出让分析
+    </h3>
+    </div>
+<div class='flex gap-2'>
+        <span class='badge px-2 py-0.5 text-xs bg-aurora-green/10 text-aurora-green'>
+        限时免费
+    </span>
+    </div>
+    </div>
+<p class='mt-3 text-[14px] text-slate-400 line-clamp-2 overflow-hidden'>
+        查询区域供地情况，支持多条件筛选分析，辅助投资准入决策
+    </p>
+<div class='mt-3 flex gap-3 items-center flex-wrap'>
+        <span class='px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs text-slate-300'>
+        土地数据
+    </span>
+<span class='px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs text-slate-300'>
+        供地分析
+    </span>
+<span class='px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs text-slate-300'>
+        投资准入
+    </span>
+    </div>
+    </a>
+<!-- 卡片4 -->
+<a href='app-detail.html' class='h-[210px] rounded-xl glass-panel-base px-6 py-6 transition-all duration-300 hover:shadow-glow-sm hover:border-aurora-cyan/30 flex flex-col'>
+        <div class='flex items-center justify-between w-full'>
+        <div class='flex items-center gap-2'>
+        <div class='w-[24px] h-[24px] rounded-md bg-accent-gradient flex items-center justify-center'>
+        <i class='fa-solid fa-brain text-void-900 text-xs'>
+        </i>
+    </div>
+<h3 class='text-[16px] font-bold text-white truncate'>
+        市场情报分析 Agent
+    </h3>
+    </div>
+<div class='flex gap-2'>
+        <span class='badge px-2 py-0.5 text-xs bg-aurora-green/10 text-aurora-green'>
+        免费
+    </span>
+    </div>
+    </div>
+<p class='mt-3 text-[14px] text-slate-400 line-clamp-2 overflow-hidden'>
+        自动挖掘市场机会、风险与趋势，输出区域布局与智能决策建议
+    </p>
+<div class='mt-3 flex gap-3 items-center flex-wrap'>
+        <span class='px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs text-slate-300'>
+        市场机会
+    </span>
+<span class='px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs text-slate-300'>
+        区域布局
+    </span>
+<span class='px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs text-slate-300'>
+        智能决策
+    </span>
+    </div>
+    </a>
+<!-- 卡片5 -->
+<a href='app-detail.html' class='h-[210px] rounded-xl glass-panel-base px-6 py-6 transition-all duration-300 hover:shadow-glow-sm hover:border-aurora-cyan/30 flex flex-col'>
+        <div class='flex items-center justify-between w-full'>
+        <div class='flex items-center gap-2'>
+        <div class='w-[24px] h-[24px] rounded-md bg-accent-gradient flex items-center justify-center'>
+        <i class='fa-solid fa-search text-void-900 text-xs'>
+        </i>
+    </div>
+<h3 class='text-[16px] font-bold text-white truncate'>
+        潜客扫描 - 策略筛选
+    </h3>
+    </div>
+<div class='flex gap-2'>
+        <span class='badge px-2 py-0.5 text-xs bg-aurora-green/10 text-aurora-green'>
+        免费
+    </span>
+    </div>
+    </div>
+<p class='mt-3 text-[14px] text-slate-400 line-clamp-2 overflow-hidden'>
+        根据产业、区域、资质等条件筛选潜在招商企业，助力精准获客
+    </p>
+<div class='mt-3 flex gap-3 items-center flex-wrap'>
+        <span class='px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs text-slate-300'>
+        招商筛选
+    </span>
+<span class='px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs text-slate-300'>
+        精准招商
+    </span>
+<span class='px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs text-slate-300'>
+        企业拓客
+    </span>
+    </div>
+    </a>
+<!-- 卡片6 -->
+<a href='app-detail.html' class='h-[210px] rounded-xl glass-panel-base px-6 py-6 transition-all duration-300 hover:shadow-glow-sm hover:border-aurora-cyan/30 flex flex-col'>
+        <div class='flex items-center justify-between w-full'>
+        <div class='flex items-center gap-2'>
+        <div class='w-[24px] h-[24px] rounded-md bg-accent-gradient flex items-center justify-center'>
+        <i class='fa-solid fa-map text-void-900 text-xs'>
+        </i>
+    </div>
+<h3 class='text-[16px] font-bold text-white truncate'>
+        潜客扫描 - 地图查企
+    </h3>
+    </div>
+<div class='flex gap-2'>
+        <span class='badge px-2 py-0.5 text-xs bg-aurora-green/10 text-aurora-green'>
+        免费
+    </span>
+    </div>
+    </div>
+<p class='mt-3 text-[14px] text-slate-400 line-clamp-2 overflow-hidden'>
+        地图圈选区域查询企业名单，一键获取区域内企业核心信息
+    </p>
+<div class='mt-3 flex gap-3 items-center flex-wrap'>
+        <span class='px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs text-slate-300'>
+        地图查企
+    </span>
+<span class='px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs text-slate-300'>
+        区域圈选
+    </span>
+<span class='px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs text-slate-300'>
+        招商辅助
+    </span>
+    </div>
+    </a>
+    </div>
+    </section>
+<!-- [/MODULE] q8m_市场竞争分析专栏 -- 市场竞争分析类应用展示 -->
+<!-- [MODULE] p1r_产业招商分析专栏 -->
+<section id='investment' class='mt-14'>
+        <!-- 专栏头部 -->
+<div class='flex items-center justify-between mb-8'>
+        <h2 class='text-[24px] font-bold text-white leading-[40px]'>
+        产业招商分析
+    </h2>
+<a href='app-detail.html' class='w-[100px] h-[32px] flex items-center justify-center text-sm text-aurora-cyan hover:text-aurora-green hover:bg-aurora-cyan/10 rounded transition-colors'>
+        查看更多
+<i class='fa-solid fa-arrow-right ml-1'>
+        </i>
+    </a>
+    </div>
+<!-- 应用卡片网格 -->
+<div class='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
+        <!-- 卡片1 -->
+<a href='app-detail.html' class='h-[210px] rounded-xl glass-panel-base px-6 py-6 transition-all duration-300 hover:shadow-glow-sm hover:border-aurora-cyan/30 flex flex-col'>
+        <div class='flex items-center justify-between w-full'>
+        <div class='flex items-center gap-2'>
+        <div class='w-[24px] h-[24px] rounded-md bg-accent-gradient flex items-center justify-center'>
+        <i class='fa-solid fa-search text-void-900 text-xs'>
+        </i>
+    </div>
+<h3 class='text-[16px] font-bold text-white truncate'>
+        潜客扫描 - 策略筛选
+    </h3>
+    </div>
+<div class='flex gap-2'>
+        <span class='badge px-2 py-0.5 text-xs bg-aurora-green/10 text-aurora-green'>
+        免费
+    </span>
+    </div>
+    </div>
+<p class='mt-3 text-[14px] text-slate-400 line-clamp-2 overflow-hidden'>
+        根据产业、区域、资质等条件筛选潜在招商企业，助力精准招商
+    </p>
+<div class='mt-3 flex gap-3 items-center flex-wrap'>
+        <span class='px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs text-slate-300'>
+        招商筛选
+    </span>
+<span class='px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs text-slate-300'>
+        精准招商
+    </span>
+<span class='px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs text-slate-300'>
+        企业筛选
+    </span>
+    </div>
+    </a>
+<!-- 卡片2 -->
+<a href='app-detail.html' class='h-[210px] rounded-xl glass-panel-base px-6 py-6 transition-all duration-300 hover:shadow-glow-sm hover:border-aurora-cyan/30 flex flex-col'>
+        <div class='flex items-center justify-between w-full'>
+        <div class='flex items-center gap-2'>
+        <div class='w-[24px] h-[24px] rounded-md bg-accent-gradient flex items-center justify-center'>
+        <i class='fa-solid fa-map text-void-900 text-xs'>
+        </i>
+    </div>
+<h3 class='text-[16px] font-bold text-white truncate'>
+        潜客扫描 - 地图查企
+    </h3>
+    </div>
+<div class='flex gap-2'>
+        <span class='badge px-2 py-0.5 text-xs bg-aurora-green/10 text-aurora-green'>
+        免费
+    </span>
+    </div>
+    </div>
+<p class='mt-3 text-[14px] text-slate-400 line-clamp-2 overflow-hidden'>
+        地图圈选目标区域，一键查询区域内企业名单与核心信息
+    </p>
+<div class='mt-3 flex gap-3 items-center flex-wrap'>
+        <span class='px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs text-slate-300'>
+        地图查企
+    </span>
+<span class='px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs text-slate-300'>
+        区域圈选
+    </span>
+<span class='px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs text-slate-300'>
+        招商辅助
+    </span>
+    </div>
+    </a>
+<!-- 卡片3 -->
+<a href='app-detail.html' class='h-[210px] rounded-xl glass-panel-base px-6 py-6 transition-all duration-300 hover:shadow-glow-sm hover:border-aurora-cyan/30 flex flex-col'>
+        <div class='flex items-center justify-between w-full'>
+        <div class='flex items-center gap-2'>
+        <div class='w-[24px] h-[24px] rounded-md bg-accent-gradient flex items-center justify-center'>
+        <i class='fa-solid fa-chart-column text-void-900 text-xs'>
+        </i>
+    </div>
+<h3 class='text-[16px] font-bold text-white truncate'>
+        区域信息分析
+    </h3>
+    </div>
+<div class='flex gap-2'>
+        <span class='badge px-2 py-0.5 text-xs'>
+        订阅制
+    </span>
+    </div>
+    </div>
+<p class='mt-3 text-[14px] text-slate-400 line-clamp-2 overflow-hidden'>
+        图表分析区域企业布局与产业分布，输出产业发展趋势与招商建议
+    </p>
+<div class='mt-3 flex gap-3 items-center flex-wrap'>
+        <span class='px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs text-slate-300'>
+        产业布局
+    </span>
+<span class='px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs text-slate-300'>
+        企业画像
+    </span>
+<span class='px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs text-slate-300'>
+        区域研究
+    </span>
+    </div>
+    </a>
+<!-- 卡片4 -->
+<a href='app-detail.html' class='w-[464px] h-[210px] rounded-xl glass-panel-base px-[24px] py-[24px] transition-all duration-300 hover:shadow-glow-sm hover:border-aurora-cyan/30 flex flex-col'>
+        <div class='flex items-center justify-between w-full'>
+        <div class='flex items-center gap-[8px]'>
+        <div class='w-[24px] h-[24px] rounded-md bg-accent-gradient flex items-center justify-center'>
+        <i class='fa-solid fa-cloud text-void-900 text-xs'>
+        </i>
+    </div>
+<h3 class='text-[16px] font-bold text-white truncate'>
+        迁入迁出云图
+    </h3>
+    </div>
+<div class='flex gap-[8px]'>
+        <span class='badge px-2 py-0.5 text-xs'>
+        订阅制
+    </span>
+    </div>
+    </div>
+<p class='mt-[12px] text-[14px] text-slate-400 line-clamp-2 overflow-hidden'>
+        统计指定区域企业迁入迁出数据，支持大屏展示，辅助招商方向研判
+    </p>
+<div class='mt-[12px] flex gap-[12px] items-center'>
+        <span class='px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs text-slate-300'>
+        企业迁移
+    </span>
+<span class='px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs text-slate-300'>
+        产业流动
+    </span>
+<span class='px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs text-slate-300'>
+        招商洞察
+    </span>
+    </div>
+    </a>
+<!-- 卡片5 -->
+<a href='app-detail.html' class='w-[464px] h-[210px] rounded-xl glass-panel-base px-[24px] py-[24px] transition-all duration-300 hover:shadow-glow-sm hover:border-aurora-cyan/30 flex flex-col'>
+        <div class='flex items-center justify-between w-full'>
+        <div class='flex items-center gap-[8px]'>
+        <div class='w-[24px] h-[24px] rounded-md bg-accent-gradient flex items-center justify-center'>
+        <i class='fa-solid fa-coins text-void-900 text-xs'>
+        </i>
+    </div>
+<h3 class='text-[16px] font-bold text-white truncate'>
+        宏观经济数据查询
+    </h3>
+    </div>
+<div class='flex gap-[8px]'>
+        <span class='badge px-2 py-0.5 text-xs'>
+        按次收费
+    </span>
+    </div>
+    </div>
+<p class='mt-[12px] text-[14px] text-slate-400 line-clamp-2 overflow-hidden'>
+        查询省市区 GDP、人口、地方负债、产业结构等宏观经济指标
+    </p>
+<div class='mt-[12px] flex gap-[12px] items-center'>
+        <span class='px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs text-slate-300'>
+        宏观经济
+    </span>
+<span class='px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs text-slate-300'>
+        城市数据
+    </span>
+<span class='px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs text-slate-300'>
+        投资门槛
+    </span>
+    </div>
+    </a>
+<!-- 卡片6 -->
+<a href='app-detail.html' class='w-[464px] h-[210px] rounded-xl glass-panel-base px-[24px] py-[24px] transition-all duration-300 hover:shadow-glow-sm hover:border-aurora-cyan/30 flex flex-col'>
+        <div class='flex items-center justify-between w-full'>
+        <div class='flex items-center gap-[8px]'>
+        <div class='w-[24px] h-[24px] rounded-md bg-accent-gradient flex items-center justify-center'>
+        <i class='fa-solid fa-sitemap text-void-900 text-xs'>
+        </i>
+    </div>
+<h3 class='text-[16px] font-bold text-white truncate'>
+        数擎2.0
+    </h3>
+    </div>
+<div class='flex gap-[8px]'>
+        <span class='badge px-2 py-0.5 text-xs'>
+        订阅制
+    </span>
+    </div>
+    </div>
+<p class='mt-[12px] text-[14px] text-slate-400 line-clamp-2 overflow-hidden'>
+        从图谱、企业、项目、技术等多维度分析产业链，挖掘强链补链机会
+    </p>
+<div class='mt-[12px] flex gap-[12px] items-center'>
+        <span class='px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs text-slate-300'>
+        产业链图谱
+    </span>
+<span class='px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs text-slate-300'>
+        强链补链
+    </span>
+<span class='px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs text-slate-300'>
+        产业规划
+    </span>
+    </div>
+    </a>
+    </div>
+    </section>
+<!-- [/MODULE] p1r_产业招商分析专栏 -- 产业招商分析类应用展示 -->
+<!-- [MODULE] t4s_企业合规分析专栏 -->
+<section id='compliance' class='mt-[56px] w-[1440px] mx-auto mb-[80px]'>
+        <!-- 专栏头部 -->
+<div class='flex items-center justify-between mb-[32px]'>
+        <h2 class='text-[24px] font-bold text-white leading-[40px] w-[280px]'>
+        企业合规分析
+    </h2>
+<a href='app-detail.html' class='w-[100px] h-[32px] flex items-center justify-center text-sm text-aurora-cyan hover:text-aurora-green hover:bg-aurora-cyan/10 rounded transition-colors'>
+        查看更多
+<i class='fa-solid fa-arrow-right ml-1'>
+        </i>
+    </a>
+    </div>
+<!-- 应用卡片网格 -->
+<div class='grid grid-cols-3 gap-[24px] gap-y-[32px]'>
+        <!-- 卡片1 -->
+<a href='app-detail.html' class='w-[464px] h-[210px] rounded-xl glass-panel-base px-[24px] py-[24px] transition-all duration-300 hover:shadow-glow-sm hover:border-aurora-cyan/30 flex flex-col'>
+        <div class='flex items-center justify-between w-full'>
+        <div class='flex items-center gap-[8px]'>
+        <div class='w-[24px] h-[24px] rounded-md bg-accent-gradient flex items-center justify-center'>
+        <i class='fa-solid fa-shield-halved text-void-900 text-xs'>
+        </i>
+    </div>
+<h3 class='text-[16px] font-bold text-white truncate'>
+        企业风险审核
+    </h3>
+    </div>
+<div class='flex gap-[8px]'>
+        <span class='badge px-2 py-0.5 text-xs'>
+        免费试用
+    </span>
+    </div>
+    </div>
+<p class='mt-[12px] text-[14px] text-slate-400 line-clamp-2 overflow-hidden'>
+        覆盖工商、司法、失信、行政处罚多维度企业风险审查，识别准入风险
+    </p>
+<div class='mt-[12px] flex gap-[12px] items-center'>
+        <span class='px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs text-slate-300'>
+        风险识别
+    </span>
+<span class='px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs text-slate-300'>
+        准入审核
+    </span>
+<span class='px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs text-slate-300'>
+        尽调工具
+    </span>
+    </div>
+    </a>
+<!-- 卡片2 -->
+<a href='app-detail.html' class='w-[464px] h-[210px] rounded-xl glass-panel-base px-[24px] py-[24px] transition-all duration-300 hover:shadow-glow-sm hover:border-aurora-cyan/30 flex flex-col'>
+        <div class='flex items-center justify-between w-full'>
+        <div class='flex items-center gap-[8px]'>
+        <div class='w-[24px] h-[24px] rounded-md bg-accent-gradient flex items-center justify-center'>
+        <i class='fa-solid fa-star-half-stroke text-void-900 text-xs'>
+        </i>
+    </div>
+<h3 class='text-[16px] font-bold text-white truncate'>
+        企业综合信用评价
+    </h3>
+    </div>
+<div class='flex gap-[8px]'>
+        <span class='badge px-2 py-0.5 text-xs'>
+        订阅制
+    </span>
+    </div>
+    </div>
+<p class='mt-[12px] text-[14px] text-slate-400 line-clamp-2 overflow-hidden'>
+        综合评价企业信用等级，输出信用报告，支持授信与招投标合作评估
+    </p>
+<div class='mt-[12px] flex gap-[12px] items-center'>
+        <span class='px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs text-slate-300'>
+        信用评分
+    </span>
+<span class='px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs text-slate-300'>
+        合作评级
+    </span>
+<span class='px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs text-slate-300'>
+        红名单
+    </span>
+    </div>
+    </a>
+<!-- 卡片3 -->
+<a href='app-detail.html' class='w-[464px] h-[210px] rounded-xl glass-panel-base px-[24px] py-[24px] transition-all duration-300 hover:shadow-glow-sm hover:border-aurora-cyan/30 flex flex-col'>
+        <div class='flex items-center justify-between w-full'>
+        <div class='flex items-center gap-[8px]'>
+        <div class='w-[24px] h-[24px] rounded-md bg-accent-gradient flex items-center justify-center'>
+        <i class='fa-solid fa-user-tag text-void-900 text-xs'>
+        </i>
+    </div>
+<h3 class='text-[16px] font-bold text-white truncate'>
+        供应商画像分析
+    </h3>
+    </div>
+<div class='flex gap-[8px]'>
+        <span class='badge px-2 py-0.5 text-xs'>
+        订阅制
+    </span>
+    </div>
+    </div>
+<p class='mt-[12px] text-[14px] text-slate-400 line-clamp-2 overflow-hidden'>
+        构建供应商能力标签画像，多维度评估履约能力，辅助分级管理
+    </p>
+<div class='mt-[12px] flex gap-[12px] items-center'>
+        <span class='px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs text-slate-300'>
+        供应商画像
+    </span>
+<span class='px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs text-slate-300'>
+        履约能力
+    </span>
+<span class='px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs text-slate-300'>
+        供应风险
+    </span>
+    </div>
+    </a>
+<!-- 卡片4 -->
+<a href='app-detail.html' class='w-[464px] h-[210px] rounded-xl glass-panel-base px-[24px] py-[24px] transition-all duration-300 hover:shadow-glow-sm hover:border-aurora-cyan/30 flex flex-col'>
+        <div class='flex items-center justify-between w-full'>
+        <div class='flex items-center gap-[8px]'>
+        <div class='w-[24px] h-[24px] rounded-md bg-accent-gradient flex items-center justify-center'>
+        <i class='fa-solid fa-file-contract text-void-900 text-xs'>
+        </i>
+    </div>
+<h3 class='text-[16px] font-bold text-white truncate'>
+        AI 标书合规审查
+    </h3>
+    </div>
+<div class='flex gap-[8px]'>
+        <span class='badge px-2 py-0.5 text-xs'>
+        按次收费
+    </span>
+    </div>
+    </div>
+<p class='mt-[12px] text-[14px] text-slate-400 line-clamp-2 overflow-hidden'>
+        智能对标书进行合规性审查，识别不符项与废标风险，辅助标书优化
+    </p>
+<div class='mt-[12px] flex gap-[12px] items-center'>
+        <span class='px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs text-slate-300'>
+        标书审查
+    </span>
+<span class='px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs text-slate-300'>
+        合规检查
+    </span>
+<span class='px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs text-slate-300'>
+        投标辅助
+    </span>
+    </div>
+    </a>
+<!-- 卡片5 -->
+<a href='app-detail.html' class='w-[464px] h-[210px] rounded-xl glass-panel-base px-[24px] py-[24px] transition-all duration-300 hover:shadow-glow-sm hover:border-aurora-cyan/30 flex flex-col'>
+        <div class='flex items-center justify-between w-full'>
+        <div class='flex items-center gap-[8px]'>
+        <div class='w-[24px] h-[24px] rounded-md bg-accent-gradient flex items-center justify-center'>
+        <i class='fa-solid fa-ban text-void-900 text-xs'>
+        </i>
+    </div>
+<h3 class='text-[16px] font-bold text-white truncate'>
+        企业失信黑名单检查
+    </h3>
+    </div>
+<div class='flex gap-[8px]'>
+        <span class='badge px-2 py-0.5 text-xs bg-green-500/10 text-green-400'>
+        实时
+    </span>
+    </div>
+    </div>
+<p class='mt-[12px] text-[14px] text-slate-400 line-clamp-2 overflow-hidden'>
+        检测目标企业是否在失信被执行人黑名单，自动触发风险预警
+    </p>
+<div class='mt-[12px] flex gap-[12px] items-center'>
+        <span class='px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs text-slate-300'>
+        失信检查
+    </span>
+<span class='px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs text-slate-300'>
+        风险预警
+    </span>
+<span class='px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs text-slate-300'>
+        合规审核
+    </span>
+    </div>
+    </a>
+<!-- 卡片6 -->
+<a href='app-detail.html' class='w-[464px] h-[210px] rounded-xl glass-panel-base px-[24px] py-[24px] transition-all duration-300 hover:shadow-glow-sm hover:border-aurora-cyan/30 flex flex-col'>
+        <div class='flex items-center justify-between w-full'>
+        <div class='flex items-center gap-[8px]'>
+        <div class='w-[24px] h-[24px] rounded-md bg-accent-gradient flex items-center justify-center'>
+        <i class='fa-solid fa-id-card-clip text-void-900 text-xs'>
+        </i>
+    </div>
+<h3 class='text-[16px] font-bold text-white truncate'>
+        企业工商基本信息查询
+    </h3>
+    </div>
+<div class='flex gap-[8px]'>
+        <span class='badge px-2 py-0.5 text-xs bg-green-500/10 text-green-400'>
+        T+0
+    </span>
+    </div>
+    </div>
+<p class='mt-[12px] text-[14px] text-slate-400 line-clamp-2 overflow-hidden'>
+        查询企业工商注册基本信息，包含法人、注册资本、注册地址、成立日期等
+    </p>
+<div class='mt-[12px] flex gap-[12px] items-center'>
+        <span class='px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs text-slate-300'>
+        API 集市
+    </span>
+<span class='px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs text-slate-300'>
+        工商登记
+    </span>
+<span class='px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs text-slate-300'>
+        基础信息
+    </span>
+    </div>
+    </a>
+    </div>
+    </section>
+<!-- [/MODULE] t4s_企业合规分析专栏 -- 企业合规分析类应用展示 -->
+    </main>
+
+    <footer class="relative z-10 max-w-7xl mx-auto px-6 py-8 mt-12 border-t border-white/10">
+        <div class="flex flex-col md:flex-row justify-between items-center">
+            <div class="text-slate-500 text-sm">
+                © 2025 数擎平台 · 企业级数据服务平台
+            </div>
+            <div class="flex gap-6 mt-4 md:mt-0 text-sm">
+                <a href="#" class="text-slate-400 hover:text-white transition">服务协议</a>
+                <a href="#" class="text-slate-400 hover:text-white transition">隐私政策</a>
+                <a href="#" class="text-slate-400 hover:text-white transition">帮助中心</a>
+                <a href="#" class="text-slate-400 hover:text-white transition">联系我们</a>
+            </div>
+        </div>
+    </footer>
+    <!-- 用户菜单和客户类型下拉功能 -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 客户类型切换
+            const clientTypeOptions = document.querySelectorAll('.client-type-option');
+            const currentClientType = document.getElementById('current-client-type');
+            
+            // 加载保存的客户类型
+            const savedClientType = localStorage.getItem('clientType') || 'investment';
+            
+            // 更新当前客户类型显示
+            if (currentClientType) {
+                let typeText = '投资类客户';
+                switch(savedClientType) {
+                    case 'investment':
+                        typeText = '投资类客户';
+                        break;
+                    case 'market':
+                        typeText = '市场类客户';
+                        break;
+                    case 'enterprise':
+                        typeText = '企业类客户';
+                        break;
+                    case 'government':
+                        typeText = '政府类客户';
+                        break;
+                }
+                currentClientType.textContent = typeText;
+            }
+            
+            // 客户类型切换
+            clientTypeOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    const clientType = this.getAttribute('data-type');
+                    
+                    // 保存客户类型到本地存储
+                    localStorage.setItem('clientType', clientType);
+                    
+                    // 更新当前客户类型显示
+                    if (currentClientType) {
+                        let typeText = '投资类客户';
+                        switch(clientType) {
+                            case 'investment':
+                                typeText = '投资类客户';
+                                break;
+                            case 'market':
+                                typeText = '市场类客户';
+                                break;
+                            case 'enterprise':
+                                typeText = '企业类客户';
+                                break;
+                            case 'government':
+                                typeText = '政府类客户';
+                                break;
+                        }
+                        currentClientType.textContent = typeText;
+                    }
+                    
+                    switchClientType(clientType);
+                });
+            });
+
+            // 用户菜单下拉
+            const userMenuButton = document.getElementById('user-menu-button');
+            const userMenu = document.getElementById('user-menu');
+
+            if (userMenuButton && userMenu) {
+                userMenuButton.addEventListener('click', function() {
+                    userMenu.classList.toggle('hidden');
+                });
+
+                // 点击页面其他地方关闭菜单
+                document.addEventListener('click', function(event) {
+                    if (!userMenuButton.contains(event.target) && !userMenu.contains(event.target)) {
+                        userMenu.classList.add('hidden');
+                    }
+                });
+            }
+        });
+
+        // 切换客户类型
+        function switchClientType(clientType) {
+            // 根据客户类型显示不同的内容
+            console.log('切换到客户类型:', clientType);
+            
+            // 这里可以根据客户类型修改页面内容
+            // 例如：显示不同的推荐应用、调整布局等
+            
+            // 示例：修改页面标题
+            const pageTitle = document.querySelector('header .text-xl');
+            if (pageTitle) {
+                let title = '数擎平台';
+                switch(clientType) {
+                    case 'investment':
+                        title = '数擎平台 - 投资分析';
+                        break;
+                    case 'market':
+                        title = '数擎平台 - 市场洞察';
+                        break;
+                    case 'enterprise':
+                        title = '数擎平台 - 企业服务';
+                        break;
+                    case 'government':
+                        title = '数擎平台 - 政府决策';
+                        break;
+                }
+                pageTitle.textContent = title;
+            }
+        }
+
+        // 应用分类筛选功能
+        const categoryButtons = document.querySelectorAll('.mt-14 button');
+        if (categoryButtons.length > 0) {
+            categoryButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // 移除所有按钮的激活状态
+                    categoryButtons.forEach(btn => {
+                        btn.classList.remove('bg-accent-gradient', 'text-void-900', 'shadow-glow-sm');
+                        btn.classList.add('bg-white/5', 'border', 'border-white/10', 'text-slate-300');
+                    });
+                    
+                    // 为当前点击的按钮添加激活状态
+                    this.classList.remove('bg-white/5', 'border', 'border-white/10', 'text-slate-300');
+                    this.classList.add('bg-accent-gradient', 'text-void-900', 'shadow-glow-sm');
+                    
+                    // 这里可以添加实际的筛选逻辑
+                    const category = this.textContent.trim();
+                    console.log('Selected category:', category);
+                    
+                    // 模拟筛选效果
+                    const appCards = document.querySelectorAll('#popularGrid a');
+                    appCards.forEach(card => {
+                        if (category === '全部应用') {
+                            card.style.display = 'block';
+                        } else if (category === '查询类') {
+                            // 显示查询类应用
+                            const queryApps = ['潜客扫描 - 策略筛选', '企业信用评价'];
+                            const cardTitle = card.querySelector('h3').textContent.trim();
+                            card.style.display = queryApps.includes(cardTitle) ? 'block' : 'none';
+                        } else if (category === '分析类') {
+                            // 显示分析类应用
+                            const analysisApps = ['市场竞争分析', '企业风险审核'];
+                            const cardTitle = card.querySelector('h3').textContent.trim();
+                            card.style.display = analysisApps.includes(cardTitle) ? 'block' : 'none';
+                        } else if (category === '报告类') {
+                            // 显示报告类应用
+                            const reportApps = ['市场分析报告系列', 'AI 智能分析'];
+                            const cardTitle = card.querySelector('h3').textContent.trim();
+                            card.style.display = reportApps.includes(cardTitle) ? 'block' : 'none';
+                        }
+                    });
+                });
+            });
+        }
+    </script>
+</body>
+</html>

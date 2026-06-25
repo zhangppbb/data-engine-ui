@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>搜索结果 · 智能数据中枢 - 数擎平台</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        void: {
+                            900: '#02040a',
+                            800: '#050b14',
+                            700: '#0a1525'
+                        },
+                        aurora: {
+                            green: '#00ffa3',
+                            cyan: '#00d2ff',
+                            purple: '#7000ff',
+                            red: '#ff4757',
+                            blue: '#3742fa',
+                            nav: '#0b1021'
+                        },
+                        glass: {
+                            surface: 'rgba(255, 255, 255, 0.03)',
+                            stroke: 'rgba(255, 255, 255, 0.08)',
+                            highlight: 'rgba(255, 255, 255, 0.15)'
+                        }
+                    },
+                    fontFamily: {
+                        display: ['system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'sans-serif'],
+                        body: ['system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'sans-serif']
+                    },
+                    boxShadow: {
+                        'glow-sm': '0 0 10px rgba(0, 255, 163, 0.2)',
+                        'glow-md': '0 0 20px rgba(0, 210, 255, 0.3)',
+                        'glow-lg': '0 0 30px rgba(0, 255, 163, 0.4)',
+                        'glass': '0 8px 32px 0 rgba(0, 0, 0, 0.36)'
+                    },
+                    backgroundImage: {
+                        'aurora-gradient': 'linear-gradient(135deg, #050b14 0%, #0a1525 100%)',
+                        'accent-gradient': 'linear-gradient(90deg, #00d2ff 0%, #00ffa3 100%)'
+                    }
+                }
+            }
+        };
+    </script>
+    <style type="text/tailwindcss">
+        @tailwind base;
+        @tailwind components;
+        @tailwind utilities;
+        
+        @layer utilities {
+            .bg-stars {
+                background-color: #02040a;
+                background-image: 
+                    radial-gradient(white, rgba(255,255,255,.2) 2px, transparent 3px),
+                    radial-gradient(white, rgba(255,255,255,.15) 1px, transparent 2px),
+                    radial-gradient(white, rgba(255,255,255,.1) 2px, transparent 3px);
+                background-size: 550px 550px, 350px 350px, 250px 250px;
+                background-position: 0 0, 40px 60px, 130px 270px;
+            }
+            .text-gradient {
+                background: linear-gradient(to right, #00d2ff, #00ffa3);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+                color: transparent;
+            }
+            .aurora-blur {
+                position: absolute;
+                filter: blur(80px);
+                opacity: 0.4;
+                z-index: 0;
+                border-radius: 50%;
+                pointer-events: none;
+            }
+            .glass-panel-base {
+                background: rgba(255, 255, 255, 0.03);
+                backdrop-filter: blur(12px);
+                -webkit-backdrop-filter: blur(12px);
+                border: 1px solid rgba(255, 255, 255, 0.08);
+                box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            }
+        }
+        @layer components {
+            .btn-primary {
+                @apply relative overflow-hidden inline-flex items-center justify-center px-8 py-3 rounded-full font-bold text-void-900 transition-all duration-300;
+                background: linear-gradient(90deg, #00d2ff 0%, #00ffa3 100%);
+            }
+            .btn-primary:hover {
+                @apply shadow-glow-md transform -translate-y-0.5 scale-105;
+            }
+            .card-glass {
+                @apply glass-panel-base rounded-2xl p-6 transition-all duration-300 hover:bg-white/5 hover:border-aurora-cyan/30 hover:shadow-glow-sm;
+            }
+            .input-glass {
+                @apply w-full bg-void-900/50 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-aurora-cyan/50 focus:ring-1 focus:ring-aurora-cyan/50 transition-all;
+            }
+            .badge {
+                @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider bg-white/5 border border-white/10 text-aurora-cyan;
+            }
+            .filter-tag {
+                @apply px-4 py-2 rounded-full text-sm font-medium transition-all cursor-pointer border border-white/10 bg-white/5 text-slate-300;
+
+            }
+            .filter-tag.active {
+                @apply bg-accent-gradient text-void-900 border-transparent shadow-glow-sm;
+            }
+        }
+        body {
+            @apply selection:bg-aurora-cyan/30 selection:text-white font-body;
+        }
+    </style>
+</head>
+<body class="bg-stars text-slate-300 min-h-screen relative overflow-x-hidden">
+    <!-- 全局背景光晕 -->
+    <div class="fixed top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
+        <div class="aurora-blur bg-aurora-cyan w-[500px] h-[500px] top-[-100px] left-[-100px]"></div>
+        <div class="aurora-blur bg-aurora-red w-[400px] h-[400px] bottom-[-50px] right-[-50px] opacity-20"></div>
+    </div>
+
+    <!-- 顶部导航栏 -->
+    <header class="relative z-20 glass-panel-base border-x-0 border-t-0 sticky top-0 bg-void-900/80">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <a href="index.html" class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-lg bg-accent-gradient flex items-center justify-center shadow-glow-sm">
+                        <i class="fa-solid fa-dog text-void-900 text-lg"></i>
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="text-xl font-bold text-white tracking-wide">数擎平台</span>
+                        <span class="opacity-50 text-[10px] tracking-wide">企业级数据服务平台</span>
+                    </div>
+                </a>
+            </div>
+            <nav class="hidden md:flex gap-8 text-sm font-medium flex-1 justify-center">
+                <a href="index.html" class="hover:text-aurora-cyan transition-colors">首页</a>
+                <a href="apps/apps.html" class="hover:text-aurora-cyan transition-colors">应用馆</a>
+                <a href="resources/resources.html" class="hover:text-aurora-cyan transition-colors">资源馆</a>
+                <a href="cases/cases.html" class="hover:text-aurora-cyan transition-colors">案例馆</a>
+            </nav>
+            <div class="flex items-center gap-4 flex-1 max-w-md">
+                <div class="relative w-full">
+                    <input type="text" 
+                           id="search-input"
+                           class="input-glass h-10 text-sm pl-4 pr-10 placeholder-slate-500"
+                           placeholder="输入搜索内容..."
+                           onkeypress="if(event.key === 'Enter') { window.location.href='search-results.html'; }">
+                    <button class="absolute right-2 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-aurora-cyan transition">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </button>
+                    <!-- Agent智能助手区域 -->
+                    <div class="absolute top-full left-0 right-0 mt-2 glass-panel-base rounded-xl p-4 hidden" id="ai-agent-container">
+                        <div class="flex items-center gap-3 mb-3">
+                            <div class="w-8 h-8 rounded-full bg-accent-gradient flex items-center justify-center shadow-glow-sm">
+                                <i class="fa-solid fa-robot text-void-900"></i>
+                            </div>
+                            <h3 class="text-white font-medium">智能Agent助手</h3>
+                            <span class="text-xs bg-aurora-green/20 text-aurora-green px-2 py-0.5 rounded-full">在线</span>
+                        </div>
+                        <div class="space-y-4 max-h-80 overflow-y-auto" id="ai-agent-messages">
+                            <!-- 消息将通过JS动态生成 -->
+                            <div class="flex gap-3">
+                                <div class="w-8 h-8 rounded-full bg-accent-gradient flex items-center justify-center flex-shrink-0">
+                                    <i class="fa-solid fa-robot text-void-900 text-sm"></i>
+                                </div>
+                                <div class="bg-white/5 rounded-2xl p-3 max-w-[80%]">
+                                    <p class="text-sm">您好！我是数擎平台的智能Agent助手，有什么可以帮助您的吗？</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-4 flex gap-2">
+                            <input type="text" 
+                                   id="ai-agent-input"
+                                   class="input-glass flex-1 pr-10 text-sm" 
+                                   placeholder="输入您的问题，如'如何生成企业风险报告？'...">
+                            <button class="btn-primary py-2 px-4" id="ai-agent-send">
+                                <i class="fa-solid fa-paper-plane"></i>
+                            </button>
+                        </div>
+                        <div class="flex flex-wrap gap-2 mt-3">
+                            <button class="px-3 py-1.5 rounded-full text-xs bg-white/5 border border-white/10 text-slate-300 hover:bg-aurora-cyan/10 hover:border-aurora-cyan/30 transition">
+                                如何生成企业风险报告？
+                            </button>
+                            <button class="px-3 py-1.5 rounded-full text-xs bg-white/5 border border-white/10 text-slate-300 hover:bg-aurora-cyan/10 hover:border-aurora-cyan/30 transition">
+                                资源馆有哪些数据？
+                            </button>
+                            <button class="px-3 py-1.5 rounded-full text-xs bg-white/5 border border-white/10 text-slate-300 hover:bg-aurora-cyan/10 hover:border-aurora-cyan/30 transition">
+                                如何使用API？
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="flex items-center gap-4">
+                <a href="workspace.html" class="text-sm font-medium hover:text-aurora-cyan transition-colors hidden md:block">工作空间</a>
+                <!-- 用户头像下拉菜单 -->
+                <div class="relative">
+                    <button class="flex items-center gap-2 focus:outline-none" id="user-menu-button">
+                        <div class="w-8 h-8 rounded-full bg-gradient-to-br from-aurora-cyan to-aurora-green flex items-center justify-center">
+                            <span class="text-void-900 font-bold">黄</span>
+                        </div>
+                    </button>
+                    <!-- 下拉菜单 -->
+                    <div class="absolute right-0 mt-2 w-80 glass-panel-base rounded-xl p-4 border border-white/10 shadow-lg z-99999 hidden" id="user-menu">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="w-12 h-12 rounded-full bg-gradient-to-br from-aurora-cyan to-aurora-green flex items-center justify-center">
+                                <span class="text-void-900 text-xl font-bold">黄</span>
+                            </div>
+                            <div>
+                                <p class="text-white font-medium">18****48</p>
+                                <div class="flex items-center gap-1 mt-1">
+                                    <span class="text-xs bg-yellow-500/20 text-yellow-500 px-2 py-0.5 rounded-full">VIP试用</span>
+                                </div>
+                            </div>
+                            <a href="profile.html" class="ml-auto text-sm text-aurora-cyan hover:text-aurora-green transition">进入个人中心 &gt;</a>
+                        </div>
+                        <div class="border-t border-white/10 py-3 mb-3">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-slate-400 text-sm">客户类型：</span>
+                                <span class="text-white font-medium" id="current-client-type">投资类客户</span>
+                            </div>
+                            <div class="grid grid-cols-2 gap-2 mt-2">
+                                <button class="py-2 px-3 rounded-lg text-sm bg-white/5 border border-white/10 hover:border-aurora-cyan/50 hover:bg-aurora-cyan/10 transition client-type-option" data-type="investment">投资类客户</button>
+                                <button class="py-2 px-3 rounded-lg text-sm bg-white/5 border border-white/10 hover:border-aurora-cyan/50 hover:bg-aurora-cyan/10 transition client-type-option" data-type="market">市场类客户</button>
+                                <button class="py-2 px-3 rounded-lg text-sm bg-white/5 border border-white/10 hover:border-aurora-cyan/50 hover:bg-aurora-cyan/10 transition client-type-option" data-type="enterprise">企业类客户</button>
+                                <button class="py-2 px-3 rounded-lg text-sm bg-white/5 border border-white/10 hover:border-aurora-cyan/50 hover:bg-aurora-cyan/10 transition client-type-option" data-type="government">政府类客户</button>
+                            </div>
+                        </div>
+                        <div class="border-t border-white/10 py-3 mb-3">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-slate-400 text-sm">剩余点数：</span>
+                                <span class="text-aurora-green font-bold">1,234</span>
+                            </div>
+                            <button class="w-full py-2 rounded-lg bg-aurora-cyan/20 text-aurora-cyan border border-aurora-cyan/30 hover:bg-aurora-cyan/30 transition text-sm">充值</button>
+                        </div>
+                        <div class="grid grid-cols-3 gap-2 mb-4">
+                            <a href="#" class="flex flex-col items-center p-2 rounded-lg hover:bg-white/5 transition">
+                                <i class="fa-solid fa-download text-aurora-cyan mb-1"></i>
+                                <span class="text-xs text-slate-300">下载记录</span>
+                            </a>
+                            <a href="#" class="flex flex-col items-center p-2 rounded-lg hover:bg-white/5 transition">
+                                <i class="fa-solid fa-history text-aurora-cyan mb-1"></i>
+                                <span class="text-xs text-slate-300">浏览历史</span>
+                            </a>
+                            <a href="#" class="flex flex-col items-center p-2 rounded-lg hover:bg-white/5 transition">
+                                <i class="fa-solid fa-heart text-aurora-cyan mb-1"></i>
+                                <span class="text-xs text-slate-300">我的关注</span>
+                            </a>
+                        </div>
+                        <div class="grid grid-cols-3 gap-2">
+                            <a href="#" class="flex flex-col items-center p-2 rounded-lg hover:bg-white/5 transition">
+                                <i class="fa-solid fa-building text-aurora-cyan mb-1"></i>
+                                <span class="text-xs text-slate-300">我的企业</span>
+                            </a>
+                            <a href="#" class="flex flex-col items-center p-2 rounded-lg hover:bg-white/5 transition">
+                                <i class="fa-solid fa-shopping-cart text-aurora-cyan mb-1"></i>
+                                <span class="text-xs text-slate-300">我的订单</span>
+                            </a>
+                            <a href="#" class="flex flex-col items-center p-2 rounded-lg hover:bg-white/5 transition">
+                                <i class="fa-solid fa-file-invoice text-aurora-cyan mb-1"></i>
+                                <span class="text-xs text-slate-300">我的发票</span>
+                            </a>
+                        </div>
+                        <div class="border-t border-white/10 mt-4 pt-4 flex justify-between">
+                            <a href="#" class="text-sm text-slate-400 hover:text-white transition">客服中心</a>
+                            <a href="#" class="text-sm text-slate-400 hover:text-white transition">我的反馈</a>
+                            <a href="#" class="text-sm text-slate-400 hover:text-white transition">退出登录</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主内容区 -->
+    <main class="relative z-10 max-w-7xl mx-auto px-6 py-8">
+        <!-- 搜索框区域 -->
+        <div class="mb-8">
+            <div class="flex items-center gap-4 mb-6">
+                <a href="index.html" class="text-slate-400 hover:text-white transition">
+                    <i class="fa-solid fa-arrow-left"></i> 返回首页
+                </a>
+                <div class="flex-1">
+                    <div class="relative">
+                        <input type="text" 
+                               id="search-input"
+                               class="input-glass h-12 text-lg pl-6 pr-12" 
+                               value="公司风险报告"
+                               placeholder="输入搜索关键词...">
+                        <button class="absolute right-3 top-1/2 transform -translate-y-1/2 text-aurora-cyan">
+                            <i class="fa-solid fa-pencil"></i>
+                        </button>
+                    </div>
+                    <p class="text-sm text-slate-500 mt-2">
+                        搜索结果：<span class="text-white font-medium">"公司风险报告"</span>
+                    </p>
+                </div>
+            </div>
+
+            <!-- 分类Tab -->
+            <div class="flex gap-4 mb-8">
+                <button class="filter-tag active">应用馆 (12)</button>
+                <button class="filter-tag">资源馆 (8)</button>
+                <button class="filter-tag">案例馆 (3)</button>
+            </div>
+        </div>
+
+        <!-- 搜索结果列表 -->
+        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <!-- 应用卡片示例 -->
+            <a href="apps/app-detail.html" class="card-glass block">
+                <div class="flex items-start justify-between mb-4">
+                    <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-aurora-cyan to-aurora-green flex items-center justify-center">
+                        <i class="fa-solid fa-shield-alt text-xl text-void-900"></i>
+                    </div>
+                    <span class="badge">市场竞争</span>
+                </div>
+                <h3 class="text-lg font-bold text-white mb-2">企业风险报告生成</h3>
+                <p class="text-slate-400 text-sm mb-4">基于多维数据源生成企业风险分析报告，包含工商、司法、舆情等风险维度</p>
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <span class="text-aurora-green text-sm font-bold">VIP免费</span>
+                        <span class="text-slate-500 text-xs">普通用户: 10点/次</span>
+                    </div>
+                    <button class="px-4 py-2 rounded-full text-sm bg-aurora-cyan/20 text-aurora-cyan border border-aurora-cyan/30 hover:bg-aurora-cyan/30 transition">立即使用</button>
+                </div>
+            </a>
+
+            <a href="apps/app-detail.html" class="card-glass block">
+                <div class="flex items-start justify-between mb-4">
+                    <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-aurora-purple to-aurora-cyan flex items-center justify-center">
+                        <i class="fa-solid fa-chart-line text-xl text-white"></i>
+                    </div>
+                    <span class="badge">风控审核</span>
+                </div>
+                <h3 class="text-lg font-bold text-white mb-2">风险监控预警</h3>
+                <p class="text-slate-400 text-sm mb-4">实时监控企业风险变化，设置阈值自动预警，支持多维度风险评分</p>
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <span class="text-slate-400 text-sm">15点/次</span>
+                    </div>
+                    <button class="px-4 py-2 rounded-full text-sm bg-aurora-cyan/20 text-aurora-cyan border border-aurora-cyan/30 hover:bg-aurora-cyan/30 transition">立即使用</button>
+                </div>
+            </a>
+
+            <a href="app-detail.html" class="card-glass block">
+                <div class="flex items-start justify-between mb-4">
+                    <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-aurora-red to-orange-500 flex items-center justify-center">
+                        <i class="fa-solid fa-building text-xl text-white"></i>
+                    </div>
+                    <span class="badge">产业招商</span>
+                </div>
+                <h3 class="text-lg font-bold text-white mb-2">招商目标分析</h3>
+                <p class="text-slate-400 text-sm mb-4">分析潜在招商目标企业的实力、发展潜力、产业匹配度，生成招商建议</p>
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <span class="text-aurora-green text-sm font-bold">VIP免费</span>
+                        <span class="text-slate-500 text-xs">普通用户: 20点/次</span>
+                    </div>
+                    <button class="px-4 py-2 rounded-full text-sm bg-aurora-cyan/20 text-aurora-cyan border border-aurora-cyan/30 hover:bg-aurora-cyan/30 transition">立即使用</button>
+                </div>
+            </a>
+
+            <a href="app-detail.html" class="card-glass block">
+                <div class="flex items-start justify-between mb-4">
+                    <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-aurora-blue to-purple-500 flex items-center justify-center">
+                        <i class="fa-solid fa-file-contract text-xl text-white"></i>
+                    </div>
+                    <span class="badge">效率工具</span>
+                </div>
+                <h3 class="text-lg font-bold text-white mb-2">AI标书审查</h3>
+                <p class="text-slate-400 text-sm mb-4">自动审查招标文件合规性、完整性，识别潜在风险点，生成审查报告</p>
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <span class="text-slate-400 text-sm">25点/次</span>
+                    </div>
+                    <button class="px-4 py-2 rounded-full text-sm bg-aurora-cyan/20 text-aurora-cyan border border-aurora-cyan/30 hover:bg-aurora-cyan/30 transition">立即使用</button>
+                </div>
+            </a>
+
+            <!-- 更多应用卡片 -->
+            <a href="app-detail.html" class="card-glass block">
+                <div class="flex items-start justify-between mb-4">
+                    <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-aurora-green to-cyan-500 flex items-center justify-center">
+                        <i class="fa-solid fa-search-dollar text-xl text-void-900"></i>
+                    </div>
+                    <span class="badge">市场竞争</span>
+                </div>
+                <h3 class="text-lg font-bold text-white mb-2">竞争对手分析</h3>
+                <p class="text-slate-400 text-sm mb-4">分析竞争对手的产品、市场、财务、专利等维度，生成竞争策略建议</p>
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <span class="text-slate-400 text-sm">18点/次</span>
+                    </div>
+                    <button class="px-4 py-2 rounded-full text-sm bg-aurora-cyan/20 text-aurora-cyan border border-aurora-cyan/30 hover:bg-aurora-cyan/30 transition">立即使用</button>
+                </div>
+            </a>
+
+            <a href="app-detail.html" class="card-glass block">
+                <div class="flex items-start justify-between mb-4">
+                    <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
+                        <i class="fa-solid fa-user-tie text-xl text-white"></i>
+                    </div>
+                    <span class="badge">效率工具</span>
+                </div>
+                <h3 class="text-lg font-bold text-white mb-2">高管背景调查</h3>
+                <p class="text-slate-400 text-sm mb-4">查询企业高管的教育背景、职业经历、关联企业等信息，辅助人才评估</p>
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <span class="text-aurora-green text-sm font-bold">VIP免费</span>
+                        <span class="text-slate-500 text-xs">普通用户: 12点/次</span>
+                    </div>
+                    <button class="px-4 py-2 rounded-full text-sm bg-aurora-cyan/20 text-aurora-cyan border border-aurora-cyan/30 hover:bg-aurora-cyan/30 transition">立即使用</button>
+                </div>
+            </a>
+
+            <a href="app-detail.html" class="card-glass block">
+                <div class="flex items-start justify-between mb-4">
+                    <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-yellow-500 to-red-500 flex items-center justify-center">
+                        <i class="fa-solid fa-fire text-xl text-white"></i>
+                    </div>
+                    <span class="badge">风控审核</span>
+                </div>
+                <h3 class="text-lg font-bold text-white mb-2">舆情风险监测</h3>
+                <p class="text-slate-400 text-sm mb-4">监控企业在社交媒体的负面舆情，识别风险事件，提供预警和应对建议</p>
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <span class="text-slate-400 text-sm">30点/次</span>
+                    </div>
+                    <button class="px-4 py-2 rounded-full text-sm bg-aurora-cyan/20 text-aurora-cyan border border-aurora-cyan/30 hover:bg-aurora-cyan/30 transition">立即使用</button>
+                </div>
+            </a>
+
+            <a href="app-detail.html" class="card-glass block">
+                <div class="flex items-start justify-between mb-4">
+                    <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center">
+                        <i class="fa-solid fa-industry text-xl text-white"></i>
+                    </div>
+                    <span class="badge">产业招商</span>
+                </div>
+                <h3 class="text-lg font-bold text-white mb-2">产业链分析</h3>
+                <p class="text-slate-400 text-sm mb-4">分析产业链上下游企业关系，识别关键节点企业，为招商提供目标清单</p>
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <span class="text-slate-400 text-sm">22点/次</span>
+                    </div>
+                    <button class="px-4 py-2 rounded-full text-sm bg-aurora-cyan/20 text-aurora-cyan border border-aurora-cyan/30 hover:bg-aurora-cyan/30 transition">立即使用</button>
+                </div>
+            </a>
+        </div>
+
+        <!-- 分页 -->
+        <div class="flex justify-center mt-12">
+            <div class="flex gap-2">
+                <button class="px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-slate-400 hover:bg-white/10 transition">上一页</button>
+                <button class="px-4 py-2 rounded-lg bg-accent-gradient text-void-900 font-bold border-transparent">1</button>
+                <button class="px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-slate-400 hover:bg-white/10 transition">2</button>
+                <button class="px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-slate-400 hover:bg-white/10 transition">3</button>
+                <button class="px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-slate-400 hover:bg-white/10 transition">下一页</button>
+            </div>
+        </div>
+    </main>
+
+    <footer class="relative z-10 max-w-7xl mx-auto px-6 py-8 mt-12 border-t border-white/10">
+        <div class="flex flex-col md:flex-row justify-between items-center">
+            <div class="text-slate-500 text-sm">
+                © 2025 数擎平台 · 企业级数据服务平台
+            </div>
+            <div class="flex gap-6 mt-4 md:mt-0 text-sm">
+                <a href="#" class="text-slate-400 hover:text-white transition">服务协议</a>
+                <a href="#" class="text-slate-400 hover:text-white transition">隐私政策</a>
+                <a href="#" class="text-slate-400 hover:text-white transition">帮助中心</a>
+                <a href="#" class="text-slate-400 hover:text-white transition">联系我们</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- AI 对话框 -->
+    <div class="fixed bottom-6 right-6 z-50 w-80 md:w-96">
+        <!-- 对话框头部 -->
+        <div class="glass-panel-base rounded-t-2xl p-4 flex items-center justify-between cursor-pointer" id="ai-chat-header">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-full bg-accent-gradient flex items-center justify-center shadow-glow-sm">
+                    <i class="fa-solid fa-robot text-void-900"></i>
+                </div>
+                <div>
+                    <h3 class="text-white font-medium">智能助手</h3>
+                    <p class="text-xs text-slate-400">随时为您提供帮助</p>
+                </div>
+            </div>
+            <button id="ai-chat-toggle" class="text-slate-400 hover:text-white transition">
+                <i class="fa-solid fa-chevron-up"></i>
+            </button>
+        </div>
+        
+        <!-- 对话框内容 -->
+        <div class="glass-panel-base rounded-b-2xl border-t-0 p-4 max-h-96 overflow-y-auto hidden" id="ai-chat-content">
+            <!-- 欢迎消息 -->
+            <div class="flex gap-3 mb-4">
+                <div class="w-8 h-8 rounded-full bg-accent-gradient flex items-center justify-center flex-shrink-0">
+                    <i class="fa-solid fa-robot text-void-900 text-sm"></i>
+                </div>
+                <div class="bg-white/5 rounded-2xl p-3 max-w-[80%]">
+                    <p class="text-sm">您好！我是数擎平台的智能助手，有什么可以帮助您的吗？</p>
+                </div>
+            </div>
+            
+            <!-- 示例问题 -->
+            <div class="flex flex-wrap gap-2 mb-4">
+                <button class="px-3 py-1.5 rounded-full text-xs bg-white/5 border border-white/10 text-slate-300 hover:bg-aurora-cyan/10 hover:border-aurora-cyan/30 transition">
+                    如何生成企业风险报告？
+                </button>
+                <button class="px-3 py-1.5 rounded-full text-xs bg-white/5 border border-white/10 text-slate-300 hover:bg-aurora-cyan/10 hover:border-aurora-cyan/30 transition">
+                    资源馆有哪些数据？
+                </button>
+                <button class="px-3 py-1.5 rounded-full text-xs bg-white/5 border border-white/10 text-slate-300 hover:bg-aurora-cyan/10 hover:border-aurora-cyan/30 transition">
+                    如何使用API？
+                </button>
+            </div>
+        </div>
+        
+        <!-- 输入区域 -->
+        <div class="glass-panel-base border-t-0 p-3 rounded-b-2xl hidden" id="ai-chat-input-container">
+            <div class="relative">
+                <input type="text" 
+                       class="input-glass pr-10 text-sm" 
+                       placeholder="输入您的问题..."
+                       id="ai-chat-input">
+                <button class="absolute right-3 top-1/2 transform -translate-y-1/2 text-aurora-cyan hover:text-aurora-green transition" id="ai-chat-send">
+                    <i class="fa-solid fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 用户菜单下拉功能 -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 客户类型切换
+            const clientTypeOptions = document.querySelectorAll('.client-type-option');
+            const currentClientType = document.getElementById('current-client-type');
+            
+            // 加载保存的客户类型
+            const savedClientType = localStorage.getItem('clientType') || 'investment';
+            
+            // 更新当前客户类型显示
+            if (currentClientType) {
+                let typeText = '投资类客户';
+                switch(savedClientType) {
+                    case 'investment':
+                        typeText = '投资类客户';
+                        break;
+                    case 'market':
+                        typeText = '市场类客户';
+                        break;
+                    case 'enterprise':
+                        typeText = '企业类客户';
+                        break;
+                    case 'government':
+                        typeText = '政府类客户';
+                        break;
+                }
+                currentClientType.textContent = typeText;
+            }
+            
+            // 客户类型切换
+            clientTypeOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    const clientType = this.getAttribute('data-type');
+                    
+                    // 保存客户类型到本地存储
+                    localStorage.setItem('clientType', clientType);
+                    
+                    // 更新当前客户类型显示
+                    if (currentClientType) {
+                        let typeText = '投资类客户';
+                        switch(clientType) {
+                            case 'investment':
+                                typeText = '投资类客户';
+                                break;
+                            case 'market':
+                                typeText = '市场类客户';
+                                break;
+                            case 'enterprise':
+                                typeText = '企业类客户';
+                                break;
+                            case 'government':
+                                typeText = '政府类客户';
+                                break;
+                        }
+                        currentClientType.textContent = typeText;
+                    }
+                    
+                    switchClientType(clientType);
+                });
+            });
+
+            // 用户菜单下拉
+            const userMenuButton = document.getElementById('user-menu-button');
+            const userMenu = document.getElementById('user-menu');
+
+            if (userMenuButton && userMenu) {
+                userMenuButton.addEventListener('click', function() {
+                    userMenu.classList.toggle('hidden');
+                });
+
+                // 点击页面其他地方关闭菜单
+                document.addEventListener('click', function(event) {
+                    if (!userMenuButton.contains(event.target) && !userMenu.contains(event.target)) {
+                        userMenu.classList.add('hidden');
+                    }
+                });
+            }
+
+            // AI 对话框功能
+            const aiChatHeader = document.getElementById('ai-chat-header');
+            const aiChatContent = document.getElementById('ai-chat-content');
+            const aiChatInputContainer = document.getElementById('ai-chat-input-container');
+            const aiChatToggle = document.getElementById('ai-chat-toggle');
+            const aiChatInput = document.getElementById('ai-chat-input');
+            const aiChatSend = document.getElementById('ai-chat-send');
+
+            if (aiChatHeader && aiChatContent && aiChatInputContainer && aiChatToggle) {
+                aiChatHeader.addEventListener('click', function() {
+                    aiChatContent.classList.toggle('hidden');
+                    aiChatInputContainer.classList.toggle('hidden');
+                    aiChatToggle.querySelector('i').classList.toggle('fa-chevron-up');
+                    aiChatToggle.querySelector('i').classList.toggle('fa-chevron-down');
+                });
+
+                // 发送消息功能
+                function sendMessage() {
+                    const message = aiChatInput.value.trim();
+                    if (message) {
+                        // 添加用户消息
+                        const userMessageHtml = `
+                            <div class="flex gap-3 mb-4 justify-end">
+                                <div class="bg-aurora-cyan/20 rounded-2xl p-3 max-w-[80%]">
+                                    <p class="text-sm">${message}</p>
+                                </div>
+                                <div class="w-8 h-8 rounded-full bg-gradient-to-br from-aurora-cyan to-aurora-green flex items-center justify-center flex-shrink-0">
+                                    <span class="text-void-900 font-bold text-sm">黄</span>
+                                </div>
+                            </div>
+                        `;
+                        aiChatContent.insertAdjacentHTML('beforeend', userMessageHtml);
+                        aiChatInput.value = '';
+                        aiChatContent.scrollTop = aiChatContent.scrollHeight;
+
+                        // 模拟 AI 回复
+                        setTimeout(() => {
+                            const aiMessageHtml = `
+                                <div class="flex gap-3 mb-4">
+                                    <div class="w-8 h-8 rounded-full bg-accent-gradient flex items-center justify-center flex-shrink-0">
+                                        <i class="fa-solid fa-robot text-void-900 text-sm"></i>
+                                    </div>
+                                    <div class="bg-white/5 rounded-2xl p-3 max-w-[80%]">
+                                        <p class="text-sm">感谢您的提问！我正在处理您的请求，请稍候...</p>
+                                    </div>
+                                </div>
+                            `;
+                            aiChatContent.insertAdjacentHTML('beforeend', aiMessageHtml);
+                            aiChatContent.scrollTop = aiChatContent.scrollHeight;
+                        }, 1000);
+                    }
+                }
+
+                // 发送按钮点击事件
+                aiChatSend.addEventListener('click', sendMessage);
+
+                // 输入框回车事件
+                aiChatInput.addEventListener('keypress', function(event) {
+                    if (event.key === 'Enter') {
+                        sendMessage();
+                    }
+                });
+
+                // 示例问题点击事件
+                const exampleQuestions = aiChatContent.querySelectorAll('button');
+                exampleQuestions.forEach(button => {
+                    button.addEventListener('click', function() {
+                        aiChatInput.value = this.textContent.trim();
+                        sendMessage();
+                    });
+                });
+            }
+
+
+        });
+
+        // 切换客户类型
+        function switchClientType(clientType) {
+            // 根据客户类型显示不同的内容
+            console.log('切换到客户类型:', clientType);
+            
+            // 这里可以根据客户类型修改页面内容
+            // 例如：显示不同的推荐应用、调整布局等
+            
+            // 示例：修改页面标题
+            const pageTitle = document.querySelector('header .text-xl');
+            if (pageTitle) {
+                let title = '数擎平台';
+                switch(clientType) {
+                    case 'investment':
+                        title = '数擎平台 - 投资分析';
+                        break;
+                    case 'market':
+                        title = '数擎平台 - 市场洞察';
+                        break;
+                    case 'enterprise':
+                        title = '数擎平台 - 企业服务';
+                        break;
+                    case 'government':
+                        title = '数擎平台 - 政府决策';
+                        break;
+                }
+                pageTitle.textContent = title;
+            }
+        }
+
+    </script>
+    
+    <!-- Agent智能助手功能 -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const aiAgentButton = document.getElementById('ai-agent-button');
+            const aiAgentContainer = document.getElementById('ai-agent-container');
+            const aiAgentClose = document.getElementById('ai-agent-close');
+            const aiAgentMessages = document.getElementById('ai-agent-messages');
+            const aiAgentInput = document.getElementById('ai-agent-input');
+            const aiAgentSend = document.getElementById('ai-agent-send');
+
+            if (aiAgentButton && aiAgentContainer && aiAgentClose && aiAgentMessages && aiAgentInput && aiAgentSend) {
+                // 对话历史记录，用于上下文理解
+                let conversationHistory = [];
+
+                // 模拟AI回复数据
+                const aiResponses = {
+                    '如何生成企业风险报告？': '生成企业风险报告需要以下步骤：1. 收集企业基本信息和经营数据 2. 分析企业的财务状况、法律风险、经营风险等多个维度 3. 生成综合风险评估报告。您可以在应用馆中使用"企业风险报告生成"应用来完成这个任务。',
+                    '资源馆有哪些数据？': '资源馆包含多种类型的数据资源，主要分为：1. API接口：提供各种数据查询和分析接口 2. MCP工具：提供专业的数据处理和分析工具 3. 数据集：提供结构化的行业和企业数据。您可以根据具体需求在资源馆中浏览和使用这些资源。',
+                    '如何使用API？': '使用API的基本步骤：1. 在资源馆中选择适合的API 2. 查看API文档，了解接口参数和使用方法 3. 获取API密钥 4. 按照文档调用API获取数据。您可以在API详情页查看详细的使用指南和示例代码。'
+                };
+
+                // 显示Agent助手
+                function showAgent() {
+                    aiAgentContainer.classList.remove('hidden');
+                }
+
+                // 隐藏Agent助手
+                function hideAgent() {
+                    aiAgentContainer.classList.add('hidden');
+                }
+
+                // 发送消息
+                function sendMessage() {
+                    const message = aiAgentInput.value.trim();
+                    if (message) {
+                        // 添加用户消息到对话历史
+                        conversationHistory.push({ role: 'user', content: message });
+
+                        // 显示用户消息
+                        const userMessageHtml = `
+                            <div class="flex gap-3 justify-end">
+                                <div class="bg-aurora-cyan/20 rounded-2xl p-3 max-w-[80%]">
+                                    <p class="text-sm">${message}</p>
+                                </div>
+                                <div class="w-8 h-8 rounded-full bg-gradient-to-br from-aurora-cyan to-aurora-green flex items-center justify-center flex-shrink-0">
+                                    <span class="text-void-900 font-bold text-sm">黄</span>
+                                </div>
+                            </div>
+                        `;
+                        aiAgentMessages.insertAdjacentHTML('beforeend', userMessageHtml);
+                        aiAgentInput.value = '';
+                        aiAgentMessages.scrollTop = aiAgentMessages.scrollHeight;
+
+                        // 模拟AI思考
+                        const thinkingHtml = `
+                            <div class="flex gap-3">
+                                <div class="w-8 h-8 rounded-full bg-accent-gradient flex items-center justify-center flex-shrink-0">
+                                    <i class="fa-solid fa-robot text-void-900 text-sm"></i>
+                                </div>
+                                <div class="bg-white/5 rounded-2xl p-3 max-w-[80%]">
+                                    <p class="text-sm">正在思考...</p>
+                                </div>
+                            </div>
+                        `;
+                        aiAgentMessages.insertAdjacentHTML('beforeend', thinkingHtml);
+                        aiAgentMessages.scrollTop = aiAgentMessages.scrollHeight;
+
+                        // 模拟AI回复
+                        setTimeout(() => {
+                            // 移除思考消息
+                            const messages = aiAgentMessages.querySelectorAll('div');
+                            if (messages.length > 0) {
+                                messages[messages.length - 1].remove();
+                            }
+
+                            // 生成AI回复
+                            let aiResponse = '感谢您的提问！我正在处理您的请求，请稍候...';
+                            
+                            // 基于关键词匹配回复
+                            for (const [key, response] of Object.entries(aiResponses)) {
+                                if (message.includes(key.split('？')[0])) {
+                                    aiResponse = response;
+                                    break;
+                                }
+                            }
+
+                            // 添加AI回复到对话历史
+                            conversationHistory.push({ role: 'assistant', content: aiResponse });
+
+                            // 显示AI回复
+                            const aiMessageHtml = `
+                                <div class="flex gap-3">
+                                    <div class="w-8 h-8 rounded-full bg-accent-gradient flex items-center justify-center flex-shrink-0">
+                                        <i class="fa-solid fa-robot text-void-900 text-sm"></i>
+                                    </div>
+                                    <div class="bg-white/5 rounded-2xl p-3 max-w-[80%]">
+                                        <p class="text-sm">${aiResponse}</p>
+                                    </div>
+                                </div>
+                            `;
+                            aiAgentMessages.insertAdjacentHTML('beforeend', aiMessageHtml);
+                            aiAgentMessages.scrollTop = aiAgentMessages.scrollHeight;
+                        }, 1500);
+                    }
+                }
+
+                // 智能助手按钮点击事件
+                aiAgentButton.addEventListener('click', showAgent);
+
+                // 关闭按钮点击事件
+                aiAgentClose.addEventListener('click', hideAgent);
+
+                // 发送按钮点击事件
+                aiAgentSend.addEventListener('click', sendMessage);
+
+                // 输入框回车事件
+                aiAgentInput.addEventListener('keypress', function(event) {
+                    if (event.key === 'Enter') {
+                        sendMessage();
+                    }
+                });
+
+                // 示例问题点击事件
+                const exampleQuestions = aiAgentContainer.querySelectorAll('button');
+                exampleQuestions.forEach(button => {
+                    button.addEventListener('click', function() {
+                        aiAgentInput.value = this.textContent.trim();
+                        sendMessage();
+                    });
+                });
+
+                // 点击页面其他地方关闭Agent
+                document.addEventListener('click', function(event) {
+                    if (!aiAgentButton.contains(event.target) && !aiAgentContainer.contains(event.target)) {
+                        hideAgent();
+                    }
+                });
+            }
+        });
+    </script>
+        
+        <!-- 智能助手按钮 -->
+        <button id="ai-agent-button" class="fixed bottom-6 right-6 z-50 w-14 h-14 bg-accent-gradient rounded-full shadow-glow-sm flex items-center justify-center text-void-900 text-xl hover:scale-110 transition-all duration-300">
+            <i class="fa-solid fa-robot"></i>
+        </button>
+        
+        <!-- 智能助手对话框 -->
+        <div id="ai-agent-container" class="fixed bottom-20 right-6 z-50 w-80 h-96 glass-panel-base rounded-xl border border-white/10 shadow-lg flex flex-col hidden">
+            <div class="p-4 border-b border-white/10 flex justify-between items-center">
+                <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 rounded-full bg-accent-gradient flex items-center justify-center">
+                        <i class="fa-solid fa-robot text-void-900"></i>
+                    </div>
+                    <h3 class="font-medium text-white">智能助手</h3>
+                    <span class="text-xs bg-aurora-green/20 text-aurora-green px-2 py-0.5 rounded-full">在线</span>
+                </div>
+                <button id="ai-agent-close" class="text-slate-400 hover:text-white transition">
+                    <i class="fa-solid fa-times"></i>
+                </button>
+            </div>
+            <div id="ai-agent-messages" class="flex-1 p-4 overflow-y-auto space-y-4">
+                <div class="flex gap-3">
+                    <div class="w-8 h-8 rounded-full bg-accent-gradient flex-shrink-0 flex items-center justify-center">
+                        <i class="fa-solid fa-robot text-void-900 text-sm"></i>
+                    </div>
+                    <div class="bg-white/5 rounded-2xl p-3 max-w-[80%]">
+                        <p class="text-sm">你好！我是数擎平台的智能助手，有什么可以帮助你的吗？</p>
+                    </div>
+                </div>
+            </div>
+            <div class="p-4 border-t border-white/10">
+                <div class="flex gap-2">
+                    <input type="text" id="ai-agent-input" placeholder="输入你的问题..." class="flex-1 bg-white/5 border border-white/10 rounded-lg px-4 py-2 text-sm focus:outline-none focus:border-aurora-cyan">
+                    <button id="ai-agent-send" class="bg-accent-gradient rounded-lg p-2 text-void-900">
+                        <i class="fa-solid fa-paper-plane"></i>
+                    </button>
+                </div>
+                <div class="flex flex-wrap gap-2 mt-3">
+                    <button class="px-3 py-1.5 rounded-full text-xs bg-white/5 border border-white/10 text-slate-300 hover:bg-aurora-cyan/10 hover:border-aurora-cyan/30 transition">
+                        如何生成企业风险报告？
+                    </button>
+                    <button class="px-3 py-1.5 rounded-full text-xs bg-white/5 border border-white/10 text-slate-300 hover:bg-aurora-cyan/10 hover:border-aurora-cyan/30 transition">
+                        资源馆有哪些数据？
+                    </button>
+                    <button class="px-3 py-1.5 rounded-full text-xs bg-white/5 border border-white/10 text-slate-300 hover:bg-aurora-cyan/10 hover:border-aurora-cyan/30 transition">
+                        如何使用API？
+                    </button>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

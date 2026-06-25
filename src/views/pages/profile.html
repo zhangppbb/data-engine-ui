@@ -1,0 +1,695 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>个人中心 · 账户与设置 - 数擎平台</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        void: {
+                            900: '#02040a',
+                            800: '#050b14',
+                            700: '#0a1525'
+                        },
+                        aurora: {
+                            green: '#00ffa3',
+                            cyan: '#00d2ff',
+                            purple: '#7000ff',
+                            red: '#ff4757',
+                            blue: '#3742fa',
+                            nav: '#0b1021'
+                        },
+                        glass: {
+                            surface: 'rgba(255, 255, 255, 0.03)',
+                            stroke: 'rgba(255, 255, 255, 0.08)',
+                            highlight: 'rgba(255, 255, 255, 0.15)'
+                        }
+                    },
+                    fontFamily: {
+                        display: ['system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'sans-serif'],
+                        body: ['system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'sans-serif']
+                    },
+                    boxShadow: {
+                        'glow-sm': '0 0 10px rgba(0, 255, 163, 0.2)',
+                        'glow-md': '0 0 20px rgba(0, 210, 255, 0.3)',
+                        'glow-lg': '0 0 30px rgba(0, 255, 163, 0.4)',
+                        'glass': '0 8px 32px 0 rgba(0, 0, 0, 0.36)'
+                    },
+                    backgroundImage: {
+                        'aurora-gradient': 'linear-gradient(135deg, #050b14 0%, #0a1525 100%)',
+                        'accent-gradient': 'linear-gradient(90deg, #00d2ff 0%, #00ffa3 100%)'
+                    }
+                }
+            }
+        };
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .bg-stars {
+                background-color: #02040a;
+                background-image:
+                    radial-gradient(white, rgba(255,255,255,.2) 2px, transparent 3px),
+                    radial-gradient(white, rgba(255,255,255,.15) 1px, transparent 2px),
+                    radial-gradient(white, rgba(255,255,255,.1) 2px, transparent 3px);
+                background-size: 550px 550px, 350px 350px, 250px 250px;
+                background-position: 0 0, 40px 60px, 130px 270px;
+            }
+            .text-gradient {
+                background: linear-gradient(to right, #00d2ff, #00ffa3);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+                color: transparent;
+            }
+            .aurora-blur {
+                position: absolute;
+                filter: blur(80px);
+                opacity: 0.4;
+                z-index: 0;
+                border-radius: 50%;
+                pointer-events: none;
+            }
+            .glass-panel-base {
+                background: rgba(11, 16, 33, 0.95);
+                backdrop-filter: blur(12px);
+                -webkit-backdrop-filter: blur(12px);
+                border: 1px solid rgba(255, 255, 255, 0.08);
+                box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            }
+        }
+        @layer components {
+            .btn-primary {
+                @apply relative overflow-hidden inline-flex items-center justify-center px-8 py-3 rounded-full font-bold text-void-900 transition-all duration-300;
+                background: linear-gradient(90deg, #00d2ff 0%, #00ffa3 100%);
+            }
+            .btn-primary:hover {
+                @apply shadow-glow-md transform -translate-y-0.5 scale-105;
+            }
+            .card-glass {
+                @apply glass-panel-base rounded-2xl p-6 transition-all duration-300 hover:bg-white/5 hover:border-aurora-cyan/30 hover:shadow-glow-sm;
+            }
+            .badge {
+                @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider bg-white/5 border border-white/10 text-aurora-cyan;
+            }
+            .badge-vip {
+                @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-gradient-to-r from-yellow-500 to-orange-500 text-void-900;
+            }
+            .badge-success {
+                @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-gradient-to-r from-aurora-green to-emerald-500 text-void-900;
+            }
+            .tab-button {
+                @apply px-4 py-2 text-sm font-medium transition-all cursor-pointer border-b-2 border-transparent text-slate-400;
+            }
+            .tab-button.active {
+                @apply text-aurora-cyan border-aurora-cyan;
+            }
+            .input-glass {
+                @apply w-full bg-void-900/50 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-aurora-cyan/50 focus:ring-1 focus:ring-aurora-cyan/50 transition-all;
+            }
+        }
+        body {
+            @apply selection:bg-aurora-cyan/30 selection:text-white font-body;
+        }
+        .hidden {
+            display: none !important;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+</head>
+<body class="bg-stars text-slate-300 min-h-screen relative overflow-x-hidden">
+    <!-- 全局背景光晕 -->
+    <div class="fixed top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
+        <div class="aurora-blur bg-aurora-cyan w-[500px] h-[500px] top-[-100px] left-[-100px]"></div>
+        <div class="aurora-blur bg-aurora-red w-[400px] h-[400px] bottom-[-50px] right-[-50px] opacity-20"></div>
+    </div>
+
+    <!-- 顶部导航栏 -->
+    <header class="relative z-20 glass-panel-base border-x-0 border-t-0 sticky top-0 bg-void-900/80">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <a href="index.html" class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-lg bg-accent-gradient flex items-center justify-center shadow-glow-sm">
+                        <i class="fa-solid fa-dog text-void-900 text-lg"></i>
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="text-xl font-bold text-white tracking-wide">数擎平台</span>
+                        <span class="opacity-50 text-[10px] tracking-wide">企业级数据服务平台</span>
+                    </div>
+                </a>
+            </div>
+            <nav class="hidden md:flex gap-8 text-sm font-medium flex-1 justify-center">
+                <a href="index.html" class="hover:text-aurora-cyan transition-colors">首页</a>
+                <a href="apps/apps.html" class="hover:text-aurora-cyan transition-colors">应用馆</a>
+                <a href="resources/resources.html" class="hover:text-aurora-cyan transition-colors">资源馆</a>
+                <a href="cases/cases.html" class="hover:text-aurora-cyan transition-colors">案例馆</a>
+            </nav>
+            <div class="flex items-center gap-4">
+                <a href="workspace.html" class="text-sm font-medium hover:text-aurora-cyan transition-colors hidden md:block">工作空间</a>
+                <!-- 用户头像下拉菜单 -->
+                <div class="relative">
+                    <button class="flex items-center gap-2 focus:outline-none" id="user-menu-button">
+                        <div class="w-8 h-8 rounded-full bg-gradient-to-br from-aurora-cyan to-aurora-green flex items-center justify-center">
+                            <span class="text-void-900 font-bold">黄</span>
+                        </div>
+                    </button>
+                    <!-- 下拉菜单 -->
+                    <div class="absolute right-0 mt-2 w-80 glass-panel-base rounded-xl p-4 border border-white/10 shadow-lg z-99999 hidden" id="user-menu">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="w-12 h-12 rounded-full bg-gradient-to-br from-aurora-cyan to-aurora-green flex items-center justify-center">
+                                <span class="text-void-900 text-xl font-bold">黄</span>
+                            </div>
+                            <div>
+                                <p class="text-white font-medium">18****48</p>
+                                <div class="flex items-center gap-1 mt-1">
+                                    <span class="text-xs bg-yellow-500/20 text-yellow-500 px-2 py-0.5 rounded-full">VIP试用</span>
+                                </div>
+                            </div>
+                            <a href="profile.html" class="ml-auto text-sm text-aurora-cyan hover:text-aurora-green transition">进入个人中心 &gt;</a>
+                        </div>
+                        <div class="border-t border-white/10 py-3 mb-3">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-slate-400 text-sm">客户类型：</span>
+                                <span class="text-white font-medium" id="current-client-type">投资类客户</span>
+                            </div>
+                            <div class="grid grid-cols-2 gap-2 mt-2">
+                                <button class="py-2 px-3 rounded-lg text-sm bg-white/5 border border-white/10 hover:border-aurora-cyan/50 hover:bg-aurora-cyan/10 transition client-type-option" data-type="investment">投资类客户</button>
+                                <button class="py-2 px-3 rounded-lg text-sm bg-white/5 border border-white/10 hover:border-aurora-cyan/50 hover:bg-aurora-cyan/10 transition client-type-option" data-type="market">市场类客户</button>
+                                <button class="py-2 px-3 rounded-lg text-sm bg-white/5 border border-white/10 hover:border-aurora-cyan/50 hover:bg-aurora-cyan/10 transition client-type-option" data-type="enterprise">企业类客户</button>
+                                <button class="py-2 px-3 rounded-lg text-sm bg-white/5 border border-white/10 hover:border-aurora-cyan/50 hover:bg-aurora-cyan/10 transition client-type-option" data-type="government">政府类客户</button>
+                            </div>
+                        </div>
+                        <div class="border-t border-white/10 py-3 mb-3">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-slate-400 text-sm">剩余点数：</span>
+                                <span class="text-aurora-green font-bold">1,234</span>
+                            </div>
+                            <button class="w-full py-2 rounded-lg bg-aurora-cyan/20 text-aurora-cyan border border-aurora-cyan/30 hover:bg-aurora-cyan/30 transition text-sm">充值</button>
+                        </div>
+                        <div class="grid grid-cols-3 gap-2 mb-4">
+                            <a href="#" class="flex flex-col items-center p-2 rounded-lg hover:bg-white/5 transition">
+                                <i class="fa-solid fa-download text-aurora-cyan mb-1"></i>
+                                <span class="text-xs text-slate-300">下载记录</span>
+                            </a>
+                            <a href="#" class="flex flex-col items-center p-2 rounded-lg hover:bg-white/5 transition">
+                                <i class="fa-solid fa-history text-aurora-cyan mb-1"></i>
+                                <span class="text-xs text-slate-300">浏览历史</span>
+                            </a>
+                            <a href="#" class="flex flex-col items-center p-2 rounded-lg hover:bg-white/5 transition">
+                                <i class="fa-solid fa-heart text-aurora-cyan mb-1"></i>
+                                <span class="text-xs text-slate-300">我的关注</span>
+                            </a>
+                        </div>
+                        <div class="grid grid-cols-3 gap-2">
+                            <a href="#" class="flex flex-col items-center p-2 rounded-lg hover:bg-white/5 transition">
+                                <i class="fa-solid fa-building text-aurora-cyan mb-1"></i>
+                                <span class="text-xs text-slate-300">我的企业</span>
+                            </a>
+                            <a href="#" class="flex flex-col items-center p-2 rounded-lg hover:bg-white/5 transition">
+                                <i class="fa-solid fa-shopping-cart text-aurora-cyan mb-1"></i>
+                                <span class="text-xs text-slate-300">我的订单</span>
+                            </a>
+                            <a href="#" class="flex flex-col items-center p-2 rounded-lg hover:bg-white/5 transition">
+                                <i class="fa-solid fa-file-invoice text-aurora-cyan mb-1"></i>
+                                <span class="text-xs text-slate-300">我的发票</span>
+                            </a>
+                        </div>
+                        <div class="border-t border-white/10 mt-4 pt-4 flex justify-between">
+                            <a href="#" class="text-sm text-slate-400 hover:text-white transition">客服中心</a>
+                            <a href="#" class="text-sm text-slate-400 hover:text-white transition">我的反馈</a>
+                            <a href="#" class="text-sm text-slate-400 hover:text-white transition">退出登录</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主内容区 -->
+    <main class="relative z-10 max-w-7xl mx-auto px-6 py-8">
+        <!-- 页面标题 -->
+        <div class="mb-8">
+            <h1 class="text-3xl font-bold text-white mb-2">个人中心</h1>
+            <p class="text-slate-400">管理您的账户、点数、API密钥和使用记录</p>
+        </div>
+
+        <div class="grid lg:grid-cols-3 gap-8">
+            <!-- 左侧：账户概览 -->
+            <div class="lg:col-span-1">
+                <div class="card-glass sticky top-24">
+                    <!-- 用户信息 -->
+                    <div class="text-center mb-6">
+                        <div class="w-24 h-24 rounded-full bg-gradient-to-br from-aurora-cyan to-aurora-green mx-auto mb-4 flex items-center justify-center">
+                            <span class="text-void-900 text-3xl font-bold">黄</span>
+                        </div>
+                        <h2 class="text-xl font-bold text-white mb-1">黄经理</h2>
+                        <p class="text-slate-400 text-sm mb-3">风险控制部负责人</p>
+                        <span class="badge-vip">VIP会员</span>
+                    </div>
+
+                    <!-- 账户状态 -->
+                    <div class="space-y-4 mb-6">
+                        <div>
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-slate-400">账户状态</span>
+                                <span class="text-aurora-green font-medium">正常</span>
+                            </div>
+                            <div class="w-full bg-void-800/50 rounded-full h-2">
+                                <div class="bg-aurora-green h-2 rounded-full" style="width: 100%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-slate-400">信用等级</span>
+                                <span class="text-aurora-cyan font-medium">AAA</span>
+                            </div>
+                            <div class="w-full bg-void-800/50 rounded-full h-2">
+                                <div class="bg-aurora-cyan h-2 rounded-full" style="width: 95%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 快速统计 -->
+                    <div class="grid grid-cols-2 gap-4 mb-6">
+                        <div class="text-center p-3 rounded-lg bg-white/5">
+                            <p class="text-2xl font-bold text-aurora-cyan">1,234</p>
+                            <p class="text-xs text-slate-400">剩余点数</p>
+                        </div>
+                        <div class="text-center p-3 rounded-lg bg-white/5">
+                            <p class="text-2xl font-bold text-aurora-green">56</p>
+                            <p class="text-xs text-slate-400">API密钥</p>
+                        </div>
+                        <div class="text-center p-3 rounded-lg bg-white/5">
+                            <p class="text-2xl font-bold text-aurora-purple">128</p>
+                            <p class="text-xs text-slate-400">调用次数</p>
+                        </div>
+                        <div class="text-center p-3 rounded-lg bg-white/5">
+                            <p class="text-2xl font-bold text-aurora-red">3</p>
+                            <p class="text-xs text-slate-400">应用中</p>
+                        </div>
+                    </div>
+
+                    <!-- 会员到期 -->
+                    <div class="p-4 rounded-lg bg-gradient-to-r from-aurora-purple/20 to-aurora-cyan/20 border border-aurora-purple/30">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-sm text-slate-300">VIP会员到期时间</span>
+                            <span class="badge-success">续费中</span>
+                        </div>
+                        <p class="text-xl font-bold text-white">2025-12-31</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 右侧：详细信息 -->
+            <div class="lg:col-span-2 space-y-6">
+                <!-- 标签页导航 -->
+                <div class="glass-panel-base rounded-xl">
+                    <div class="flex flex-wrap border-b border-white/10">
+                        <button class="tab-btn px-6 py-4 font-medium text-aurora-cyan border-b-2 border-aurora-cyan" data-tab="account">账户信息</button>
+                        <button class="tab-btn px-6 py-4 font-medium text-slate-400 hover:text-white transition-colors" data-tab="api">API密钥</button>
+                        <button class="tab-btn px-6 py-4 font-medium text-slate-400 hover:text-white transition-colors" data-tab="usage">使用记录</button>
+                        <button class="tab-btn px-6 py-4 font-medium text-slate-400 hover:text-white transition-colors" data-tab="settings">设置</button>
+                    </div>
+                </div>
+
+                <!-- 标签页内容 -->
+                <div class="glass-panel-base rounded-xl p-6">
+                    <!-- 账户信息 -->
+                    <div class="tab-content active" id="account">
+                        <h3 class="text-xl font-bold text-white mb-6">账户信息</h3>
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between py-3 border-b border-white/10">
+                                <span class="text-slate-400">用户名</span>
+                                <span class="text-white font-medium">黄经理</span>
+                            </div>
+                            <div class="flex items-center justify-between py-3 border-b border-white/10">
+                                <span class="text-slate-400">邮箱</span>
+                                <span class="text-white font-medium">zhangming@example.com</span>
+                            </div>
+                            <div class="flex items-center justify-between py-3 border-b border-white/10">
+                                <span class="text-slate-400">手机号</span>
+                                <span class="text-white font-medium">138****8888</span>
+                            </div>
+                            <div class="flex items-center justify-between py-3 border-b border-white/10">
+                                <span class="text-slate-400">公司</span>
+                                <span class="text-white font-medium">科技有限公司</span>
+                            </div>
+                            <div class="flex items-center justify-between py-3 border-b border-white/10">
+                                <span class="text-slate-400">部门</span>
+                                <span class="text-white font-medium">风险控制部</span>
+                            </div>
+                            <div class="flex items-center justify-between py-3">
+                                <span class="text-slate-400">注册时间</span>
+                                <span class="text-white font-medium">2024-01-15</span>
+                            </div>
+                        </div>
+                        <div class="mt-6 flex gap-4">
+                            <button class="btn-primary py-2 px-6">编辑资料</button>
+                            <button class="px-6 py-2 rounded-full font-medium text-white transition-all duration-300 border border-white/20 hover:border-aurora-cyan/50 hover:bg-white/5">修改密码</button>
+                        </div>
+                    </div>
+
+                    <!-- API密钥 -->
+                    <div class="tab-content" id="api">
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="text-xl font-bold text-white">API密钥管理</h3>
+                            <button class="btn-primary py-2 px-6">
+                                <i class="fa-solid fa-plus mr-2"></i>创建密钥
+                            </button>
+                        </div>
+                        <div class="space-y-4">
+                            <div class="p-4 rounded-lg bg-white/5 border border-white/10">
+                                <div class="flex items-center justify-between mb-3">
+                                    <div>
+                                        <h4 class="text-white font-medium mb-1">生产环境密钥</h4>
+                                        <p class="text-sm text-slate-400">sk-prod-****8f3d2e1c</p>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="badge-success">活跃</span>
+                                        <button class="text-slate-400 hover:text-white transition">
+                                            <i class="fa-solid fa-ellipsis-v"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-3 gap-4 text-sm">
+                                    <div>
+                                        <span class="text-slate-400">今日调用</span>
+                                        <p class="text-aurora-cyan font-bold">1,234</p>
+                                    </div>
+                                    <div>
+                                        <span class="text-slate-400">本月调用</span>
+                                        <p class="text-aurora-cyan font-bold">45,678</p>
+                                    </div>
+                                    <div>
+                                        <span class="text-slate-400">额度限制</span>
+                                        <p class="text-white font-bold">100,000</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="p-4 rounded-lg bg-white/5 border border-white/10">
+                                <div class="flex items-center justify-between mb-3">
+                                    <div>
+                                        <h4 class="text-white font-medium mb-1">测试环境密钥</h4>
+                                        <p class="text-sm text-slate-400">sk-test-****7a9b8c6</p>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="badge">受限</span>
+                                        <button class="text-slate-400 hover:text-white transition">
+                                            <i class="fa-solid fa-ellipsis-v"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-3 gap-4 text-sm">
+                                    <div>
+                                        <span class="text-slate-400">今日调用</span>
+                                        <p class="text-aurora-purple font-bold">89</p>
+                                    </div>
+                                    <div>
+                                        <span class="text-slate-400">本月调用</span>
+                                        <p class="text-aurora-purple font-bold">2,345</p>
+                                    </div>
+                                    <div>
+                                        <span class="text-slate-400">额度限制</span>
+                                        <p class="text-white font-bold">10,000</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 使用记录 -->
+                    <div class="tab-content" id="usage">
+                        <h3 class="text-xl font-bold text-white mb-6">使用记录</h3>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left">
+                                <thead>
+                                    <tr class="border-b border-white/10">
+                                        <th class="py-3 px-4 font-semibold text-white">时间</th>
+                                        <th class="py-3 px-4 font-semibold text-white">服务</th>
+                                        <th class="py-3 px-4 font-semibold text-white">调用内容</th>
+                                        <th class="py-3 px-4 font-semibold text-white">消耗点数</th>
+                                        <th class="py-3 px-4 font-semibold text-white">状态</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="border-b border-white/5 hover:bg-white/5">
+                                        <td class="py-3 px-4 text-sm">2024-04-17 14:32:15</td>
+                                        <td class="py-3 px-4 text-sm">企业风险分析</td>
+                                        <td class="py-3 px-4 text-sm truncate max-w-xs">查询某科技有限公司风险信息</td>
+                                        <td class="py-3 px-4 text-sm text-aurora-cyan">-5</td>
+                                        <td class="py-3 px-4"><span class="badge-success">成功</span></td>
+                                    </tr>
+                                    <tr class="border-b border-white/5 hover:bg-white/5">
+                                        <td class="py-3 px-4 text-sm">2024-04-17 14:28:03</td>
+                                        <td class="py-3 px-4 text-sm">工商信息查询</td>
+                                        <td class="py-3 px-4 text-sm truncate max-w-xs">获取企业工商基本信息</td>
+                                        <td class="py-3 px-4 text-sm text-aurora-cyan">-2</td>
+                                        <td class="py-3 px-4"><span class="badge-success">成功</span></td>
+                                    </tr>
+                                    <tr class="border-b border-white/5 hover:bg-white/5">
+                                        <td class="py-3 px-4 text-sm">2024-04-17 13:55:42</td>
+                                        <td class="py-3 px-4 text-sm">市场竞争分析</td>
+                                        <td class="py-3 px-4 text-sm truncate max-w-xs">分析行业竞争格局</td>
+                                        <td class="py-3 px-4 text-sm text-aurora-red">-10</td>
+                                        <td class="py-3 px-4"><span class="badge">失败</span></td>
+                                    </tr>
+                                    <tr class="border-b border-white/5 hover:bg-white/5">
+                                        <td class="py-3 px-4 text-sm">2024-04-17 11:20:18</td>
+                                        <td class="py-3 px-4 text-sm">舆情监控</td>
+                                        <td class="py-3 px-4 text-sm truncate max-w-xs">监控企业舆情动态</td>
+                                        <td class="py-3 px-4 text-sm text-aurora-cyan">-3</td>
+                                        <td class="py-3 px-4"><span class="badge-success">成功</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="mt-6 flex items-center justify-between">
+                            <p class="text-sm text-slate-400">显示 1-4 条，共 128 条记录</p>
+                            <div class="flex gap-2">
+                                <button class="px-3 py-1 rounded bg-white/5 text-slate-400 hover:bg-white/10 transition">上一页</button>
+                                <button class="px-3 py-1 rounded bg-aurora-cyan/20 text-aurora-cyan">1</button>
+                                <button class="px-3 py-1 rounded bg-white/5 text-slate-400 hover:bg-white/10 transition">2</button>
+                                <button class="px-3 py-1 rounded bg-white/5 text-slate-400 hover:bg-white/10 transition">3</button>
+                                <button class="px-3 py-1 rounded bg-white/5 text-slate-400 hover:bg-white/10 transition">下一页</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 设置 -->
+                    <div class="tab-content" id="settings">
+                        <h3 class="text-xl font-bold text-white mb-6">设置</h3>
+                        <div class="space-y-6">
+                            <div class="p-4 rounded-lg bg-white/5 border border-white/10">
+                                <h4 class="text-white font-medium mb-4">通知设置</h4>
+                                <div class="space-y-3">
+                                    <label class="flex items-center justify-between cursor-pointer">
+                                        <span class="text-slate-300">接收服务更新通知</span>
+                                        <input type="checkbox" class="w-5 h-5 rounded bg-void-800 border-white/20 text-aurora-cyan focus:ring-aurora-cyan" checked>
+                                    </label>
+                                    <label class="flex items-center justify-between cursor-pointer">
+                                        <span class="text-slate-300">接收使用提醒</span>
+                                        <input type="checkbox" class="w-5 h-5 rounded bg-void-800 border-white/20 text-aurora-cyan focus:ring-aurora-cyan" checked>
+                                    </label>
+                                    <label class="flex items-center justify-between cursor-pointer">
+                                        <span class="text-slate-300">接收营销活动</span>
+                                        <input type="checkbox" class="w-5 h-5 rounded bg-void-800 border-white/20 text-aurora-cyan focus:ring-aurora-cyan">
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="p-4 rounded-lg bg-white/5 border border-white/10">
+                                <h4 class="text-white font-medium mb-4">安全设置</h4>
+                                <div class="space-y-3">
+                                    <button class="w-full flex items-center justify-between py-2 text-slate-300 hover:text-white transition">
+                                        <span>修改登录密码</span>
+                                        <i class="fa-solid fa-chevron-right text-sm"></i>
+                                    </button>
+                                    <button class="w-full flex items-center justify-between py-2 text-slate-300 hover:text-white transition">
+                                        <span>绑定二次验证</span>
+                                        <i class="fa-solid fa-chevron-right text-sm"></i>
+                                    </button>
+                                    <button class="w-full flex items-center justify-between py-2 text-slate-300 hover:text-white transition">
+                                        <span>查看登录日志</span>
+                                        <i class="fa-solid fa-chevron-right text-sm"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="p-4 rounded-lg bg-white/5 border border-white/10">
+                                <h4 class="text-white font-medium mb-4">其他设置</h4>
+                                <div class="space-y-3">
+                                    <button class="w-full flex items-center justify-between py-2 text-slate-300 hover:text-white transition">
+                                        <span>API使用限制</span>
+                                        <i class="fa-solid fa-chevron-right text-sm"></i>
+                                    </button>
+                                    <button class="w-full flex items-center justify-between py-2 text-slate-300 hover:text-white transition">
+                                        <span>导出账户数据</span>
+                                        <i class="fa-solid fa-chevron-right text-sm"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 页脚区域 -->
+    <footer class="relative z-10 max-w-7xl mx-auto px-6 py-8 mt-12 border-t border-white/10">
+        <div class="flex flex-col md:flex-row justify-between items-center">
+            <div class="text-slate-500 text-sm">
+                © 2025 数擎平台 · 企业级数据服务平台
+            </div>
+            <div class="flex gap-6 mt-4 md:mt-0 text-sm">
+                <a href="#" class="text-slate-400 hover:text-white transition">服务协议</a>
+                <a href="#" class="text-slate-400 hover:text-white transition">隐私政策</a>
+                <a href="#" class="text-slate-400 hover:text-white transition">帮助中心</a>
+                <a href="#" class="text-slate-400 hover:text-white transition">联系我们</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- 标签页切换功能 -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 客户类型切换
+            const clientTypeOptions = document.querySelectorAll('.client-type-option');
+            const currentClientType = document.getElementById('current-client-type');
+            
+            // 加载保存的客户类型
+            const savedClientType = localStorage.getItem('clientType') || 'investment';
+            
+            // 更新当前客户类型显示
+            if (currentClientType) {
+                let typeText = '投资类客户';
+                switch(savedClientType) {
+                    case 'investment':
+                        typeText = '投资类客户';
+                        break;
+                    case 'market':
+                        typeText = '市场类客户';
+                        break;
+                    case 'enterprise':
+                        typeText = '企业类客户';
+                        break;
+                    case 'government':
+                        typeText = '政府类客户';
+                        break;
+                }
+                currentClientType.textContent = typeText;
+            }
+            
+            // 客户类型切换
+            clientTypeOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    const clientType = this.getAttribute('data-type');
+                    
+                    // 保存客户类型到本地存储
+                    localStorage.setItem('clientType', clientType);
+                    
+                    // 更新当前客户类型显示
+                    if (currentClientType) {
+                        let typeText = '投资类客户';
+                        switch(clientType) {
+                            case 'investment':
+                                typeText = '投资类客户';
+                                break;
+                            case 'market':
+                                typeText = '市场类客户';
+                                break;
+                            case 'enterprise':
+                                typeText = '企业类客户';
+                                break;
+                            case 'government':
+                                typeText = '政府类客户';
+                                break;
+                        }
+                        currentClientType.textContent = typeText;
+                    }
+                    
+                    switchClientType(clientType);
+                });
+            });
+
+            // 标签页切换
+            const tabBtns = document.querySelectorAll('.tab-btn');
+            const tabContents = document.querySelectorAll('.tab-content');
+
+            tabBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const tabId = this.dataset.tab;
+
+                    tabBtns.forEach(b => {
+                        b.classList.remove('text-aurora-cyan', 'border-aurora-cyan');
+                        b.classList.add('text-slate-400');
+                    });
+
+                    this.classList.add('text-aurora-cyan', 'border-aurora-cyan');
+                    this.classList.remove('text-slate-400');
+
+                    tabContents.forEach(content => {
+                        content.classList.remove('active');
+                    });
+
+                    document.getElementById(tabId).classList.add('active');
+                });
+            });
+
+            // 用户菜单下拉
+            const userMenuButton = document.getElementById('user-menu-button');
+            const userMenu = document.getElementById('user-menu');
+
+            if (userMenuButton && userMenu) {
+                userMenuButton.addEventListener('click', function() {
+                    userMenu.classList.toggle('hidden');
+                });
+
+                // 点击页面其他地方关闭菜单
+                document.addEventListener('click', function(event) {
+                    if (!userMenuButton.contains(event.target) && !userMenu.contains(event.target)) {
+                        userMenu.classList.add('hidden');
+                    }
+                });
+            }
+        });
+
+        // 切换客户类型
+        function switchClientType(clientType) {
+            // 根据客户类型显示不同的内容
+            console.log('切换到客户类型:', clientType);
+            
+            // 这里可以根据客户类型修改页面内容
+            // 例如：显示不同的推荐应用、调整布局等
+            
+            // 示例：修改页面标题
+            const pageTitle = document.querySelector('header .text-xl');
+            if (pageTitle) {
+                let title = '数擎平台';
+                switch(clientType) {
+                    case 'investment':
+                        title = '数擎平台 - 投资分析';
+                        break;
+                    case 'market':
+                        title = '数擎平台 - 市场洞察';
+                        break;
+                    case 'enterprise':
+                        title = '数擎平台 - 企业服务';
+                        break;
+                    case 'government':
+                        title = '数擎平台 - 政府决策';
+                        break;
+                }
+                pageTitle.textContent = title;
+            }
+        }
+    </script>
+</body>
+</html>

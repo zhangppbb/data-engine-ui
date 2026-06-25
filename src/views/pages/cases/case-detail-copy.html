@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>银行信贷风险智能审核案例 · 案例详情 - 数擎平台</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        void: {
+                            900: '#02040a',
+                            800: '#050b14',
+                            700: '#0a1525'
+                        },
+                        aurora: {
+                            green: '#00ffa3',
+                            cyan: '#00d2ff',
+                            purple: '#7000ff',
+                            red: '#ff4757',
+                            blue: '#3742fa',
+                            nav: '#0b1021'
+                        },
+                        glass: {
+                            surface: 'rgba(255, 255, 255, 0.03)',
+                            stroke: 'rgba(255, 255, 255, 0.08)',
+                            highlight: 'rgba(255, 255, 255, 0.15)'
+                        }
+                    },
+                    fontFamily: {
+                        display: ['system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'sans-serif'],
+                        body: ['system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'sans-serif']
+                    },
+                    boxShadow: {
+                        'glow-sm': '0 0 10px rgba(0, 255, 163, 0.2)',
+                        'glow-md': '0 0 20px rgba(0, 210, 255, 0.3)',
+                        'glow-lg': '0 0 30px rgba(0, 255, 163, 0.4)',
+                        'glass': '0 8px 32px 0 rgba(0, 0, 0, 0.36)'
+                    },
+                    backgroundImage: {
+                        'aurora-gradient': 'linear-gradient(135deg, #050b14 0%, #0a1525 100%)',
+                        'accent-gradient': 'linear-gradient(90deg, #00d2ff 0%, #00ffa3 100%)',
+                        'case-gradient': 'linear-gradient(135deg, #00d2ff 0%, #00ffa3 100%)'
+                    }
+                }
+            }
+        };
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .bg-stars {
+                background-color: #02040a;
+                background-image: 
+                    radial-gradient(white, rgba(255,255,255,.2) 2px, transparent 3px),
+                    radial-gradient(white, rgba(255,255,255,.15) 1px, transparent 2px),
+                    radial-gradient(white, rgba(255,255,255,.1) 2px, transparent 3px);
+                background-size: 550px 550px, 350px 350px, 250px 250px;
+                background-position: 0 0, 40px 60px, 130px 270px;
+            }
+            .text-gradient {
+                background: linear-gradient(to right, #00d2ff, #00ffa3);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+                color: transparent;
+            }
+            .aurora-blur {
+                position: absolute;
+                filter: blur(80px);
+                opacity: 0.4;
+                z-index: 0;
+                border-radius: 50%;
+                pointer-events: none;
+            }
+            .glass-panel-base {
+                background: rgba(255, 255, 255, 0.03);
+                backdrop-filter: blur(12px);
+                -webkit-backdrop-filter: blur(12px);
+                border: 1px solid rgba(255, 255, 255, 0.08);
+                box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            }
+        }
+        @layer components {
+            .btn-primary {
+                @apply relative overflow-hidden inline-flex items-center justify-center px-8 py-3 rounded-full font-bold text-void-900 transition-all duration-300;
+                background: linear-gradient(90deg, #00d2ff 0%, #00ffa3 100%);
+            }
+            .btn-primary:hover {
+                @apply shadow-glow-md transform -translate-y-0.5 scale-105;
+            }
+            .card-glass {
+                @apply glass-panel-base rounded-2xl p-6 transition-all duration-300 hover:bg-white/5 hover:border-aurora-cyan/30 hover:shadow-glow-sm;
+            }
+            .badge {
+                @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider bg-white/5 border border-white/10 text-aurora-cyan;
+            }
+            .badge-industry {
+                @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-gradient-to-r from-aurora-cyan to-aurora-green text-void-900;
+            }
+            .badge-scenario {
+                @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-gradient-to-r from-aurora-purple to-aurora-cyan text-white;
+            }
+            .stat-card {
+                @apply glass-panel-base rounded-2xl p-6 text-center;
+            }
+            .tab-button {
+                @apply px-4 py-2 text-sm font-medium transition-all cursor-pointer border-b-2 border-transparent text-slate-400;
+            }
+            .tab-button.active {
+                @apply text-aurora-cyan border-aurora-cyan;
+            }
+        }
+        body {
+            @apply selection:bg-aurora-cyan/30 selection:text-white font-body;
+        }
+    </style>
+</head>
+<body class="bg-stars text-slate-300 min-h-screen relative overflow-x-hidden">
+    <!-- 全局背景光晕 -->
+    <div class="fixed top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
+        <div class="aurora-blur bg-aurora-cyan w-[500px] h-[500px] top-[-100px] left-[-100px]"></div>
+        <div class="aurora-blur bg-aurora-red w-[400px] h-[400px] bottom-[-50px] right-[-50px] opacity-20"></div>
+    </div>
+
+    <!-- 顶部导航栏 -->
+    <header class="relative z-10 glass-panel-base border-x-0 border-t-0 sticky top-0 bg-void-900/80">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <a href="../index.html" class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-lg bg-accent-gradient flex items-center justify-center shadow-glow-sm">
+                        <i class="fa-solid fa-cube text-void-900 text-lg"></i>
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="text-xl font-bold text-white tracking-wide">数擎平台</span>
+                        <span class="opacity-50 text-[10px] tracking-wide">企业级数据服务平台</span>
+                    </div>
+                </a>
+            </div>
+            <nav class="hidden md:flex gap-6 text-sm font-medium">
+                <a href="../index.html" class="hover:text-aurora-cyan transition-colors">首页</a>
+                <a href="../apps/apps.html" class="hover:text-aurora-cyan transition-colors">应用馆</a>
+                <a href="../resources/resources.html" class="hover:text-aurora-cyan transition-colors">资源馆</a>
+                <a href="cases.html" class="hover:text-aurora-cyan transition-colors">案例馆</a>
+                <a href="../workspace.html" class="hover:text-aurora-cyan transition-colors">工作空间</a>
+                <a href="../profile.html" class="hover:text-aurora-cyan transition-colors">个人中心</a>
+            </nav>
+            <div class="flex items-center gap-4">
+                <div class="hidden md:flex items-center gap-2 text-sm">
+                    <span class="text-slate-400">剩余点数：</span>
+                    <span class="text-aurora-green font-bold">1,234</span>
+                    <button class="ml-2 px-3 py-1 rounded-full text-xs bg-aurora-cyan/20 text-aurora-cyan border border-aurora-cyan/30 hover:bg-aurora-cyan/30 transition">充值</button>
+                </div>
+                <button class="btn-primary py-2 px-6">免费试用</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主内容区 -->
+    <main class="relative z-10 max-w-7xl mx-auto px-6 py-8">
+        <!-- 返回按钮 -->
+        <div class="mb-6">
+            <a href="cases.html" class="inline-flex items-center text-slate-400 hover:text-white transition">
+                <i class="fa-solid fa-arrow-left mr-2"></i> 返回案例馆
+            </a>
+        </div>
+
+        <!-- 案例头部 -->
+        <div class="card-glass mb-8 relative overflow-hidden">
+            <div class="absolute top-0 right-0 w-64 h-64 bg-case-gradient opacity-10 rounded-full -mr-32 -mt-32"></div>
+            <div class="relative z-10">
+                <div class="flex items-start justify-between mb-6">
+                    <div>
+                        <span class="badge-industry">金融</span>
+                        <span class="badge-scenario ml-2">风控</span>
+                    </div>
+                    <div class="text-slate-500 text-sm">
+                        发布日期: 2024年2月 | 浏览次数: 1,245
+                    </div>
+                </div>
+                <h1 class="text-3xl font-bold text-white mb-4">银行信贷风险智能审核</h1>
+                <p class="text-slate-400 text-lg leading-relaxed">
+                    某商业银行应用企业风险报告生成API，将信贷审核时间从3天缩短至30分钟，风险识别准确率提升40%，年节省人工成本约150万元。
+                </p>
+            </div>
+        </div>
+
+        <div class="grid lg:grid-cols-3 gap-8">
+            <!-- 左侧：案例详细信息 -->
+            <div class="lg:col-span-2">
+                <!-- Tab栏 -->
+                <div class="flex border-b border-white/10 mb-6">
+                    <button class="tab-button active" data-tab="details">案例详情</button>
+                    <button class="tab-button" data-tab="solution">解决方案</button>
+                    <button class="tab-button" data-tab="tools">使用工具</button>
+                    <button class="tab-button" data-tab="results">成果展示</button>
+                </div>
+
+                <!-- 案例详情面板 -->
+                <div id="details-tab" class="space-y-6">
+                    <div>
+                        <h2 class="text-xl font-bold text-white mb-4">客户背景</h2>
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <div class="bg-void-800/30 rounded-xl p-5">
+                                <div class="flex items-center gap-3 mb-4">
+                                    <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-aurora-cyan to-aurora-green flex items-center justify-center">
+                                        <i class="fa-solid fa-building text-void-900 text-xl"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold text-white">客户名称</h4>
+                                        <p class="text-slate-400 text-sm">某股份制商业银行</p>
+                                    </div>
+                                </div>
+                                <div class="space-y-3">
+                                    <div>
+                                        <p class="text-slate-500 text-xs mb-1">资产规模</p>
+                                        <p class="text-white font-medium">超过3万亿元</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-slate-500 text-xs mb-1">分支机构</p>
+                                        <p class="text-white font-medium">200+</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="bg-void-800/30 rounded-xl p-5">
+                                <div class="flex items-center gap-3 mb-4">
+                                    <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-aurora-purple to-aurora-cyan flex items-center justify-center">
+                                        <i class="fa-solid fa-business-time text-white text-xl"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold text-white">业务挑战</h4>
+                                        <p class="text-slate-400 text-sm">信贷审核效率与风险控制</p>
+                                    </div>
+                                </div>
+                                <ul class="space-y-2">
+                                    <li class="flex items-start gap-2">
+                                        <i class="fa-solid fa-check text-aurora-green mt-1"></i>
+                                        <span class="text-slate-400 text-sm">信贷审核平均耗时3天</span>
+                                    </li>
+                                    <li class="flex items-start gap-2">
+                                        <i class="fa-solid fa-check text-aurora-green mt-1"></i>
+                                        <span class="text-slate-400 text-sm">高风险企业识别准确率仅68%</span>
+                                    </li>
+                                    <li class="flex items-start gap-2">
+                                        <i class="fa-solid fa-check text-aurora-green mt-1"></i>
+                                        <span class="text-slate-400 text-sm">人工审核成本高，易出错</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h2 class="text-xl font-bold text-white mb-4">业务场景</h2>
+                        <div class="bg-void-800/30 rounded-xl p-6">
+                            <p class="text-slate-400 mb-4 leading-relaxed">
+                                该银行的企业信贷业务中，客户经理需要对申请贷款的企业进行全面的风险审查，包括企业工商信息、司法诉讼、行政处罚、经营状况、关联方风险等多维度信息。传统的人工审核需要：
+                            </p>
+                            <ol class="space-y-3">
+                                <li class="flex items-start gap-3">
+                                    <span class="w-6 h-6 rounded-full bg-aurora-cyan text-void-900 flex items-center justify-center text-xs font-bold">1</span>
+                                    <span class="text-slate-400 flex-1">登录多个政府公开数据平台查询企业基础信息</span>
+                                </li>
+                                <li class="flex items-start gap-3">
+                                    <span class="w-6 h-6 rounded-full bg-aurora-cyan text-void-900 flex items-center justify-center text-xs font-bold">2</span>
+                                    <span class="text-slate-400 flex-1">手动整理、核对各类信息，形成报告</span>
+                                </li>
+                                <li class="flex items-start gap-3">
+                                    <span class="w-6 h-6 rounded-full bg-aurora-cyan text-void-900 flex items-center justify-center text-xs font-bold">3</span>
+                                    <span class="text-slate-400 flex-1">风险评审会议讨论，形成审批意见</span>
+                                </li>
+                            </ol>
+                            <p class="text-slate-400 mt-4 leading-relaxed">
+                                这一流程平均需要3个工作日，效率低下且容易因人为因素导致风险识别不准确。
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 解决方案面板 (默认隐藏) -->
+                <div id="solution-tab" class="space-y-6 hidden">
+                    <div>
+                        <h2 class="text-xl font-bold text-white mb-4">解决方案架构</h2>
+                        <div class="bg-void-800/30 rounded-xl p-6">
+                            <div class="grid md:grid-cols-3 gap-6 mb-6">
+                                <div class="text-center">
+                                    <div class="w-16 h-16 rounded-xl bg-gradient-to-br from-aurora-cyan to-aurora-green flex items-center justify-center mx-auto mb-4">
+                                        <i class="fa-solid fa-database text-void-900 text-2xl"></i>
+                                    </div>
+                                    <h4 class="font-bold text-white mb-2">数据层</h4>
+                                    <p class="text-slate-400 text-sm">企业全维度风险数据源</p>
+                                </div>
+                                <div class="text-center">
+                                    <div class="w-16 h-16 rounded-xl bg-gradient-to-br from-aurora-purple to-aurora-cyan flex items-center justify-center mx-auto mb-4">
+                                        <i class="fa-solid fa-code text-white text-2xl"></i>
+                                    </div>
+                                    <h4 class="font-bold text-white mb-2">API服务层</h4>
+                                    <p class="text-slate-400 text-sm">企业风险报告生成API</p>
+                                </div>
+                                <div class="text-center">
+                                    <div class="w-16 h-16 rounded-xl bg-gradient-to-br from-aurora-red to-aurora-green flex items-center justify-center mx-auto mb-4">
+                                        <i class="fa-solid fa-desktop text-void-900 text-2xl"></i>
+                                    </div>
+                                    <h4 class="font-bold text-white mb-2">应用层</h4>
+                                    <p class="text-slate-400 text-sm">信贷审批系统集成</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h2 class="text-xl font-bold text-white mb-4">实施流程</h2>
+                        <div class="space-y-4">
+                            <div class="flex gap-4">
+                                <div class="flex-shrink-0 w-8 h-8 rounded-full bg-accent-gradient flex items-center justify-center text-void-900 font-bold">1</div>
+                                <div>
+                                    <h4 class="font-bold text-white mb-2">API接入与配置</h4>
+                                    <p class="text-slate-400 text-sm">在数擎平台申请企业风险报告生成API Key，配置到银行信贷审批系统</p>
+                                </div>
+                            </div>
+                            <div class="flex gap-4">
+                                <div class="flex-shrink-0 w-8 h-8 rounded-full bg-accent-gradient flex items-center justify-center text-void-900 font-bold">2</div>
+                                <div>
+                                    <h4 class="font-bold text-white mb-2">流程改造</h4>
+                                    <p class="text-slate-400 text-sm">将API调用嵌入信贷审批流程，系统自动触发风险报告生成</p>
+                                </div>
+                            </div>
+                            <div class="flex gap-4">
+                                <div class="flex-shrink-0 w-8 h-8 rounded-full bg-accent-gradient flex items-center justify-center text-void-900 font-bold">3</div>
+                                <div>
+                                    <h4 class="font-bold text-white mb-2">员工培训</h4>
+                                    <p class="text-slate-400 text-sm">培训客户经理使用新系统，理解风险报告各项指标含义</p>
+                                </div>
+                            </div>
+                            <div class="flex gap-4">
+                                <div class="flex-shrink-0 w-8 h-8 rounded-full bg-accent-gradient flex items-center justify-center text-void-900 font-bold">4</div>
+                                <div>
+                                    <h4 class="font-bold text-white mb-2">上线与优化</h4>
+                                    <p class="text-slate-400 text-sm">全面上线，根据使用反馈持续优化风险评分模型</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 使用工具面板 (默认隐藏) -->
+                <div id="tools-tab" class="space-y-6 hidden">
+                    <div>
+                        <h2 class="text-xl font-bold text-white mb-4">核心工具</h2>
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <a href="../resources/resource-detail.html" class="card-glass block">
+                                <div class="flex items-start gap-4">
+                                    <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-aurora-cyan to-aurora-green flex items-center justify-center flex-shrink-0">
+                                        <i class="fa-solid fa-chart-bar text-void-900 text-xl"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold text-white mb-2">企业风险报告生成API</h4>
+                                        <p class="text-slate-400 text-sm mb-3">一键生成企业全维度风险报告，包含工商、司法、税务、舆情等风险指标</p>
+                                        <div class="flex items-center gap-2">
+                                            <span class="text-aurora-cyan text-sm font-medium">5点/次</span>
+                                            <span class="text-slate-500 text-xs">VIP免费</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                            <a href="../apps/app-detail.html" class="card-glass block">
+                                <div class="flex items-start gap-4">
+                                    <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-aurora-purple to-aurora-cyan flex items-center justify-center flex-shrink-0">
+                                        <i class="fa-solid fa-robot text-white text-xl"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold text-white mb-2">信贷审批机器人</h4>
+                                        <p class="text-slate-400 text-sm mb-3">基于风险报告的自动化审批决策，支持规则引擎配置</p>
+                                        <div class="flex items-center gap-2">
+                                            <span class="text-aurora-cyan text-sm font-medium">VIP专属应用</span>
+                                            <span class="text-slate-500 text-xs">100点/月</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h2 class="text-xl font-bold text-white mb-4">辅助工具</h2>
+                        <div class="space-y-4">
+                            <div class="flex items-center gap-4 p-4 rounded-xl bg-void-800/30">
+                                <i class="fa-solid fa-gavel text-slate-500"></i>
+                                <div class="flex-1">
+                                    <h4 class="font-bold text-white text-sm">司法诉讼查询API</h4>
+                                    <p class="text-slate-400 text-xs">查询企业相关法律诉讼案件</p>
+                                </div>
+                                <a href="../resources/resources.html" class="text-aurora-cyan text-sm hover:text-aurora-green transition">查看</a>
+                            </div>
+                            <div class="flex items-center gap-4 p-4 rounded-xl bg-void-800/30">
+                                <i class="fa-solid fa-newspaper text-slate-500"></i>
+                                <div class="flex-1">
+                                    <h4 class="font-bold text-white text-sm">企业舆情监控Skill</h4>
+                                    <p class="text-slate-400 text-xs">监控企业相关新闻舆情</p>
+                                </div>
+                                <a href="resources.html" class="text-aurora-cyan text-sm hover:text-aurora-green transition">查看</a>
+                            </div>
+                            <div class="flex items-center gap-4 p-4 rounded-xl bg-void-800/30">
+                                <i class="fa-solid fa-users text-slate-500"></i>
+                                <div class="flex-1">
+                                    <h4 class="font-bold text-white text-sm">关联方风险分析MCP</h4>
+                                    <p class="text-slate-400 text-xs">分析企业关联方风险网络</p>
+                                </div>
+                                <a href="resources.html" class="text-aurora-cyan text-sm hover:text-aurora-green transition">查看</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 成果展示面板 (默认隐藏) -->
+                <div id="results-tab" class="space-y-6 hidden">
+                    <div>
+                        <h2 class="text-xl font-bold text-white mb-4">实施效果</h2>
+                        <div class="grid md:grid-cols-2 gap-6 mb-6">
+                            <div class="stat-card">
+                                <div class="text-4xl font-bold text-aurora-cyan mb-2">30分钟</div>
+                                <p class="text-slate-400 text-sm">信贷审核时间</p>
+                                <p class="text-slate-500 text-xs mt-2">从3天缩短至30分钟</p>
+                            </div>
+                            <div class="stat-card">
+                                <div class="text-4xl font-bold text-aurora-green mb-2">40%↑</div>
+                                <p class="text-slate-400 text-sm">风险识别准确率</p>
+                                <p class="text-slate-500 text-xs mt-2">从68%提升至95%</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h2 class="text-xl font-bold text-white mb-4">成本节约</h2>
+                        <div class="card-glass">
+                            <div class="grid md:grid-cols-2 gap-6">
+                                <div>
+                                    <h4 class="font-bold text-white mb-3">人工成本节省</h4>
+                                    <div class="space-y-2">
+                                        <div class="flex items-center justify-between">
+                                            <span class="text-slate-400 text-sm">审核人员</span>
+                                            <span class="text-white font-medium">从10人减至3人</span>
+                                        </div>
+                                        <div class="flex items-center justify-between">
+                                            <span class="text-slate-400 text-sm">年度人工成本</span>
+                                            <span class="text-aurora-green font-medium">节省150万元</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-white mb-3">坏账率变化</h4>
+                                    <div class="space-y-2">
+                                        <div class="flex items-center justify-between">
+                                            <span class="text-slate-400 text-sm">实施前</span>
+                                            <span class="text-aurora-red font-medium">2.8%</span>
+                                        </div>
+                                        <div class="flex items-center justify-between">
+                                            <span class="text-slate-400 text-sm">实施后</span>
+                                            <span class="text-aurora-green font-medium">1.5%</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h2 class="text-xl font-bold text-white mb-4">客户反馈</h2>
+                        <div class="bg-void-800/30 rounded-xl p-6">
+                            <div class="flex items-center gap-4 mb-4">
+                                <div class="w-12 h-12 rounded-full bg-gradient-to-br from-aurora-cyan to-aurora-green flex items-center justify-center">
+                                    <i class="fa-solid fa-user-tie text-void-900 text-xl"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-white">黄经理</h4>
+                                    <p class="text-slate-400 text-sm">风险控制部负责人</p>
+                                </div>
+                            </div>
+                            <blockquote class="text-slate-300 italic leading-relaxed">
+                                "数擎平台的企业风险报告生成API彻底改变了我们的信贷审核流程。现在，客户经理提交贷款申请后，系统自动生成完整的风险报告，风险评分一目了然。我们不仅大幅提升了审核效率，更重要的是风险识别的准确率显著提高，有效避免了潜在的不良贷款。"
+                            </blockquote>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 右侧：关键指标和行动号召 -->
+            <div class="lg:col-span-1">
+                <div class="card-glass sticky top-24">
+                    <h2 class="text-xl font-bold text-white mb-6">关键指标</h2>
+                    <div class="space-y-6">
+                        <div>
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-slate-400">效率提升</span>
+                                <span class="text-aurora-cyan font-bold">96%</span>
+                            </div>
+                            <div class="w-full bg-void-800/50 rounded-full h-2">
+                                <div class="bg-aurora-cyan h-2 rounded-full" style="width: 96%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-slate-400">准确率提升</span>
+                                <span class="text-aurora-green font-bold">40%</span>
+                            </div>
+                            <div class="w-full bg-void-800/50 rounded-full h-2">
+                                <div class="bg-aurora-green h-2 rounded-full" style="width: 40%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-slate-400">成本节约</span>
+                                <span class="text-aurora-purple font-bold">150万/年</span>
+                            </div>
+                            <div class="w-full bg-void-800/50 rounded-full h-2">
+                                <div class="bg-aurora-purple h-2 rounded-full" style="width: 85%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-8 pt-8 border-t border-white/10">
+                        <h3 class="font-bold text-white mb-4">相关工具</h3>
+                        <div class="space-y-4">
+                            <a href="resource-detail.html" class="flex items-center gap-3 p-3 rounded-lg bg-white/5 hover:bg-white/10 transition group">
+                                <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-aurora-cyan to-aurora-green flex items-center justify-center">
+                                    <i class="fa-solid fa-chart-bar text-void-900"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <h4 class="font-bold text-white text-sm mb-1">企业风险报告生成API</h4>
+                                    <span class="text-slate-500 text-xs">核心工具</span>
+                                </div>
+                            </a>
+                            <a href="app-detail.html" class="flex items-center gap-3 p-3 rounded-lg bg-white/5 hover:bg-white/10 transition group">
+                                <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-aurora-purple to-aurora-cyan flex items-center justify-center">
+                                    <i class="fa-solid fa-robot text-white"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <h4 class="font-bold text-white text-sm mb-1">信贷审批机器人</h4>
+                                    <span class="text-slate-500 text-xs">VIP专属应用</span>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="mt-8 pt-8 border-t border-white/10">
+                        <h3 class="font-bold text-white mb-4">获取类似解决方案</h3>
+                        <p class="text-slate-400 text-sm mb-4">
+                            根据您的业务场景，我们可提供定制化解决方案咨询
+                        </p>
+                        <button class="btn-primary w-full py-3 mb-3">
+                            立即咨询方案
+                        </button>
+                        <a href="cases.html" class="inline-block w-full text-center py-3 rounded-full text-sm bg-white/5 text-slate-300 border border-white/10 hover:bg-white/10 transition">
+                            查看其他案例
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="relative z-10 max-w-7xl mx-auto px-6 py-8 mt-12 border-t border-white/10">
+        <div class="flex flex-col md:flex-row justify-between items-center">
+            <div class="text-slate-500 text-sm">
+                © 2025 数擎平台 · 企业级数据服务平台
+            </div>
+            <div class="flex gap-6 mt-4 md:mt-0 text-sm">
+                <a href="#" class="text-slate-400 hover:text-white transition">服务协议</a>
+                <a href="#" class="text-slate-400 hover:text-white transition">隐私政策</a>
+                <a href="#" class="text-slate-400 hover:text-white transition">帮助中心</a>
+                <a href="#" class="text-slate-400 hover:text-white transition">联系我们</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Tab切换功能
+        document.addEventListener('DOMContentLoaded', function() {
+            const tabs = document.querySelectorAll('.tab-button');
+            const tabContents = document.querySelectorAll('[id$="-tab"]');
+            
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const tabId = this.getAttribute('data-tab');
+                    
+                    // 更新Tab按钮状态
+                    tabs.forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // 显示对应内容
+                    tabContents.forEach(content => {
+                        if (content.id === `${tabId}-tab`) {
+                            content.classList.remove('hidden');
+                        } else {
+                            content.classList.add('hidden');
+                        }
+                    });
+                });
+            });
+        });
+    </script>
+</body>
+</html>

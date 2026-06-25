@@ -1,0 +1,729 @@
+<html lang="zh-CN">
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>
+   市场分析主题报告 | 数擎
+  </title>
+  <!-- Google Fonts: Inter -->
+  <link href="https://fonts.googleapis.com" rel="preconnect"/>
+  <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+  <!-- Font Awesome -->
+  <link href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+  <!-- Tailwind CSS -->
+  <script src="https://res.gemcoder.com/js/reload.js">
+  </script>
+  <script src="https://cdn.tailwindcss.com">
+  </script>
+  <!-- Configuration -->
+  <script>
+   tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        primary: {
+          DEFAULT: '#3B82F6',
+          // Blue 500
+          light: '#60A5FA',
+          // Blue 400
+          dark: '#2563EB',
+          // Blue 600
+          50: '#EFF6FF'
+        },
+        cta: {
+          DEFAULT: '#F97316',
+          // Orange 500
+          hover: '#EA580C' // Orange 600
+        },
+        slate: {
+          canvas: '#F8FAFC',
+          // Slate 50
+          surface: '#FFFFFF',
+          // White
+          border: '#E2E8F0',
+          // Slate 200
+          subtle: '#94A3B8',
+          // Slate 400
+          body: '#1E293B',
+          // Slate 800 - Input Text
+          heading: '#0F172A' // Slate 900
+        },
+        status: {
+          success: '#10B981',
+          successBg: '#ECFDF5',
+          warning: '#F59E0B',
+          warningBg: '#FFFBEB',
+          danger: '#EF4444',
+          dangerBg: '#FEF2F2'
+        }
+      },
+      fontFamily: {
+        sans: ['Inter', 'sans-serif'],
+        mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', "Liberation Mono", "Courier New", 'monospace']
+      },
+      boxShadow: {
+        'card': '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
+        'float': '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+        'focus': '0 0 0 3px rgba(59, 130, 246, 0.4)'
+      },
+      spacing: {
+        '4.5': '1.125rem'
+      }
+    }
+  }
+};
+  </script>
+  <style type="text/tailwindcss">
+   @layer utilities {
+            .tabular-nums {
+                font-feature-settings: "tnum";
+                font-variant-numeric: tabular-nums;
+            }
+            .text-balance {
+                text-wrap: balance;
+            }
+            .scrollbar-hide::-webkit-scrollbar {
+                display: none;
+            }
+            .scrollbar-hide {
+                -ms-overflow-style: none;
+                scrollbar-width: none;
+            }
+            /* Custom thin scrollbar for dashboard tables */
+            .custom-scrollbar::-webkit-scrollbar {
+                width: 6px;
+                height: 6px;
+            }
+            .custom-scrollbar::-webkit-scrollbar-track {
+                background: transparent;
+            }
+            .custom-scrollbar::-webkit-scrollbar-thumb {
+                @apply bg-slate-300 rounded;
+            }
+            .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+                @apply bg-slate-400;
+            }
+        }
+        @layer components {
+            .layout-container {
+                @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+            }
+            
+            /* Buttons */
+            .btn {
+                @apply inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-md transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-primary;
+            }
+            .btn-sm {
+                @apply px-3 text-xs;
+            }
+            .btn-primary {
+                @apply bg-primary text-white hover:bg-primary-dark shadow-sm border border-transparent;
+            }
+            .btn-secondary {
+                @apply bg-white text-slate-700 border border-slate-300 hover:bg-slate-50 shadow-sm;
+            }
+            .btn-cta {
+                @apply bg-cta text-white hover:bg-cta-hover shadow-sm border border-transparent;
+            }
+            .btn-ghost {
+                @apply text-slate-600 hover:text-slate-900 hover:bg-slate-100;
+            }
+            /* Cards */
+            .card {
+                @apply bg-white border border-slate-200 rounded-lg shadow-card;
+            }
+            .card-header {
+                @apply px-5 py-4 border-b border-slate-100 flex justify-between items-center;
+            }
+            .card-body {
+                @apply p-5;
+            }
+            /* Data Tables */
+            .data-table-container {
+                @apply overflow-x-auto rounded-lg border border-slate-200;
+            }
+            .data-table {
+                @apply divide-y divide-slate-200;
+            }
+            .dt-th {
+                @apply px-4 py-3 bg-slate-50 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider whitespace-nowrap;
+            }
+            .dt-td {
+                @apply px-4 py-3 whitespace-nowrap text-sm text-slate-700 border-b border-slate-100 last:border-0;
+            }
+            .dt-row {
+                @apply hover:bg-slate-50 transition-colors duration-75;
+            }
+            /* Typography */
+            .heading-display {
+                @apply text-3xl font-bold text-slate-heading tracking-tight;
+            }
+            .heading-section {
+                @apply text-xl font-semibold text-slate-heading;
+            }
+            .heading-label {
+                @apply text-sm font-medium text-slate-500 uppercase tracking-wide;
+            }
+            .text-body {
+                @apply text-slate-600 text-sm leading-relaxed;
+            }
+            
+            /* Badges */
+            .badge {
+                @apply inline-flex items-center px-2 rounded text-xs font-medium;
+            }
+            .badge-success {
+                @apply bg-status-successBg text-status-success;
+            }
+            .badge-warning {
+                @apply bg-status-warningBg text-status-warning;
+            }
+            .badge-danger {
+                @apply bg-status-dangerBg text-status-danger;
+            }
+            .badge-neutral {
+                @apply bg-slate-100 text-slate-600;
+            }
+        }
+  </style>
+  <style>
+   .modal-overlay.hidden {
+            display: none !important;
+        }
+        .modal-content.hidden {
+            display: none !important;
+        }
+  </style>
+ </head>
+ <body class="bg-slate-canvas text-slate-body font-sans antialiased selection:bg-primary-light selection:text-white pb-20">
+  <!-- Header / Branding -->
+  <header class="bg-white border-b border-slate-200 sticky top-0 z-50">
+   <div class="layout-container h-16 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+     <div class="w-8 h-8 rounded bg-primary flex items-center justify-center text-white">
+      <i class="fa-solid fa-database">
+      </i>
+     </div>
+     <div>
+      <h1 class="font-bold text-slate-900 text-lg leading-tight">
+       数擎
+       <span class="text-slate-400 font-light text-sm">
+        市场情报平台
+       </span>
+      </h1>
+     </div>
+    </div>
+    <div class="text-xs text-slate-400 font-mono hidden sm:block">
+     数据驱动 · 洞察未来
+    </div>
+   </div>
+  </header>
+  <main class="layout-container py-10 space-y-8">
+   <!-- [MODULE] a1x_主内容区域 -->
+   <!-- [MODULE] b2c_市场分析报告页面 -->
+   <!-- [MODULE] 3d4_页面标题和搜索 -->
+   <section class="space-y-6">
+    <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4">
+     <div>
+      <h2 class="heading-display mb-2">
+       市场分析主题报告
+      </h2>
+      <p class="text-lg text-slate-500">
+       全国·领域·省份·城市，深度洞察建筑市场
+      </p>
+     </div>
+     <div class="w-full lg:w-80 relative">
+      <input class="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg focus:ring-primary focus:border-primary text-sm" placeholder="搜索报告名称、关键词..." type="text"/>
+      <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
+      </i>
+     </div>
+    </div>
+   </section>
+   <!-- [/MODULE] 3d4_页面标题和搜索 -- 页面主标题、副标题和搜索框 -->
+   <!-- [MODULE] f5g_分类筛选栏 -->
+   <section>
+    <div class="flex flex-wrap gap-3">
+     <button class="filter-btn px-4 py-2 rounded-full text-sm font-medium bg-primary text-white shadow-sm transition-all duration-150" data-category="全部">
+      全部
+     </button>
+     <button class="filter-btn px-4 py-2 rounded-full text-sm font-medium bg-white border border-slate-200 text-slate-600 hover:border-primary hover:bg-primary-50 transition-all duration-150" data-category="全国报告">
+      全国报告
+     </button>
+     <button class="filter-btn px-4 py-2 rounded-full text-sm font-medium bg-white border border-slate-200 text-slate-600 hover:border-primary hover:bg-primary-50 transition-all duration-150" data-category="领域报告">
+      领域报告
+     </button>
+     <button class="filter-btn px-4 py-2 rounded-full text-sm font-medium bg-white border border-slate-200 text-slate-600 hover:border-primary hover:bg-primary-50 transition-all duration-150" data-category="省份报告">
+      省份报告
+     </button>
+     <button class="filter-btn px-4 py-2 rounded-full text-sm font-medium bg-white border border-slate-200 text-slate-600 hover:border-primary hover:bg-primary-50 transition-all duration-150" data-category="城市报告">
+      城市报告
+     </button>
+    </div>
+   </section>
+   <!-- [/MODULE] f5g_分类筛选栏 -- 横向分类标签筛选，支持点击高亮筛选 -->
+   <!-- [MODULE] 7h8_报告卡片网格 -->
+   <section>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="report-grid">
+     <!-- 报告卡片 1 -->
+     <div class="card overflow-hidden hover:shadow-float transition-shadow duration-200 report-card" data-category="全国报告">
+      <div class="h-44 bg-gradient-to-br from-primary to-primary-dark relative flex items-center justify-center text-white">
+
+       <div class="text-xl font-bold relative z-10">
+        建筑业分析报告
+       </div>
+       <div class="absolute bottom-4 right-4">
+        <span class="badge bg-white/20 text-white backdrop-blur-sm">
+         全国报告
+        </span>
+       </div>
+      </div>
+      <div class="p-5 space-y-3">
+       <h3 class="font-semibold text-slate-900 line-clamp-2 text-balance">
+        建筑业公开招标市场研究简报（2025年12月）
+       </h3>
+       <p class="text-sm text-slate-500 line-clamp-1">
+        聚焦全国公招市场总量、八大央企对标、行业区域分布
+       </p>
+       <div class="flex items-center justify-between text-xs text-slate-400">
+        <span>
+         <i class="fa-solid fa-file-lines mr-1">
+         </i>
+         32页 | 2025年12月
+        </span>
+       </div>
+       <div class="pt-2 text-right">
+        <button class="btn-preview btn btn-sm btn-secondary" data-title="建筑业公开招标市场研究简报（2025年12月）">
+         预览报告
+        </button>
+       </div>
+      </div>
+     </div>
+     <!-- 报告卡片 2 -->
+     <div class="card overflow-hidden hover:shadow-float transition-shadow duration-200 report-card" data-category="省份报告">
+<div class="h-44 bg-gradient-to-br from-primary to-primary-dark relative flex items-center justify-center text-white">
+
+       <div class="text-xl font-bold relative z-10">
+        新疆建筑分析报告
+       </div>
+       <div class="absolute bottom-4 right-4">
+        <span class="badge bg-white/20 text-white backdrop-blur-sm">
+         省份报告
+        </span>
+       </div>
+      </div>
+      <div class="p-5 space-y-3">
+       <h3 class="font-semibold text-slate-900 line-clamp-2 text-balance">
+        新疆地区2025年建筑市场分析报告
+       </h3>
+       <p class="text-sm text-slate-500 line-clamp-1">
+        西部基建市场容量分析，政策规划，未来五年预测
+       </p>
+       <div class="flex items-center justify-between text-xs text-slate-400">
+        <span>
+         <i class="fa-solid fa-file-lines mr-1">
+         </i>
+         48页 | 2025年11月
+        </span>
+       </div>
+       <div class="pt-2 text-right">
+        <button class="btn-preview btn btn-sm btn-secondary" data-title="新疆地区2025年建筑市场分析报告">
+         预览报告
+        </button>
+       </div>
+      </div>
+     </div>
+     <!-- 报告卡片 3 -->
+     <div class="card overflow-hidden hover:shadow-float transition-shadow duration-200 report-card" data-category="领域报告">
+<div class="h-44 bg-gradient-to-br from-primary to-primary-dark relative flex items-center justify-center text-white">
+
+       <div class="text-xl font-bold relative z-10">
+        路桥行业分析报告
+       </div>
+       <div class="absolute bottom-4 right-4">
+        <span class="badge bg-white/20 text-white backdrop-blur-sm">
+         领域报告
+        </span>
+       </div>
+      </div>
+      <div class="p-5 space-y-3">
+       <h3 class="font-semibold text-slate-900 line-clamp-2 text-balance">
+        路桥行业投资类项目中标分析报告
+       </h3>
+       <p class="text-sm text-slate-500 line-clamp-1">
+        中标企业分析、利润率、投标报价策略参考
+       </p>
+       <div class="flex items-center justify-between text-xs text-slate-400">
+        <span>
+         <i class="fa-solid fa-file-lines mr-1">
+         </i>
+         28页 | 2025年10月
+        </span>
+       </div>
+       <div class="pt-2 text-right">
+        <button class="btn-preview btn btn-sm btn-secondary" data-title="路桥行业投资类项目中标分析报告">
+         预览报告
+        </button>
+       </div>
+      </div>
+     </div>
+     <!-- 报告卡片 4 -->
+     <div class="card overflow-hidden hover:shadow-float transition-shadow duration-200 report-card" data-category="城市报告">
+<div class="h-44 bg-gradient-to-br from-primary to-primary-dark relative flex items-center justify-center text-white">
+
+       <div class="text-xl font-bold relative z-10">
+        武汉建筑市场分析
+       </div>
+       <div class="absolute bottom-4 right-4">
+        <span class="badge bg-white/20 text-white backdrop-blur-sm">
+         城市报告
+        </span>
+       </div>
+      </div>
+      <div class="p-5 space-y-3">
+       <h3 class="font-semibold text-slate-900 line-clamp-2 text-balance">
+        武汉市建筑市场年度洞察报告
+       </h3>
+       <p class="text-sm text-slate-500 line-clamp-1">
+        城市更新项目分析、本地企业市场份额占比
+       </p>
+       <div class="flex items-center justify-between text-xs text-slate-400">
+        <span>
+         <i class="fa-solid fa-file-lines mr-1">
+         </i>
+         36页 | 2025年01月
+        </span>
+       </div>
+       <div class="pt-2 text-right">
+        <button class="btn-preview btn btn-sm btn-secondary" data-title="武汉市建筑市场年度洞察报告">
+         预览报告
+        </button>
+       </div>
+      </div>
+     </div>
+     <!-- 报告卡片 5 -->
+     <div class="card overflow-hidden hover:shadow-float transition-shadow duration-200 report-card" data-category="全国报告">
+<div class="h-44 bg-gradient-to-br from-primary to-primary-dark relative flex items-center justify-center text-white">
+
+       <div class="text-xl font-bold relative z-10">
+        八大央企分析报告
+       </div>
+       <div class="absolute bottom-4 right-4">
+        <span class="badge bg-white/20 text-white backdrop-blur-sm">
+         全国报告
+        </span>
+       </div>
+      </div>
+      <div class="p-5 space-y-3">
+       <h3 class="font-semibold text-slate-900 line-clamp-2 text-balance">
+        八大建筑央企市场竞争力对标报告
+       </h3>
+       <p class="text-sm text-slate-500 line-clamp-1">
+        营收规模、中标增长率、利润率多维度对比
+       </p>
+       <div class="flex items-center justify-between text-xs text-slate-400">
+        <span>
+         <i class="fa-solid fa-file-lines mr-1">
+         </i>
+         56页 | 2025年09月
+        </span>
+       </div>
+       <div class="pt-2 text-right">
+        <button class="btn-preview btn btn-sm btn-secondary" data-title="八大建筑央企市场竞争力对标报告">
+         预览报告
+        </button>
+       </div>
+      </div>
+     </div>
+     <!-- 报告卡片 6 -->
+     <div class="card overflow-hidden hover:shadow-float transition-shadow duration-200 report-card" data-category="省份报告">
+<div class="h-44 bg-gradient-to-br from-primary to-primary-dark relative flex items-center justify-center text-white">
+
+       <div class="text-xl font-bold relative z-10">
+        湖北建筑分析报告
+       </div>
+       <div class="absolute bottom-4 right-4">
+        <span class="badge bg-white/20 text-white backdrop-blur-sm">
+         省份报告
+        </span>
+       </div>
+      </div>
+      <div class="p-5 space-y-3">
+       <h3 class="font-semibold text-slate-900 line-clamp-2 text-balance">
+        湖北省建筑市场公招数据分析报告
+       </h3>
+       <p class="text-sm text-slate-500 line-clamp-1">
+        近一年中标数据全景透视，月度趋势分析
+       </p>
+       <div class="flex items-center justify-between text-xs text-slate-400">
+        <span>
+         <i class="fa-solid fa-file-lines mr-1">
+         </i>
+         41页 | 2025年12月
+        </span>
+       </div>
+       <div class="pt-2 text-right">
+        <button class="btn-preview btn btn-sm btn-secondary" data-title="湖北省建筑市场公招数据分析报告">
+         预览报告
+        </button>
+       </div>
+      </div>
+     </div>
+    </div>
+   </section>
+   <!-- [/MODULE] 7h8_报告卡片网格 -- 所有报告卡片展示区域，支持分类筛选 -->
+   <!-- [/MODULE] b2c_市场分析报告页面 -- 报告列表筛选和展示功能 -->
+   <!-- [/MODULE] a1x_主内容区域 -- 页面主要内容区域 -->
+  </main>
+  <!-- 试看模态框 -->
+  <div class="modal-overlay hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4" id="preview-modal">
+   <div class="modal-content bg-white rounded-xl shadow-float w-full max-w-3xl max-h-[80vh] overflow-hidden">
+    <div class="flex items-center justify-between px-6 py-4 border-b border-slate-200">
+     <h3 class="font-bold text-lg text-slate-900" id="preview-title">
+      报告试看
+     </h3>
+     <button class="text-slate-400 hover:text-slate-600 text-xl" id="close-modal">
+      <i class="fa-solid fa-xmark">
+      </i>
+     </button>
+    </div>
+    <div class="p-6 overflow-y-auto custom-scrollbar">
+     <div class="text-center py-12 space-y-6">
+      <div class="w-20 h-20 bg-primary-50 rounded-full flex items-center justify-center mx-auto text-primary text-4xl">
+       <i class="fa-solid fa-file-pdf">
+       </i>
+      </div>
+      <div>
+       <h4 class="font-semibold text-slate-900 mb-2" id="modal-report-title">
+       </h4>
+       <p class="text-slate-500 text-sm">
+        您当前可以免费预览报告前5页内容
+       </p>
+      </div>
+      <div class="bg-slate-50 rounded-lg p-4 max-w-sm mx-auto text-left">
+       <ul class="space-y-2 text-sm text-slate-600">
+        <li class="flex items-center gap-2">
+         <i class="fa-solid fa-check text-status-success">
+         </i>
+         报告目录一览
+        </li>
+        <li class="flex items-center gap-2">
+         <i class="fa-solid fa-check text-status-success">
+         </i>
+         研究方法说明
+        </li>
+        <li class="flex items-center gap-2">
+         <i class="fa-solid fa-check text-status-success">
+         </i>
+         核心数据摘要
+        </li>
+        <li class="flex items-center gap-2 text-slate-400">
+         <i class="fa-solid fa-lock">
+         </i>
+         完整数据分析（需付费解锁）
+        </li>
+        <li class="flex items-center gap-2 text-slate-400">
+         <i class="fa-solid fa-lock">
+         </i>
+         下载导出权限（需付费解锁）
+        </li>
+       </ul>
+      </div>
+      <div class="flex gap-4 justify-center pt-4">
+       <button class="btn btn-secondary" id="close-preview">
+        关闭预览
+       </button>
+<button class="btn btn-cta go-to-checkout">
+        立即购买完整版 ¥299
+       </button>
+      </div>
+     </div>
+    </div>
+   </div>
+  </div>
+  <!-- 购买模态框 -->
+  <div class="modal-overlay hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4" id="buy-modal">
+   <div class="modal-content bg-white rounded-xl shadow-float w-full max-w-lg">
+    <div class="flex items-center justify-between px-6 py-4 border-b border-slate-200">
+     <h3 class="font-bold text-lg text-slate-900">
+      确认购买
+     </h3>
+     <button class="close-buy-modal text-slate-400 hover:text-slate-600 text-xl">
+      <i class="fa-solid fa-xmark">
+      </i>
+     </button>
+    </div>
+    <div class="p-6 space-y-4">
+     <div class="space-y-1">
+      <p class="text-sm text-slate-500">
+       报告名称
+      </p>
+      <p class="font-medium text-slate-900" id="buy-report-title">
+      </p>
+     </div>
+     <div class="flex items-center justify-between py-3 border-y border-slate-100">
+      <span class="text-slate-600">
+       价格
+      </span>
+      <span class="text-2xl font-bold text-primary tabular-nums" id="buy-price">
+      </span>
+     </div>
+     <div class="bg-slate-50 p-3 rounded-md text-xs text-slate-500">
+      <i class="fa-solid fa-info-circle mr-1 text-primary">
+      </i>
+      购买成功后将永久获得本报告的阅读和下载权限
+     </div>
+     <button class="btn btn-cta w-full go-to-checkout text-base py-3">
+      立即支付
+     </button>
+    </div>
+   </div>
+  </div>
+  <!-- 底部信息栏 -->
+  <footer class="bg-white border-t border-slate-200 mt-10">
+   <div class="layout-container py-8">
+    <div class="flex flex-col md:flex-row justify-between items-start gap-6">
+     <div class="space-y-3 max-w-xl">
+      <p class="text-sm text-slate-500">
+       <strong class="text-slate-700">
+        数据来源：
+       </strong>
+       基建通、各省市公共资源交易中心公开信息、企业招投标公示数据
+      </p>
+      <p class="text-sm text-slate-400">
+       © 2025 数擎市场情报平台. All rights reserved.
+      </p>
+     </div>
+     <div class="flex gap-6 text-sm text-slate-500 font-medium">
+      <a class="hover:text-primary transition-colors" href="javascript:void(0);">
+       <i class="fa-solid fa-envelope mr-1">
+       </i>
+       contact@shuhai.com
+      </a>
+      <a class="hover:text-primary transition-colors" href="javascript:void(0);">
+       <i class="fa-solid fa-phone mr-1">
+       </i>
+       400-888-9999
+      </a>
+     </div>
+    </div>
+   </div>
+  </footer>
+  <!-- [JSMOD] k9p_分类筛选功能 -->
+  <script id="filter-script">
+   document.addEventListener('DOMContentLoaded', function () {
+  var filterButtons = document.querySelectorAll('.filter-btn');
+  var reportCards = document.querySelectorAll('.report-card');
+  filterButtons.forEach(function (button) {
+    button.addEventListener('click', function () {
+      // 移除所有选中状态
+      filterButtons.forEach(function (btn) {
+        btn.classList.remove('bg-primary', 'text-white');
+        btn.classList.add('bg-white', 'border', 'border-slate-200', 'text-slate-600');
+      });
+      // 添加当前选中状态
+      this.classList.remove('bg-white', 'border', 'border-slate-200', 'text-slate-600');
+      this.classList.add('bg-primary', 'text-white');
+      var selectedCategory = this.dataset.category;
+      // 筛选卡片
+      reportCards.forEach(function (card) {
+        var cardCategory = card.dataset.category;
+        if (selectedCategory === '全部' || selectedCategory === cardCategory) {
+          card.classList.remove('hidden');
+        } else {
+          card.classList.add('hidden');
+        }
+      });
+    });
+  });
+});
+  </script>
+  <!-- [/JSMOD] k9p_分类筛选功能 -- 实现分类筛选的交互逻辑 -->
+  <!-- [JSMOD] l2q_试看模态框功能 -->
+  <script id="preview-modal-script">
+   document.addEventListener('DOMContentLoaded', function () {
+  var previewModal = document.getElementById('preview-modal');
+  var previewTitle = document.getElementById('modal-report-title');
+  var closeModal = document.getElementById('close-modal');
+  var closePreview = document.getElementById('close-preview');
+  var previewButtons = document.querySelectorAll('.btn-preview');
+  // 打开试看模态框
+  previewButtons.forEach(function (button) {
+    button.addEventListener('click', function () {
+      var title = this.dataset.title;
+      previewTitle.textContent = title;
+      previewModal.classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+    });
+  });
+  // 关闭模态框函数
+  function closePreviewModal() {
+    previewModal.classList.add('hidden');
+    document.body.style.overflow = '';
+  }
+  closeModal.addEventListener('click', closePreviewModal);
+  closePreview.addEventListener('click', closePreviewModal);
+  // 点击遮罩层关闭
+  previewModal.addEventListener('click', function (e) {
+    if (e.target === previewModal) {
+      closePreviewModal();
+    }
+  });
+});
+  </script>
+  <!-- [/JSMOD] l2q_试看模态框功能 -- 打开和关闭试看预览模态框 -->
+  <!-- [JSMOD] m3r_购买模态框功能 -->
+  <script id="buy-modal-script">
+   document.addEventListener('DOMContentLoaded', function () {
+  var buyModal = document.getElementById('buy-modal');
+  var buyReportTitle = document.getElementById('buy-report-title');
+  var buyPrice = document.getElementById('buy-price');
+  var buyButtons = document.querySelectorAll('.btn-buy');
+  var closeButtons = document.querySelectorAll('.close-buy-modal');
+  // 打开购买模态框
+  buyButtons.forEach(function (button) {
+    button.addEventListener('click', function () {
+      var title = this.dataset.title;
+      var price = this.dataset.price;
+      buyReportTitle.textContent = title;
+      buyPrice.textContent = '¥' + price;
+      buyModal.classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+    });
+  });
+  // 关闭模态框函数
+  function closeBuyModal() {
+    buyModal.classList.add('hidden');
+    document.body.style.overflow = '';
+  }
+  closeButtons.forEach(function (button) {
+    button.addEventListener('click', closeBuyModal);
+  });
+  // 点击遮罩层关闭
+  buyModal.addEventListener('click', function (e) {
+    if (e.target === buyModal) {
+      closeBuyModal();
+    }
+  });
+});
+  </script>
+  <!-- [/JSMOD] m3r_购买模态框功能 -- 打开和关闭购买模态框 -->
+  <!-- [JSMOD] n4s_支付按钮交互 -->
+  <script id="checkout-script">
+   document.addEventListener('DOMContentLoaded', function () {
+  var checkoutButtons = document.querySelectorAll('.go-to-checkout');
+  checkoutButtons.forEach(function (button) {
+    button.addEventListener('click', function () {
+      alert('原型演示：跳转支付页面');
+      // 关闭所有模态框
+      document.querySelectorAll('.modal-overlay').forEach(function (modal) {
+        modal.classList.add('hidden');
+      });
+      document.body.style.overflow = '';
+    });
+  });
+});
+  </script>
+  <!-- [/JSMOD] n4s_支付按钮交互 -- 处理购买按钮点击提示 -->
+ </body>
+</html>

@@ -1,0 +1,49 @@
+@use './color.scss' as *;
+
+:export {
+  N00: $N00;
+  Brand_1: $Brand_1; // 按钮点击色/修饰色
+  Brand_color: $Brand_color; // 默认色、通用按钮默认色、多选/单选选中色
+  Brand_3: $Brand_3; // 主要按钮选用色/修饰色
+  Brand_4: $Brand_4; // 主按钮悬停色/修饰色
+  Brand_5: $Brand_5; // 次要按钮色/修饰色
+  Brand_6: $Brand_6; // 左侧导航icon默认色
+  Brand_7: $Brand_7; // 全局提示/修饰色/次要按钮色
+  Brand_8: $Brand_8; // 背景色/修饰色
+
+  // 负面、不可行、严重、危险、失败等提示
+  Danger_1: $Danger_1; // 点击色
+  Danger_2: $Danger_2; // 功能色
+  Danger_3: $Danger_3; // 悬停色
+  Danger_4: $Danger_4; // 全局提示/修饰色
+  Danger_5: $Danger_5; // 次要按钮色/背景色
+
+  // 正面、可行、安全、成功等提示
+  Success_1: $Success_1; // 点击色
+  Success_2: $Success_2; // 功能色
+  Success_3: $Success_3; // 悬停色
+  Success_4: $Success_4; // 全局提示/修饰色
+  Success_5: $Success_5; // 次要按钮色/背景色
+
+  // 注意、警告、阻止等提示
+  Warning_1: $Warning_1; // 点击色
+  Warning_2: $Warning_2; // 功能色
+  Warning_3: $Warning_3; // 悬停色
+  Warning_4: $Warning_4; // 全局提示/修饰色
+  Warning_5: $Warning_5; // 次要按钮色/背景色
+
+  // 文字、线框、背景色
+  Grey_1: $Grey_1; // 标题色
+  Grey_2: $Grey_2; // 主要文案
+  Grey_3: $Grey_3; // 次要文案
+  Grey_4: $Grey_4; // 辅助文字/禁用文字
+  Grey_5: $Grey_5; // 边框色
+  Grey_6: $Grey_6; // 分割线/禁用色
+  Grey_7: $Grey_7; // 背景色（区域）
+
+  // 大屏
+  Screen_brand: $Screen_brand;
+  Screen_border: $Screen_border;
+  Screen_bg: $Screen_bg;
+  Screen_brand1: $Screen_brand1;
+}

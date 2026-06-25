@@ -1,0 +1,20 @@
+// 这个文件修改element主题色，在vite.config中配置
+
+@use '../foundation/color/color.scss' as *;
+
+@use 'element-plus/theme-chalk/src/common/var.scss' with (
+  $colors: (
+    'primary': (
+      'base': $Brand_color
+    ),
+    'success': (
+      'base': $Success_2
+    ),
+    'warning': (
+      'base': $Warning_2
+    ),
+    'danger': (
+      'base': $Danger_2
+    )
+  )
+);

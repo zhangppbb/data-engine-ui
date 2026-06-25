@@ -1,0 +1,683 @@
+<html lang="zh-CN">
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>
+   供应商智能信用与风险管控Agent
+  </title>
+  <script src="https://res.gemcoder.com/js/reload.js">
+  </script>
+  <script src="https://cdn.tailwindcss.com">
+  </script>
+  <link href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+  <script>
+   tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        primary: {
+          blue: '#e6f7ff',
+          purple: '#f3e8ff',
+          dark: '#1e293b',
+          light: '#f8fafc'
+        },
+        accent: {
+          blue: '#60a5fa',
+          purple: '#a78bfa'
+        },
+        neutral: {
+          100: '#f1f5f9',
+          200: '#e2e8f0',
+          300: '#cbd5e1',
+          400: '#94a3b8',
+          500: '#64748b',
+          600: '#475569',
+          700: '#334155',
+          800: '#1e293b'
+        }
+      },
+      fontFamily: {
+        display: ['system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'sans-serif'],
+        body: ['system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'sans-serif']
+      },
+      boxShadow: {
+        'card': '0 10px 30px -10px rgba(167, 139, 250, 0.2)',
+        'input': '0 4px 20px -5px rgba(0, 0, 0, 0.08)',
+        'glow': '0 0 20px rgba(167, 139, 250, 0.3)'
+      },
+      backgroundImage: {
+        'aurora-gradient': 'linear-gradient(135deg, #e6f7ff 0%, #f3e8ff 100%)',
+        'accent-gradient': 'linear-gradient(90deg, #60a5fa 0%, #a78bfa 100%)'
+      },
+      animation: {
+        'float-slow': 'float 8s ease-in-out infinite',
+        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite'
+      },
+      keyframes: {
+        float: {
+          '0%, 100%': {
+            transform: 'translateY(0)'
+          },
+          '50%': {
+            transform: 'translateY(-8px)'
+          }
+        }
+      }
+    }
+  }
+};
+  </script>
+  <style type="text/tailwindcss">
+   @layer utilities {
+            .bg-particles {
+                background-color: #ffffff;
+                background-image: 
+                    radial-gradient(#a78bfa 1px, transparent 1px),
+                    radial-gradient(#60a5fa 0.5px, transparent 0.5px);
+                background-size: 60px 60px, 30px 30px;
+                background-position: 0 0, 15px 15px;
+                opacity: 0.05;
+            }
+            .text-gradient {
+                background: linear-gradient(to right, #60a5fa, #a78bfa);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+                color: transparent;
+            }
+            .aurora-blur {
+                position: absolute;
+                filter: blur(80px);
+                opacity: 0.3;
+                z-index: 0;
+                border-radius: 50%;
+                pointer-events: none;
+            }
+        }
+        @layer components {
+            .btn-primary {
+                @apply relative overflow-hidden inline-flex items-center justify-center px-6 py-2.5 rounded-full font-bold text-white transition-all duration-300;
+                background: linear-gradient(90deg, #60a5fa 0%, #a78bfa 100%);
+            }
+            .btn-primary:hover {
+                @apply shadow-glow transform -translate-y-0.5 scale-105;
+            }
+            .card-base {
+                @apply bg-white rounded-xl border border-neutral-200 transition-all duration-300;
+            }
+            
+            .card-hover {
+                @apply hover:shadow-card hover:-translate-y-1 hover:border-accent-purple/30;
+            }
+            .tag-badge {
+                @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-accent-purple/10 text-accent-purple border border-accent-purple/20;
+            }
+        }
+        body {
+            @apply bg-white font-body text-neutral-800 overflow-x-hidden;
+        }
+  </style>
+ </head>
+ <body class="min-h-screen relative">
+  <!-- 背景粒子效果 -->
+  <div class="fixed inset-0 bg-particles pointer-events-none z-0">
+  </div>
+  <div class="fixed top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
+   <div class="aurora-blur bg-accent-blue w-[400px] h-[400px] top-[-100px] left-[-100px] animate-pulse-slow">
+   </div>
+   <div class="aurora-blur bg-accent-purple w-[500px] h-[500px] bottom-[-200px] right-[-100px] opacity-20">
+   </div>
+  </div>
+  <!-- [MODULE] 789_顶部导航栏 -->
+  <header class="fixed top-0 left-0 right-0 z-50 bg-neutral-50 border-b border-neutral-200 h-16 flex items-center">
+   <div class="container mx-auto px-6 flex items-center justify-between w-full">
+    <div class="flex items-center gap-3">
+     <button class="w-8 h-8 rounded-full bg-white border border-neutral-200 flex items-center justify-center text-neutral-600 hover:text-accent-purple hover:border-accent-purple/30 transition-all">
+      <i class="fa-solid fa-arrow-left">
+      </i>
+     </button>
+     <h1 class="text-xl font-bold text-neutral-800">
+      供应商智能信用与风险管控Agent
+     </h1>
+    </div>
+    <div class="flex items-center gap-5">
+     <button class="w-8 h-8 rounded-full flex items-center justify-center text-neutral-600 hover:text-accent-purple hover:bg-accent-purple/10 transition-all" title="使用指南">
+      <i class="fa-regular fa-circle-question text-lg">
+      </i>
+     </button>
+     <button class="w-8 h-8 rounded-full flex items-center justify-center text-neutral-600 hover:text-accent-purple hover:bg-accent-purple/10 transition-all" title="消息通知">
+      <i class="fa-regular fa-bell text-lg">
+      </i>
+     </button>
+     <button class="w-8 h-8 rounded-full flex items-center justify-center text-neutral-600 hover:text-accent-purple hover:bg-accent-purple/10 transition-all" title="全屏">
+      <i class="fa-solid fa-expand text-lg">
+      </i>
+     </button>
+     <div class="w-8 h-8 rounded-full overflow-hidden border border-neutral-200 ml-2 cursor-pointer hover:border-accent-purple/30 transition-all">
+      <img alt="User" class="w-full h-full object-cover" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&amp;h=100&amp;fit=crop"/>
+     </div>
+    </div>
+   </div>
+  </header>
+  <!-- [/MODULE] 789_顶部导航栏 -- 包含返回按钮、标题和右侧功能图标以及用户头像 -->
+  <!-- [MODULE] 45k_主内容区域 -->
+  <main class="relative z-10 container mx-auto px-6 pr-[320px] pt-24 pb-40 flex gap-6">
+   <div class="flex-1">
+    <!-- [MODULE] 12d_核心功能三卡布局 -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+     <!-- [MODULE] a2c_卡片1:立即对话测试 -->
+     <div class="bg-gradient-to-br from-accent-blue/20 to-accent-purple/20 p-[1px] rounded-xl shadow-card hover:shadow-glow transition-all duration-300">
+      <div class="card-base card-hover h-full p-6 bg-white rounded-xl">
+       <h3 class="text-lg font-bold text-neutral-800 mb-2">
+        立即对话测试
+       </h3>
+       <p class="text-sm text-neutral-500 mb-4">
+        直接对话输入，体验供应商全维度信用评估与风险管控的Agent能力
+       </p>
+       <div class="border border-neutral-200 rounded-lg bg-neutral-50 h-[320px] overflow-y-auto p-3 space-y-3 relative">
+        <div class="absolute top-2 right-2 flex gap-1">
+         <button class="w-6 h-6 rounded bg-white border border-neutral-200 flex items-center justify-center text-neutral-400 hover:text-accent-purple transition">
+          <i class="fa-solid fa-rotate-right text-xs">
+          </i>
+         </button>
+         <button class="w-6 h-6 rounded bg-white border border-neutral-200 flex items-center justify-center text-neutral-400 hover:text-accent-purple transition">
+          <i class="fa-solid fa-copy text-xs">
+          </i>
+         </button>
+        </div>
+        <!-- User Question 1 -->
+        <div class="flex justify-end">
+         <div class="bg-accent-gradient text-white px-4 py-2 rounded-2xl max-w-[80%]">
+          <p class="text-sm">
+           请评估一下这家供应商的整体信用风险等级。
+          </p>
+         </div>
+        </div>
+        <!-- AI Answer 1 -->
+        <div class="flex gap-2">
+         <div class="w-6 h-6 rounded-full bg-accent-gradient flex items-center justify-center text-white flex-shrink-0">
+          <i class="fa-solid fa-robot text-xs">
+          </i>
+         </div>
+         <div class="bg-white border border-neutral-200 px-4 py-2 rounded-2xl max-w-[80%]">
+          <p class="text-sm text-neutral-700">
+           根据供应商工商信息、司法数据和经营数据综合分析，该供应商当前信用风险等级为A级：低风险，可以继续推进合作流程。
+          </p>
+         </div>
+        </div>
+        <!-- User Question 2 -->
+        <div class="flex justify-end">
+         <div class="bg-accent-gradient text-white px-4 py-2 rounded-2xl max-w-[80%]">
+          <p class="text-sm">
+           查询该供应商近一年是否有经营异常、法律诉讼或行政处罚。
+          </p>
+         </div>
+        </div>
+        <!-- AI Answer 2 -->
+        <div class="flex gap-2">
+         <div class="w-6 h-6 rounded-full bg-accent-gradient flex items-center justify-center text-white flex-shrink-0">
+          <i class="fa-solid fa-robot text-xs">
+          </i>
+         </div>
+         <div class="bg-white border border-neutral-200 px-4 py-2 rounded-2xl max-w-[80%]">
+          <p class="text-sm text-neutral-700">
+           已查询到，该供应商近12个月内无经营异常记录，无行政处罚，涉及1起已结案标的金额低于50万元的买卖合同诉讼，不影响整体合作风险。
+          </p>
+         </div>
+        </div>
+       </div>
+      </div>
+     </div>
+     <!-- [/MODULE] a2c_卡片1:立即对话测试 -- 模拟对话窗口，展示多组用户提问和AI回复示例 -->
+     <!-- [MODULE] b4d_卡片2:快速调用API -->
+     <div class="bg-gradient-to-br from-accent-blue/20 to-accent-purple/20 p-[1px] rounded-xl shadow-card hover:shadow-glow transition-all duration-300">
+      <div class="card-base card-hover h-full p-6 bg-white rounded-xl">
+       <h3 class="text-lg font-bold text-neutral-800 mb-2">
+        快速调用API
+       </h3>
+       <p class="text-sm text-neutral-500 mb-4">
+        获取现成Agent接口，开通即用，快速集成到企业供应商全生命周期管理业务中
+       </p>
+       <div class="bg-neutral-800 rounded-lg p-4 text-green-400 text-xs font-mono leading-relaxed h-[270px] overflow-y-auto mb-4">
+        <div class="mb-2 text-blue-300">
+         // 供应商信用评估API调用示例
+        </div>
+        <div>
+         POST https://api.yourdomain.com/v1/agent/credit-risk
+        </div>
+        <div class="mt-2 text-neutral-400">
+         Authorization: Bearer YOUR_TOKEN
+        </div>
+        <div class="mt-2 text-neutral-400">
+         Content-Type: application/json
+        </div>
+        <div class="mt-2">
+         {
+        </div>
+        <div class="pl-4">
+         "supplier_id": "SUP-2023-1289",
+        </div>
+        <div class="pl-4">
+         "evaluation_type": "full",
+        </div>
+        <div class="pl-4">
+         "include_history": true,
+        </div>
+        <div class="pl-4">
+         "requested_by": "procurement_manager"
+        </div>
+        <div>
+         }
+        </div>
+        <div class="mt-3 mb-2 text-yellow-300">
+         // 响应示例
+        </div>
+        <div>
+         {
+        </div>
+        <div class="pl-4">
+         "code": 200,
+        </div>
+        <div class="pl-4">
+         "data": {
+        </div>
+        <div class="pl-8">
+         "risk_level": "LOW",
+        </div>
+        <div class="pl-8">
+         "score": 86,
+        </div>
+        <div class="pl-8">
+         "suggestion": "Approved",
+        </div>
+        <div class="pl-8">
+         "details": [...]
+        </div>
+        <div class="pl-4">
+         }
+        </div>
+        <div>
+         }
+        </div>
+       </div>
+       <div class="text-center">
+        <button class="btn-primary w-full">
+         <i class="fa-solid fa-copy mr-2">
+         </i>
+         快速复制API文档
+        </button>
+       </div>
+      </div>
+     </div>
+     <!-- [/MODULE] b4d_卡片2:快速调用API -- API代码块展示和调用按钮 -->
+     <!-- [MODULE] c3e_卡片3:Agent能力可视化 -->
+     <div class="bg-gradient-to-br from-accent-blue/20 to-accent-purple/20 p-[1px] rounded-xl shadow-card hover:shadow-glow transition-all duration-300">
+      <div class="card-base card-hover h-full p-6 bg-white rounded-xl">
+       <h3 class="text-lg font-bold text-neutral-800 mb-2">
+        Agent能力可视化
+       </h3>
+       <p class="text-sm text-neutral-500 mb-4">
+        直观查看Agent核心能力、执行流程与风险管控逻辑
+       </p>
+       <div class="space-y-4 h-[320px] overflow-y-auto pr-1">
+        <!-- Flow Step 1 -->
+        <div class="flex items-start gap-3">
+         <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center flex-shrink-0 mt-1">
+          <i class="fa-solid fa-file-import">
+          </i>
+         </div>
+         <div>
+          <h4 class="font-semibold text-neutral-700 text-sm">
+           数据聚合
+          </h4>
+          <p class="text-xs text-neutral-500">
+           整合工商、司法、征信、舆情全维度数据源，T+0实时更新
+          </p>
+         </div>
+        </div>
+        <div class="w-[80%] h-[1px] bg-gradient-to-r from-accent-blue to-accent-purple ml-4">
+        </div>
+        <!-- Flow Step 2 -->
+        <div class="flex items-start gap-3">
+         <div class="w-8 h-8 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center flex-shrink-0 mt-1">
+          <i class="fa-solid fa-brain">
+          </i>
+         </div>
+         <div>
+          <h4 class="font-semibold text-neutral-700 text-sm">
+           智能分析
+          </h4>
+          <p class="text-xs text-neutral-500">
+           大模型驱动深度分析，识别隐性风险，输出分级评估结果
+          </p>
+         </div>
+        </div>
+        <div class="w-[80%] h-[1px] bg-gradient-to-r from-accent-blue to-accent-purple ml-4">
+        </div>
+        <!-- Flow Step 3 -->
+        <div class="flex items-start gap-3">
+         <div class="w-8 h-8 rounded-full bg-green-100 text-green-600 flex items-center justify-center flex-shrink-0 mt-1">
+          <i class="fa-solid fa-flag">
+          </i>
+         </div>
+         <div>
+          <h4 class="font-semibold text-neutral-700 text-sm">
+           风险预警
+          </h4>
+          <p class="text-xs text-neutral-500">
+           自动标记高风险项，支持自定义风险规则与阈值配置
+          </p>
+         </div>
+        </div>
+        <div class="w-[80%] h-[1px] bg-gradient-to-r from-accent-blue to-accent-purple ml-4">
+        </div>
+        <!-- Flow Step 4 -->
+        <div class="flex items-start gap-3">
+         <div class="w-8 h-8 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center flex-shrink-0 mt-1">
+          <i class="fa-solid fa-check-to-slot">
+          </i>
+         </div>
+         <div>
+          <h4 class="font-semibold text-neutral-700 text-sm">
+           决策输出
+          </h4>
+          <p class="text-xs text-neutral-500">
+           生成标准化尽调报告与管控建议，支持一键导出与审批流程对接
+          </p>
+         </div>
+        </div>
+        <!-- Score Card -->
+        <div class="mt-4 bg-gradient-to-r from-blue-50 to-purple-50 border border-neutral-200 rounded-lg p-3">
+         <div class="flex justify-between items-center mb-2">
+          <span class="text-sm font-medium text-neutral-700">
+           平均信用评分
+          </span>
+          <span class="text-lg font-bold text-gradient">
+           86.5
+          </span>
+         </div>
+         <div class="w-full bg-white rounded-full h-2 overflow-hidden">
+          <div class="bg-accent-gradient h-2 rounded-full w-[86%]">
+          </div>
+         </div>
+        </div>
+       </div>
+      </div>
+     </div>
+     <!-- [/MODULE] c3e_卡片3:Agent能力可视化 -- 流程图和评分看板 -->
+    </div>
+    <!-- [/MODULE] 12d_核心功能三卡布局 -- 三个等宽功能卡片 -->
+    <!-- 提示问题区域 -->
+    <div class="mb-6 mt-8">
+     <p class="text-sm text-neutral-500 mb-3">
+      热门问题：
+     </p>
+     <div class="flex flex-wrap gap-2">
+      <button class="prompt-question px-3 py-1.5 bg-neutral-100 hover:bg-accent-purple/10 hover:text-accent-purple rounded-full text-sm transition-all">
+       如何评估供应商信用等级？
+      </button>
+      <button class="prompt-question px-3 py-1.5 bg-neutral-100 hover:bg-accent-purple/10 hover:text-accent-purple rounded-full text-sm transition-all">
+       供应商风险预警有哪些指标？
+      </button>
+      <button class="prompt-question px-3 py-1.5 bg-neutral-100 hover:bg-accent-purple/10 hover:text-accent-purple rounded-full text-sm transition-all">
+       如何进行供应商合规审核？
+      </button>
+      <button class="prompt-question px-3 py-1.5 bg-neutral-100 hover:bg-accent-purple/10 hover:text-accent-purple rounded-full text-sm transition-all">
+       供应商违约风险如何防范？
+      </button>
+     </div>
+    </div>
+    <!-- 对话历史容器 -->
+    <div class="w-full mb-8 space-y-4 max-h-[500px] overflow-y-auto pr-2" id="chat-container">
+    </div>
+   </div>
+   <!-- [MODULE] 9xq_右侧信息侧边栏 -->
+   <aside class="w-[280px] flex-shrink-0 bg-neutral-50 border-l border-neutral-200 h-[calc(100vh-4rem)] overflow-y-auto fixed right-0 top-16 p-6 z-40">
+    <!-- [MODULE] e2f_侧边栏:Agent头部信息 -->
+    <div class="text-center mb-6">
+     <div class="w-16 h-16 mx-auto rounded-full bg-gradient-to-br from-accent-blue to-accent-purple flex items-center justify-center text-white text-3xl mb-3 shadow-glow">
+      <i class="fa-solid fa-shield-halved">
+      </i>
+     </div>
+     <h3 class="text-base font-bold text-neutral-800 mb-2">
+      供应商智能信用与风险管控Agent
+     </h3>
+     <p class="text-sm text-neutral-500 leading-relaxed text-left">
+      专为企业采购场景打造的AI智能体，基于全维度企业数据，提供供应商信用评估、风险预警、合规审核、投标准入管控等一站式智能服务，支撑采购全流程决策。
+     </p>
+    </div>
+    <!-- [/MODULE] e2f_侧边栏:Agent头部信息 -- Agent头像、标题和描述 -->
+    <div class="h-px bg-neutral-200 my-6">
+    </div>
+    <!-- [MODULE] f3g_侧边栏:数据统计区 -->
+    <div class="mb-6">
+     <h4 class="text-sm font-semibold text-neutral-700 mb-3">
+      使用统计
+     </h4>
+     <div class="grid grid-cols-2 gap-3">
+      <div class="card-base p-3 text-center card-hover">
+       <p class="text-xs text-neutral-500 mb-1">
+        互动次数
+       </p>
+       <p class="text-xl font-bold text-neutral-800">
+        1,284
+       </p>
+      </div>
+      <div class="card-base p-3 text-center card-hover">
+       <p class="text-xs text-neutral-500 mb-1">
+        API调用
+       </p>
+       <p class="text-xl font-bold text-neutral-800">
+        5.6k
+       </p>
+      </div>
+     </div>
+    </div>
+    <!-- [/MODULE] f3g_侧边栏:数据统计区 -- 互动次数和调用次数统计卡片 -->
+    <!-- [MODULE] g4h_侧边栏:能力标签区 -->
+    <div class="mb-6">
+     <h4 class="text-sm font-semibold text-neutral-700 mb-3">
+      核心能力
+     </h4>
+     <div class="flex flex-wrap gap-2">
+      <span class="tag-badge">
+       信用评估
+      </span>
+      <span class="tag-badge">
+       风险预警
+      </span>
+      <span class="tag-badge">
+       合规审核
+      </span>
+      <span class="tag-badge">
+       远程调用
+      </span>
+      <span class="tag-badge">
+       可编排
+      </span>
+      <span class="tag-badge">
+       T+0实时数据
+      </span>
+     </div>
+    </div>
+    <!-- [/MODULE] g4h_侧边栏:能力标签区 -- Agent功能标签展示 -->
+    <!-- [MODULE] h5i_侧边栏:资源包区 -->
+    <div class="mb-6">
+     <h4 class="text-sm font-semibold text-neutral-700 mb-3">
+      开通套餐
+     </h4>
+     <div class="space-y-3">
+      <div class="bg-gradient-to-r from-accent-blue/20 to-accent-purple/20 rounded-xl p-4 card-hover">
+       <div class="flex justify-between items-center">
+        <span class="text-sm font-semibold text-neutral-800">基础版</span>
+        <span class="text-lg font-bold text-gradient">¥99<span class="text-xs text-neutral-500">/月</span></span>
+       </div>
+       <p class="text-xs text-neutral-500 mt-2">包含基础查询和评估功能，月调用100次</p>
+       <button class="btn-primary w-full mt-3 text-xs">立即开通</button>
+      </div>
+      <div class="bg-gradient-to-r from-accent-blue/30 to-accent-purple/30 rounded-xl p-4 card-hover">
+       <div class="flex justify-between items-center">
+        <span class="text-sm font-semibold text-neutral-800">专业版</span>
+        <span class="text-lg font-bold text-gradient">¥249<span class="text-xs text-neutral-500">/月</span></span>
+       </div>
+       <p class="text-xs text-neutral-500 mt-2">包含全部功能，无限次调用，专属技术支持</p>
+       <button class="btn-primary w-full mt-3 text-xs">立即开通</button>
+      </div>
+     </div>
+    </div>
+    <!-- [/MODULE] h5i_侧边栏:资源包区 -- 基础版和专业版套餐展示 -->
+   </aside>
+   <!-- [/MODULE] 9xq_右侧信息侧边栏 -- 包含Agent信息、统计、能力标签和套餐 -->
+  </main>
+  <!-- [/MODULE] 45k_主内容区域 -- 包含核心功能区和右侧侧边栏 -->
+  <!-- [MODULE] 67m_底部对话输入区 -->
+  <div class="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-neutral-200 pb-6 pt-4">
+   <div class="container mx-auto px-6">
+    <div class="w-[calc(100%-280px)] mx-auto pr-0">
+     <div class="bg-white border border-neutral-200 rounded-2xl p-2 shadow-input flex items-center gap-2">
+      <button class="w-10 h-10 rounded-full flex items-center justify-center text-neutral-500 hover:text-accent-purple hover:bg-accent-purple/10 transition-all">
+       <i class="fa-solid fa-paperclip">
+       </i>
+      </button>
+      <input class="flex-1 px-4 py-3 text-neutral-700 placeholder-neutral-400 focus:outline-none bg-transparent" id="chat-input" placeholder="输入您的问题，如供应商信用评估、风险预警、合规审核等" type="text"/>
+      <button class="btn-primary w-10 h-10 p-0 rounded-full" id="send-btn">
+       <i class="fa-solid fa-paper-plane">
+       </i>
+      </button>
+     </div>
+     <p class="text-center text-xs text-neutral-400 mt-3">
+      内容由AI生成，仅供参考
+     </p>
+    </div>
+   </div>
+  </div>
+  <!-- [/MODULE] 67m_底部对话输入区 -- 固定悬浮式对话输入框 -->
+  <!-- [JSMOD] 7d9_自动问答逻辑 -->
+<script id="auto-answer-script">
+document.addEventListener('DOMContentLoaded', function () {
+  var input = document.getElementById('chat-input');
+  var sendBtn = document.getElementById('send-btn');
+  var promptQuestions = document.querySelectorAll('.prompt-question');
+  var chatContainer = document.getElementById('chat-container');
+  // 输入框聚焦效果
+  input.addEventListener('focus', function () {
+    input.parentElement.classList.add('border-accent-purple');
+    input.parentElement.classList.add('shadow-glow');
+  });
+  input.addEventListener('blur', function () {
+    input.parentElement.classList.remove('border-accent-purple');
+    input.parentElement.classList.remove('shadow-glow');
+  });
+  // 模拟AI回答
+  function simulateAnswer(question) {
+    // 创建用户消息
+    addMessage(question, 'user');
+    // 清空输入框
+    input.value = '';
+    // 显示思考状态
+    addMessage('正在思考...', 'ai', true);
+    // 滚动到底部
+    scrollToBottom();
+    // 2秒后给出回答
+    setTimeout(function () {
+      // 移除思考状态
+      var thinkingMsg = document.querySelector('.thinking-message');
+      if (thinkingMsg) {
+        thinkingMsg.remove();
+      }
+      // 根据问题返回模拟回答
+      var answer = '';
+      switch (question) {
+        case '如何评估供应商信用等级？':
+          answer = '供应商信用等级评估主要基于以下几个维度：\n1. 财务状况分析（营收、利润、负债率等）\n2. 历史交易记录（准时交货率、质量合格率）\n3. 行业口碑与评价\n4. 合规性与资质认证\n5. 风险管理能力\n我们的AI系统会综合这些数据给出量化的信用评分。';
+          break;
+        case '供应商风险预警有哪些指标？':
+          answer = '主要风险预警指标包括：\n1. 财务指标异常（如负债率突增、现金流紧张）\n2. 交付延迟率上升\n3. 产品质量合格率下降\n4. 负面新闻或法律纠纷\n5. 管理层变动\n6. 供应链依赖度风险\n当这些指标达到阈值时，系统会自动发出预警。';
+          break;
+        case '如何进行供应商合规审核？':
+          answer = '供应商合规审核流程包括：\n1. 资质文件审查（营业执照、生产许可证等）\n2. 合规政策评估（环保、安全、劳动保障等）\n3. 现场审核（必要时）\n4. 合规风险评估\n5. 定期复审\n我们的AI系统可以快速识别合规风险点，并生成审核报告。';
+          break;
+        case '供应商违约风险如何防范？':
+          answer = '防范供应商违约风险可以采取以下措施：\n1. 建立完善的供应商准入机制\n2. 签订严谨的合同条款\n3. 实施动态监控与风险预警\n4. 建立备选供应商体系\n5. 合理控制采购比例\n6. 定期进行供应商绩效评估';
+          break;
+        default:
+          answer = '感谢您的提问，我将为您提供专业的供应商信用与风险管控解决方案。请具体说明您的需求，以便我更好地为您服务。';
+      }
+      addMessage(answer, 'ai');
+      scrollToBottom();
+    }, 2000);
+  }
+  // 添加消息到对话区域
+  function addMessage(content, sender, isThinking) {
+    // 创建消息元素
+    var messageDiv = document.createElement('div');
+    messageDiv.className = "flex items-end mb-4 " + (sender === 'user' ? "justify-end" : "justify-start");
+    // 创建头像
+    var avatar = document.createElement('div');
+    avatar.className = "w-10 h-10 rounded-full overflow-hidden " + (sender === 'user' ? "ml-3 mr-0" : 'mr-3');
+    avatar.innerHTML = sender === 'user'
+      ? '<div class="w-full h-full bg-neutral-200 flex items-center justify-center text-neutral-600"><i class="fa-solid fa-user"></i></div>'
+      : '<div class="w-full h-full bg-accent-gradient flex items-center justify-center text-white"><i class="fa-solid fa-robot"></i></div>';
+    // 创建消息内容容器
+    var messageContent = document.createElement('div');
+    messageContent.className = "max-w-[85%]";
+    // 创建消息气泡
+    var messageBubble = document.createElement('div');
+    messageBubble.className = (sender === 'user'
+      ? 'bg-accent-gradient text-white rounded-t-lg rounded-l-lg'
+      : 'bg-white border border-neutral-200 text-neutral-800 rounded-t-lg rounded-r-lg') + " px-4 py-3 shadow-sm";
+    if (isThinking) {
+      messageBubble.classList.add('thinking-message');
+      messageBubble.innerHTML = '<div class="flex items-center"><i class="fa-solid fa-spinner fa-spin mr-2"></i>正在思考...</div>';
+    } else {
+      // 将换行符转换为<br>
+      messageBubble.innerHTML = content.replace(/\n/g, '<br>');
+    }
+    messageContent.appendChild(messageBubble);
+    // 组装消息元素
+    if (sender === 'user') {
+      messageDiv.appendChild(messageContent);
+      messageDiv.appendChild(avatar);
+    } else {
+      messageDiv.appendChild(avatar);
+      messageDiv.appendChild(messageContent);
+    }
+    chatContainer.appendChild(messageDiv);
+  }
+  // 滚动到底部确保最新消息可见
+  function scrollToBottom() {
+    setTimeout(function () {
+      chatContainer.scrollIntoView({
+        behavior: 'smooth',
+        block: 'end'
+      });
+    }, 100);
+  }
+  // 点击提示问题
+  promptQuestions.forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var question = this.textContent.trim();
+      simulateAnswer(question);
+    });
+  });
+  // 发送按钮点击事件
+  sendBtn.addEventListener('click', function () {
+    var question = input.value.trim();
+    if (question) {
+      simulateAnswer(question);
+    }
+  });
+  // 回车发送
+  input.addEventListener('keypress', function (e) {
+    if (e.key === 'Enter') {
+      var question = input.value.trim();
+      if (question) {
+        simulateAnswer(question);
+      }
+    }
+  });
+});
+</script>
+  <!-- [/JSMOD] 7d9_自动问答逻辑 -- 实现提示问题点击交互、自动思考和回答功能 -->
+ </body>
+</html>

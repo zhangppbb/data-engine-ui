@@ -1,0 +1,307 @@
+// Form Item
+@use '../foundation/color/color.scss' as *;
+
+.el-form-item {
+  margin-bottom: var(--spacing-sm);
+  .el-form-item__label {
+    --el-text-color-regular: #{$Grey_1};
+    padding: 0 12px 0 0;
+    font-weight: bold;
+  }
+}
+
+// switch
+.el-switch .el-switch__core {
+  background-color: $Grey_4;
+  border: none;
+}
+
+.el-switch.is-disabled .el-switch__core {
+  background-color: rgba($color: $Grey_4, $alpha: 0.5);
+}
+
+.el-switch.is-checked .el-switch__core {
+  background-color: $Brand_color;
+  border: none;
+}
+
+.el-switch.is-checked.is-disabled .el-switch__core {
+  background-color: rgba($color: $Brand_color, $alpha: 0.5);
+}
+
+// 胶囊单选
+.el-radio-button.is-active .el-radio-button__inner {
+  background-color: $Brand_7;
+  border-color: $Brand_3;
+  color: $Brand_3;
+}
+
+.el-radio-button.is-disabled .el-radio-button__inner {
+  background-color: $Grey_6;
+  border-color: $Grey_6;
+  color: $Grey_4;
+}
+
+// 普通单选
+.el-radio {
+  margin-right: var(--spacing-xs);
+  .el-radio__input {
+    .el-radio__original {
+      border: 1px solid var(--grey5);
+    }
+
+    .el-radio__inner {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      &::after {
+        width: 9px;
+        height: 4px;
+        border: 2px solid $N00;
+        border-top: transparent;
+        border-right: transparent;
+        text-align: unset;
+        display: inline-block;
+        position: static;
+        vertical-align: unset;
+        transform: translate(-2%, -15%) rotate(-45deg) scale(0.7);
+        border-radius: 0px;
+        background: transparent !important;
+      }
+    }
+  }
+
+  .el-radio__label {
+    color: var(--grey-1);
+  }
+
+  .el-radio__input.is-checked + .el-radio__label {
+    color: var(--grey-1);
+  }
+
+  &.el-radio--small .el-radio__input {
+    .el-radio__inner {
+      &::after {
+        width: 8px;
+        height: 3px;
+      }
+    }
+  }
+
+  &.is-disabled {
+    .el-radio__original {
+      background-color: var(--grey-6);
+    }
+
+    .el-radio__label {
+      color: $Grey_4;
+    }
+
+    &.is-checked .el-radio__inner {
+      background-color: rgba($color: $Brand_color, $alpha: 0.5);
+    }
+  }
+}
+
+// 普通多选
+.el-checkbox .el-checkbox__inner {
+  border-color: #d9d9d9;
+
+  &::after {
+    border-width: 2px;
+  }
+}
+
+.el-checkbox.is-disabled.is-checked .el-checkbox__inner {
+  background-color: rgba($color: $Brand_color, $alpha: 0.5);
+
+  &::after {
+    border-color: rgba($color: $N00, $alpha: 0.5);
+    border-width: 2px;
+  }
+}
+
+.el-checkbox .is-indeterminate .el-checkbox__inner {
+  background-color: $N00;
+  border-color: #d9d9d9;
+
+  &::before {
+    background-color: $Brand_color;
+    height: 3px;
+  }
+}
+
+.el-input {
+  --el-input-width: var(--form-item-width);
+  --el-input-placeholder-color: var(--grey-4);
+  --el-disabled-text-color: var(--grey-4);
+  --el-disabled-border-color: var(--grey-5);
+  .el-input__wrapper {
+    &:hover {
+      border-color: $Grey_4;
+    }
+
+    &:active {
+      border-color: $Brand_3;
+    }
+
+    .el-input__inner::placeholder {
+      color: $Grey_4;
+    }
+
+    // 不致痘什么作用，先注释
+    // .el-input__icon {
+    // margin-right: 10px;
+    // }
+  }
+
+  &.is-disabled {
+    .el-input__wrapper {
+      background-color: $Grey_6;
+    }
+  }
+
+  &.right {
+    .el-input__wrapper {
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
+    }
+  }
+}
+
+.el-textarea .el-textarea__inner {
+  --el-input-placeholder-color: var(--grey-4);
+  --el-disabled-text-color: var(--grey-4);
+  --el-disabled-border-color: var(--grey-5);
+  padding: 10px 16px;
+  border: 1px solid $Grey_5;
+
+  &:hover {
+    border-color: $Grey_4;
+  }
+
+  &:active {
+    border-color: $Brand_3;
+  }
+}
+
+// 级联选择器
+.el-cascader {
+  --el-input-placeholder-color: var(--grey-4);
+  --el-disabled-text-color: var(--grey-4);
+  --el-disabled-border-color: var(--grey-5);
+  .el-cascader__tags .el-tag {
+    max-width: 62%;
+    margin: 0 0 0 6px;
+  }
+  .el-input__icon {
+    margin-right: 0 !important;
+  }
+
+  &.right {
+    .el-input__wrapper {
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
+    }
+  }
+
+  &.el-cascader--small {
+    .el-input {
+      --el-input-width: 140px;
+    }
+  }
+}
+
+// 选择框
+.el-select {
+  --el-select-width: var(--form-item-width);
+  --el-text-color-placeholder: var(--grey-4);
+  --el-select-disabled-border: var(--grey-5);
+  --el-fill-color-light: var(--grey-6);
+  .el-select__tags {
+    .el-tag {
+      border: 1px solid $Grey_5;
+      background: #f2f4f7;
+    }
+
+    .el-tag__close {
+      background: $Grey_5;
+    }
+  }
+
+  &.previous {
+    width: 100px;
+    transform: translateX(1px);
+    .el-select__wrapper {
+      background-color: $Grey_6;
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
+    }
+  }
+
+  &.el-select--small {
+    --el-select-width: 140px;
+  }
+}
+
+.el-select-dropdown__item {
+  color: $Grey_2;
+
+  &.hover {
+    background: $Brand_8;
+    color: $Brand_3;
+    font-weight: bold;
+  }
+
+  &.is-disabled {
+    color: $Grey_4;
+  }
+}
+
+.el-date-editor {
+  --el-input-placeholder-color: var(--grey-4);
+  --el-disabled-text-color: var(--grey-4);
+  --el-disabled-border-color: var(--grey-5);
+  --el-date-editor-monthrange-width: var(--form-item-width);
+  &.el-input__wrapper {
+    box-sizing: border-box;
+  }
+
+  &.el-input,
+  &.el-input__wrapper {
+    --el-date-editor-width: var(--form-item-width);
+  }
+}
+
+// 深色主题
+.el-form.dark {
+  .el-select {
+    .el-select__wrapper {
+      --el-border-color: var(--grey-7);
+      --el-fill-color-blank: var(--grey-7);
+    }
+  }
+
+  .el-input {
+    --el-fill-color-blank: var(--grey-7);
+    --el-input-border-color: var(--grey-7);
+  }
+
+  .interval-container {
+    --el-fill-color-light: var(--grey-7);
+    .interval {
+      --el-input-border-color: var(--grey-7);
+      --el-bg-color: var(--grey-7);
+      background-color: var(--el-bg-color) !important;
+    }
+  }
+
+  .el-date-editor {
+    &.el-input,
+    &.el-input__wrapper {
+      --el-input-bg-color: var(--grey-7);
+      --el-input-border-color: var(--grey-7);
+    }
+  }
+}

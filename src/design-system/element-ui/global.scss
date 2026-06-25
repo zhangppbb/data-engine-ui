@@ -1,0 +1,15 @@
+// 这个文件在main.ts中全局引用
+@forward './button.scss';
+@forward './form.scss';
+@forward './dialog.scss';
+@forward './tab.scss';
+@forward './table.scss';
+@forward './drawer.scss';
+@forward './popover.scss';
+@forward './pagination.scss';
+@forward './carousel.scss';
+
+:root {
+  --el-border-color: var(--grey-5);
+  --el-text-color-regular: var(--grey-2);
+}

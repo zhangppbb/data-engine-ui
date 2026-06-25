@@ -1,0 +1,625 @@
+<template>
+  <div class="pages-container bg-stars text-slate-300 min-h-screen relative overflow-x-hidden">
+    <!-- 全局背景光晕 -->
+    <div class="fixed top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
+      <div class="aurora-blur bg-aurora-cyan w-[500px] h-[500px] top-[-100px] left-[-100px] animate-pulse-slow"></div>
+      <div class="aurora-blur bg-aurora-red w-[400px] h-[400px] bottom-[-50px] right-[-50px] opacity-20 animate-pulse-slow animation-delay-1000"></div>
+      <div class="aurora-blur bg-aurora-purple w-[600px] h-[600px] top-[40%] left-[30%] opacity-10 blur-[120px] animate-pulse-slow animation-delay-2000"></div>
+    </div>
+
+    <!-- 主内容 -->
+    <main class="relative z-10 max-w-7xl mx-auto px-6 py-8">
+      <div class="fixed top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
+              <div class="aurora-blur bg-aurora-cyan w-[500px] h-[500px] top-[-100px] left-[-100px]"></div>
+              <div class="aurora-blur bg-aurora-red w-[400px] h-[400px] bottom-[-50px] right-[-50px] opacity-20"></div>
+          </div>
+      
+          
+          
+          <header class="relative z-20 glass-panel-base border-x-0 border-t-0 sticky top-0 bg-void-900/80">
+              <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+                  <div class="flex items-center gap-3">
+                      <router-link to="/pages/index" class="flex items-center gap-3">
+                          <div class="w-8 h-8 rounded-lg bg-accent-gradient flex items-center justify-center shadow-glow-sm">
+                              <i class="fa-solid fa-dog text-void-900 text-lg"></i>
+                          </div>
+                          <div class="flex flex-col">
+                              <span class="text-xl font-bold text-white tracking-wide">数擎平台</span>
+                              <span class="opacity-50 text-[10px] tracking-wide">企业级数据服务平台</span>
+                          </div>
+                      </router-link>
+                  </div>
+                  <nav class="hidden md:flex gap-8 text-sm font-medium flex-1 justify-center">
+                      <router-link to="/pages/index" class="hover:text-aurora-cyan transition-colors">首页</router-link>
+                      <router-link to="/pages/apps/list" class="text-aurora-cyan font-semibold">应用馆</router-link>
+                      <router-link to="/pages/resources/list" class="hover:text-aurora-cyan transition-colors">资源馆</router-link>
+                      <router-link to="/pages/cases/list" class="hover:text-aurora-cyan transition-colors">案例馆</router-link>
+                  </nav>
+                  <div class="flex items-center gap-4">
+                      <router-link to="/pages/workspace" class="text-sm font-medium hover:text-aurora-cyan transition-colors hidden md:block">工作空间</router-link>
+                      
+                      <div class="relative">
+                          <button class="flex items-center gap-2 focus:outline-none" ref="user-menu-button">
+                              <div class="w-8 h-8 rounded-full bg-gradient-to-br from-aurora-cyan to-aurora-green flex items-center justify-center">
+                                  <span class="text-void-900 font-bold">黄</span>
+                              </div>
+                          </button>
+                          
+                          <div class="absolute right-0 mt-2 w-80 glass-panel-base rounded-xl p-4 border border-white/10 shadow-lg z-99999 hidden" ref="user-menu">
+                              <div class="flex items-center gap-3 mb-4">
+                                  <div class="w-12 h-12 rounded-full bg-gradient-to-br from-aurora-cyan to-aurora-green flex items-center justify-center">
+                                      <span class="text-void-900 text-xl font-bold">黄</span>
+                                  </div>
+                                  <div>
+                                      <p class="text-white font-medium">18****48</p>
+                                      <div class="flex items-center gap-1 mt-1">
+                                          <span class="text-xs bg-yellow-500/20 text-yellow-500 px-2 py-0.5 rounded-full">VIP试用</span>
+                                      </div>
+                                  </div>
+                                  <router-link to="/pages/profile" class="ml-auto text-sm text-aurora-cyan hover:text-aurora-green transition">进入个人中心 &gt;</router-link>
+                              </div>
+                              <div class="border-t border-white/10 py-3 mb-3">
+                                  <div class="flex items-center justify-between mb-2">
+                                      <span class="text-slate-400 text-sm">剩余点数</span>
+                                      <span class="text-aurora-green font-bold">1,234</span>
+                                  </div>
+                                  <button class="w-full py-2 rounded-lg bg-aurora-cyan/20 text-aurora-cyan border border-aurora-cyan/30 hover:bg-aurora-cyan/30 transition text-sm">充值</button>
+                              </div>
+                              <div class="grid grid-cols-3 gap-2 mb-4">
+                                  <a href="#" class="flex flex-col items-center p-2 rounded-lg hover:bg-white/5 transition">
+                                      <i class="fa-solid fa-download text-aurora-cyan mb-1"></i>
+                                      <span class="text-xs text-slate-300">下载记录</span>
+                                  </a>
+                                  <a href="#" class="flex flex-col items-center p-2 rounded-lg hover:bg-white/5 transition">
+                                      <i class="fa-solid fa-history text-aurora-cyan mb-1"></i>
+                                      <span class="text-xs text-slate-300">浏览历史</span>
+                                  </a>
+                                  <a href="#" class="flex flex-col items-center p-2 rounded-lg hover:bg-white/5 transition">
+                                      <i class="fa-solid fa-heart text-aurora-cyan mb-1"></i>
+                                      <span class="text-xs text-slate-300">我的关注</span>
+                                  </a>
+                              </div>
+                              <div class="grid grid-cols-3 gap-2">
+                                  <a href="#" class="flex flex-col items-center p-2 rounded-lg hover:bg-white/5 transition">
+                                      <i class="fa-solid fa-building text-aurora-cyan mb-1"></i>
+                                      <span class="text-xs text-slate-300">我的企业</span>
+                                  </a>
+                                  <a href="#" class="flex flex-col items-center p-2 rounded-lg hover:bg-white/5 transition">
+                                      <i class="fa-solid fa-shopping-cart text-aurora-cyan mb-1"></i>
+                                      <span class="text-xs text-slate-300">我的订单</span>
+                                  </a>
+                                  <a href="#" class="flex flex-col items-center p-2 rounded-lg hover:bg-white/5 transition">
+                                      <i class="fa-solid fa-file-invoice text-aurora-cyan mb-1"></i>
+                                      <span class="text-xs text-slate-300">我的发票</span>
+                                  </a>
+                              </div>
+                              <div class="border-t border-white/10 mt-4 pt-4 flex justify-between">
+                                  <a href="#" class="text-sm text-slate-400 hover:text-white transition">客服中心</a>
+                                  <a href="#" class="text-sm text-slate-400 hover:text-white transition">我的反馈</a>
+                                  <a href="#" class="text-sm text-slate-400 hover:text-white transition">退出登录</a>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </header>
+      
+          
+          <main class="relative z-10 max-w-7xl mx-auto px-6 py-8">
+              
+              <div class="mb-6">
+                  <router-link to="/pages/apps/list" class="inline-flex items-center text-slate-400 hover:text-white transition mb-4">
+                      <i class="fa-solid fa-arrow-left mr-2"></i> 返回应用馆
+                  </router-link>
+              </div>
+      
+              <div class="grid lg:grid-cols-3 gap-8">
+                  
+                  <div class="lg:col-span-1">
+                      <div class="card-glass sticky top-24">
+                          <div class="text-center mb-6">
+                              <div class="w-20 h-20 rounded-xl bg-gradient-to-br from-aurora-cyan to-aurora-green mx-auto mb-4 flex items-center justify-center shadow-glow-sm">
+                                  <i class="fa-solid fa-shield-alt text-3xl text-void-900"></i>
+                              </div>
+                              <h1 class="text-2xl font-bold text-white mb-2">企业风险报告生成</h1>
+                              <span class="badge">市场竞争</span>
+                          </div>
+                          
+                          <div class="space-y-4 mb-6">
+                              <p class="text-slate-400 text-sm">
+                                  基于多维数据源生成企业风险分析报告，包含工商、司法、舆情等风险维度，为企业决策提供数据支持。
+                              </p>
+                              <div class="flex items-center gap-2">
+                                  <i class="fa-solid fa-clock text-slate-500"></i>
+                                  <span class="text-slate-400 text-sm">平均响应时间: 5-10秒</span>
+                              </div>
+                              <div class="flex items-center gap-2">
+                                  <i class="fa-solid fa-chart-line text-slate-500"></i>
+                                  <span class="text-slate-400 text-sm">本月使用: 1,245次</span>
+                              </div>
+                          </div>
+      
+                          <div class="border-t border-white/10 pt-6">
+                              <div class="flex items-center justify-between mb-4">
+                                  <div>
+                                      <span class="badge-vip">
+                                          <i class="fa-solid fa-crown mr-1"></i>VIP免费
+                                      </span>
+                                      <p class="text-slate-500 text-xs mt-1">普通用户: 10点/次</p>
+                                  </div>
+                                  <div class="text-right">
+                                      <p class="text-slate-400 text-sm">剩余试用次数</p>
+                                      <p class="text-aurora-green font-bold">3次</p>
+                                  </div>
+                              </div>
+                              <button class="btn-primary w-full py-3" @click="navigateTo('合规审查.html')">
+                                  <i class="fa-solid fa-play mr-2"></i>立即使用（免费）
+                              </button>
+                              <p class="text-slate-500 text-xs text-center mt-3">
+                                  本次操作将消耗0点数（VIP免费权益）
+                              </p>
+                          </div>
+                      </div>
+                  </div>
+      
+                  
+                  <div class="lg:col-span-2">
+                      
+                      <div class="flex border-b border-white/10 mb-6">
+                          <button class="tab-button active" data-tab="intro">介绍</button>
+                          <button class="tab-button" data-tab="features">功能</button>
+                          <button class="tab-button" data-tab="usage">使用说明</button>
+                          <button class="tab-button" data-tab="analysis">分析过程</button>
+                          <button class="tab-button" data-tab="reviews">用户评价</button>
+                      </div>
+      
+                      
+                      <div ref="intro" class="space-y-6">
+                          <div>
+                              <h2 class="text-xl font-bold text-white mb-4">应用介绍</h2>
+                              <p class="text-slate-400 mb-4">
+                                  企业风险报告生成应用是一款基于人工智能和大数据分析的智能工具，能够全面评估企业的风险状况。通过整合工商信息、司法诉讼、舆情监控、财务数据等多维度信息，自动生成专业的企业风险分析报告。
+                              </p>
+                              <p class="text-slate-400">
+                                  本应用特别适用于金融机构的风控部门、投资机构的尽职调查、企业合作伙伴评估等场景，帮助用户快速了解目标企业的风险状况，做出更明智的决策。
+                              </p>
+                          </div>
+      
+                          <div>
+                              <h3 class="text-lg font-bold text-white mb-3">适用场景</h3>
+                              <ul class="space-y-2">
+                                  <li class="flex items-start gap-2">
+                                      <i class="fa-solid fa-check text-aurora-green mt-1"></i>
+                                      <span class="text-slate-400">金融机构对贷款企业的风险评估</span>
+                                  </li>
+                                  <li class="flex items-start gap-2">
+                                      <i class="fa-solid fa-check text-aurora-green mt-1"></i>
+                                      <span class="text-slate-400">投资机构对目标公司的尽职调查</span>
+                                  </li>
+                                  <li class="flex items-start gap-2">
+                                      <i class="fa-solid fa-check text-aurora-green mt-1"></i>
+                                      <span class="text-slate-400">企业对潜在合作伙伴的信用评估</span>
+                                  </li>
+                                  <li class="flex items-start gap-2">
+                                      <i class="fa-solid fa-check text-aurora-green mt-1"></i>
+                                      <span class="text-slate-400">政府监管部门对企业的合规检查</span>
+                                  </li>
+                              </ul>
+                          </div>
+      
+                          <div>
+                              <h3 class="text-lg font-bold text-white mb-3">成果示例</h3>
+                              <div class="bg-void-800/50 border border-white/10 rounded-xl p-4">
+                                  <div class="flex items-center justify-between mb-2">
+                                      <span class="text-slate-400 text-sm">企业风险报告示例摘要</span>
+                                      <button class="text-xs text-aurora-cyan hover:text-aurora-green transition">查看完整报告</button>
+                                  </div>
+                                  <pre class="text-slate-300 text-sm overflow-x-auto">
+      {
+        "企业名称": "XX科技有限公司",
+        "统一社会信用代码": "91310101MA1XXXXXXX",
+        "风险评分": 68,
+        "风险等级": "中等风险",
+        "主要风险点": [
+          "工商异常：经营异常名录（2023年）",
+          "司法诉讼：3起买卖合同纠纷",
+          "舆情风险：近期有2条负面报道"
+        ],
+        "建议": "建议进一步核实经营异常原因，关注诉讼进展，加强舆情监控"
+      }</pre>
+                              </div>
+                          </div>
+                      </div>
+      
+                      
+                      <div ref="features" class="space-y-6 hidden">
+                          <div>
+                              <h2 class="text-xl font-bold text-white mb-4">核心功能</h2>
+                              <div class="grid md:grid-cols-2 gap-4">
+                                  <div class="card-glass">
+                                      <div class="w-10 h-10 rounded-lg bg-aurora-cyan/20 text-aurora-cyan flex items-center justify-center mb-3">
+                                          <i class="fa-solid fa-building"></i>
+                                      </div>
+                                      <h3 class="font-bold text-white mb-2">工商信息分析</h3>
+                                      <p class="text-slate-400 text-sm">全面分析企业工商登记信息，包括注册资本、股东结构、经营范围等</p>
+                                  </div>
+                                  <div class="card-glass">
+                                      <div class="w-10 h-10 rounded-lg bg-aurora-purple/20 text-aurora-purple flex items-center justify-center mb-3">
+                                          <i class="fa-solid fa-gavel"></i>
+                                      </div>
+                                      <h3 class="font-bold text-white mb-2">司法诉讼核查</h3>
+                                      <p class="text-slate-400 text-sm">查询企业涉及的司法诉讼案件，分析案件类型、判决结果、执行情况</p>
+                                  </div>
+                                  <div class="card-glass">
+                                      <div class="w-10 h-10 rounded-lg bg-aurora-red/20 text-aurora-red flex items-center justify-center mb-3">
+                                          <i class="fa-solid fa-newspaper"></i>
+                                      </div>
+                                      <h3 class="font-bold text-white mb-2">舆情监控</h3>
+                                      <p class="text-slate-400 text-sm">监控企业在各大媒体平台的舆情信息，识别负面报道和风险事件</p>
+                                  </div>
+                                  <div class="card-glass">
+                                      <div class="w-10 h-10 rounded-lg bg-aurora-green/20 text-aurora-green flex items-center justify-center mb-3">
+                                          <i class="fa-solid fa-chart-pie"></i>
+                                      </div>
+                                      <h3 class="font-bold text-white mb-2">风险评分模型</h3>
+                                      <p class="text-slate-400 text-sm">基于多维度数据构建风险评分模型，输出0-100的风险评分和等级</p>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+      
+                      
+                      <div ref="usage" class="space-y-6 hidden">
+                          <div>
+                              <h2 class="text-xl font-bold text-white mb-4">使用说明</h2>
+                              <div class="space-y-4">
+                                  <div class="flex gap-4">
+                                      <div class="w-8 h-8 rounded-full bg-accent-gradient flex items-center justify-center text-void-900 font-bold">1</div>
+                                      <div>
+                                          <h3 class="font-bold text-white mb-1">输入企业信息</h3>
+                                          <p class="text-slate-400 text-sm">输入企业名称或统一社会信用代码，支持模糊搜索</p>
+                                      </div>
+                                  </div>
+                                  <div class="flex gap-4">
+                                      <div class="w-8 h-8 rounded-full bg-accent-gradient flex items-center justify-center text-void-900 font-bold">2</div>
+                                      <div>
+                                          <h3 class="font-bold text-white mb-1">确认消耗点数</h3>
+                                          <p class="text-slate-400 text-sm">VIP用户免费，普通用户确认消耗10点数</p>
+                                      </div>
+                                  </div>
+                                  <div class="flex gap-4">
+                                      <div class="w-8 h-8 rounded-full bg-accent-gradient flex items-center justify-center text-void-900 font-bold">3</div>
+                                      <div>
+                                          <h3 class="font-bold text-white mb-1">生成报告</h3>
+                                          <p class="text-slate-400 text-sm">系统自动收集分析数据，5-10秒内生成完整风险报告</p>
+                                      </div>
+                                  </div>
+                                  <div class="flex gap-4">
+                                      <div class="w-8 h-8 rounded-full bg-accent-gradient flex items-center justify-center text-void-900 font-bold">4</div>
+                                      <div>
+                                          <h3 class="font-bold text-white mb-1">查看与导出</h3>
+                                          <p class="text-slate-400 text-sm">在线查看报告，支持PDF、Word格式导出</p>
+                                      </div>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+      
+                      
+                      <div ref="analysis" class="space-y-6 hidden">
+                          <div>
+                              <h2 class="text-xl font-bold text-white mb-4">分析过程说明</h2>
+                              
+                              <div class="space-y-6">
+                                  
+                                  <div class="card-glass">
+                                      <h3 class="font-bold text-white mb-3">数据来源</h3>
+                                      <ul class="space-y-2 text-slate-400 text-sm">
+                                          <li class="flex items-start gap-2">
+                                              <i class="fa-solid fa-database text-aurora-cyan mt-1"></i>
+                                              <span>国家企业信用信息公示系统</span>
+                                          </li>
+                                          <li class="flex items-start gap-2">
+                                              <i class="fa-solid fa-database text-aurora-cyan mt-1"></i>
+                                              <span>中国裁判文书网</span>
+                                          </li>
+                                          <li class="flex items-start gap-2">
+                                              <i class="fa-solid fa-database text-aurora-cyan mt-1"></i>
+                                              <span>信用中国</span>
+                                          </li>
+                                          <li class="flex items-start gap-2">
+                                              <i class="fa-solid fa-database text-aurora-cyan mt-1"></i>
+                                              <span>企查查、天眼查等第三方数据平台</span>
+                                          </li>
+                                          <li class="flex items-start gap-2">
+                                              <i class="fa-solid fa-database text-aurora-cyan mt-1"></i>
+                                              <span>主流媒体舆情数据</span>
+                                          </li>
+                                      </ul>
+                                  </div>
+      
+                                  
+                                  <div class="card-glass">
+                                      <h3 class="font-bold text-white mb-3">API使用</h3>
+                                      <ul class="space-y-2 text-slate-400 text-sm">
+                                          <li class="flex items-start gap-2">
+                                              <i class="fa-solid fa-code text-aurora-purple mt-1"></i>
+                                              <span>企业工商信息API</span>
+                                          </li>
+                                          <li class="flex items-start gap-2">
+                                              <i class="fa-solid fa-code text-aurora-purple mt-1"></i>
+                                              <span>司法诉讼查询API</span>
+                                          </li>
+                                          <li class="flex items-start gap-2">
+                                              <i class="fa-solid fa-code text-aurora-purple mt-1"></i>
+                                              <span>失信被执行人查询API</span>
+                                          </li>
+                                          <li class="flex items-start gap-2">
+                                              <i class="fa-solid fa-code text-aurora-purple mt-1"></i>
+                                              <span>舆情监控API</span>
+                                          </li>
+                                          <li class="flex items-start gap-2">
+                                              <i class="fa-solid fa-code text-aurora-purple mt-1"></i>
+                                              <span>企业关联关系分析API</span>
+                                          </li>
+                                      </ul>
+                                  </div>
+      
+                                  
+                                  <div class="card-glass">
+                                      <h3 class="font-bold text-white mb-3">分析方法</h3>
+                                      <ul class="space-y-2 text-slate-400 text-sm">
+                                          <li class="flex items-start gap-2">
+                                              <i class="fa-solid fa-chart-line text-aurora-green mt-1"></i>
+                                              <span>多维度风险指标体系构建</span>
+                                          </li>
+                                          <li class="flex items-start gap-2">
+                                              <i class="fa-solid fa-chart-line text-aurora-green mt-1"></i>
+                                              <span>层次分析法(AHP)确定指标权重</span>
+                                          </li>
+                                          <li class="flex items-start gap-2">
+                                              <i class="fa-solid fa-chart-line text-aurora-green mt-1"></i>
+                                              <span>行业基准对比分析</span>
+                                          </li>
+                                          <li class="flex items-start gap-2">
+                                              <i class="fa-solid fa-chart-line text-aurora-green mt-1"></i>
+                                              <span>历史趋势分析</span>
+                                          </li>
+                                          <li class="flex items-start gap-2">
+                                              <i class="fa-solid fa-chart-line text-aurora-green mt-1"></i>
+                                              <span>关联企业风险传导分析</span>
+                                          </li>
+                                      </ul>
+                                  </div>
+      
+                                  
+                                  <div class="card-glass">
+                                      <h3 class="font-bold text-white mb-3">模型说明</h3>
+                                      <div class="text-slate-400 text-sm space-y-3">
+                                          <p>本应用采用机器学习模型进行风险评估，主要包括：</p>
+                                          <ul class="space-y-2">
+                                              <li class="flex items-start gap-2">
+                                                  <i class="fa-solid fa-brain text-aurora-red mt-1"></i>
+                                                  <span>基于随机森林的风险分类模型</span>
+                                              </li>
+                                              <li class="flex items-start gap-2">
+                                                  <i class="fa-solid fa-brain text-aurora-red mt-1"></i>
+                                                  <span>基于梯度提升树的风险评分模型</span>
+                                              </li>
+                                              <li class="flex items-start gap-2">
+                                                  <i class="fa-solid fa-brain text-aurora-red mt-1"></i>
+                                                  <span>自然语言处理模型用于舆情分析</span>
+                                              </li>
+                                          </ul>
+                                          <p class="mt-2">模型训练数据覆盖了2018-2025年的企业风险案例，准确率达到85%以上。</p>
+                                      </div>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+      
+                      
+                      <div ref="reviews" class="space-y-6 hidden">
+                          <div>
+                              <h2 class="text-xl font-bold text-white mb-4">用户评价</h2>
+                              <div class="flex items-center gap-4 mb-6">
+                                  <div class="text-center">
+                                      <div class="text-3xl font-bold text-white mb-1">4.8</div>
+                                      <div class="flex">
+                                          <i class="fa-solid fa-star text-yellow-500"></i>
+                                          <i class="fa-solid fa-star text-yellow-500"></i>
+                                          <i class="fa-solid fa-star text-yellow-500"></i>
+                                          <i class="fa-solid fa-star text-yellow-500"></i>
+                                          <i class="fa-solid fa-star-half-alt text-yellow-500"></i>
+                                      </div>
+                                      <p class="text-slate-500 text-xs mt-1">基于1245条评价</p>
+                                  </div>
+                              </div>
+                          </div>
+      
+                          <div class="space-y-4">
+                              <div class="card-glass">
+                                  <div class="flex items-start justify-between mb-3">
+                                      <div class="flex items-center gap-3">
+                                          <div class="w-10 h-10 rounded-full bg-gradient-to-br from-aurora-cyan to-aurora-green flex items-center justify-center">
+                                              <span class="text-void-900 font-bold">黄</span>
+                                          </div>
+                                          <div>
+                                              <h4 class="font-bold text-white">张经理</h4>
+                                              <div class="flex items-center gap-1">
+                                                  <i class="fa-solid fa-star text-yellow-500 text-xs"></i>
+                                                  <i class="fa-solid fa-star text-yellow-500 text-xs"></i>
+                                                  <i class="fa-solid fa-star text-yellow-500 text-xs"></i>
+                                                  <i class="fa-solid fa-star text-yellow-500 text-xs"></i>
+                                                  <i class="fa-solid fa-star text-yellow-500 text-xs"></i>
+                                              </div>
+                                          </div>
+                                      </div>
+                                      <span class="text-slate-500 text-xs">2024-03-15</span>
+                                  </div>
+                                  <p class="text-slate-400 text-sm">
+                                      作为银行风控部门，我们每天需要处理大量企业风险评估。这个应用大大提高了我们的工作效率，报告质量专业，数据准确度高，值得推荐！
+                                  </p>
+                              </div>
+      
+                              <div class="card-glass">
+                                  <div class="flex items-start justify-between mb-3">
+                                      <div class="flex items-center gap-3">
+                                          <div class="w-10 h-10 rounded-full bg-gradient-to-br from-aurora-purple to-aurora-cyan flex items-center justify-center">
+                                              <span class="text-white font-bold">王</span>
+                                          </div>
+                                          <div>
+                                              <h4 class="font-bold text-white">王投资总监</h4>
+                                              <div class="flex items-center gap-1">
+                                                  <i class="fa-solid fa-star text-yellow-500 text-xs"></i>
+                                                  <i class="fa-solid fa-star text-yellow-500 text-xs"></i>
+                                                  <i class="fa-solid fa-star text-yellow-500 text-xs"></i>
+                                                  <i class="fa-solid fa-star text-yellow-500 text-xs"></i>
+                                                  <i class="fa-solid fa-star-half-alt text-yellow-500 text-xs"></i>
+                                              </div>
+                                          </div>
+                                      </div>
+                                      <span class="text-slate-500 text-xs">2024-03-10</span>
+                                  </div>
+                                  <p class="text-slate-400 text-sm">
+                                      尽职调查的利器！以前需要几天时间收集整理的数据，现在几分钟就能生成完整报告。VIP免费权益对我们机构用户非常友好。
+                                  </p>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </main>
+      
+          <footer class="relative z-10 max-w-7xl mx-auto px-6 py-8 mt-12 border-t border-white/10">
+              <div class="flex flex-col md:flex-row justify-between items-center">
+                  <div class="text-slate-500 text-sm">
+                      © 2025 数擎平台 · 企业级数据服务平台
+                  </div>
+                  <div class="flex gap-6 mt-4 md:mt-0 text-sm">
+                      <a href="#" class="text-slate-400 hover:text-white transition">服务协议</a>
+                      <a href="#" class="text-slate-400 hover:text-white transition">隐私政策</a>
+                      <a href="#" class="text-slate-400 hover:text-white transition">帮助中心</a>
+                      <a href="#" class="text-slate-400 hover:text-white transition">联系我们</a>
+                  </div>
+              </div>
+          </footer>
+    </main>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref, onMounted, nextTick } from 'vue'
+import { useRouter } from 'vue-router'
+import Icon from '@/components/Icon/src/Icon.vue'
+
+const router = useRouter()
+
+// 页面状态
+const loading = ref(false)
+
+// 导航方法
+const navigateTo = (path: string) => {
+  const routeMap: Record<string, string> = {
+    'index.html': '/pages/index',
+    'dashboard.html': '/pages/dashboard',
+    'workspace.html': '/pages/workspace',
+    'profile.html': '/pages/profile',
+    'search-results.html': '/pages/search-results',
+    'apps/apps.html': '/pages/apps/list',
+    'cases/cases.html': '/pages/cases/list',
+    'resources/resources.html': '/pages/resources/list'
+  }
+  const route = routeMap[path] || path.replace('.html', '')
+  router.push(route)
+}
+
+onMounted(() => {
+  // 页面初始化
+  console.log('应用详情 页面加载完成')
+})
+</script>
+
+<style scoped lang="scss">
+
+
+@layer utilities {
+            .bg-stars {
+                background-color: #02040a;
+                background-image: 
+                    radial-gradient(white, rgb(255 255 255 / 20%) 2px, transparent 3px),
+                    radial-gradient(white, rgb(255 255 255 / 15%) 1px, transparent 2px),
+                    radial-gradient(white, rgb(255 255 255 / 10%) 2px, transparent 3px);
+                background-position: 0 0, 40px 60px, 130px 270px;
+                background-size: 550px 550px, 350px 350px, 250px 250px;
+            }
+
+            .text-gradient {
+                color: transparent;
+                background: linear-gradient(to right, #00d2ff, #00ffa3);
+                background-clip: text;
+                background-clip: text;
+                -webkit-text-fill-color: transparent;
+            }
+
+            .aurora-blur {
+                position: absolute;
+                z-index: 0;
+                pointer-events: none;
+                border-radius: 50%;
+                opacity: 0.4;
+                filter: blur(80px);
+            }
+
+            .glass-panel-base {
+                background: rgb(11 16 33 / 95%);
+                border: 1px solid rgb(255 255 255 / 8%);
+                box-shadow: 0 4px 30px rgb(0 0 0 / 10%);
+                backdrop-filter: blur(12px);
+                backdrop-filter: blur(12px);
+            }
+        }
+
+        @layer components {
+            .btn-primary {
+                @apply relative overflow-hidden inline-flex items-center justify-center px-8 py-3 rounded-full font-bold text-void-900 transition-all duration-300;
+
+                background: linear-gradient(90deg, #00d2ff 0%, #00ffa3 100%);
+            }
+
+            .btn-primary:hover {
+                @apply shadow-glow-md transform -translate-y-0.5 scale-105;
+            }
+
+            .card-glass {
+                @apply glass-panel-base rounded-2xl p-6 transition-all duration-300 hover:bg-white/5 hover:border-aurora-cyan/30 hover:shadow-glow-sm;
+            }
+
+            .badge {
+                @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider bg-white/5 border border-white/10 text-aurora-cyan;
+            }
+
+            .badge-vip {
+                @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-gradient-to-r from-yellow-500 to-orange-500 text-void-900;
+            }
+
+            .tab-button {
+                @apply px-4 py-2 text-sm font-medium transition-all cursor-pointer border-b-2 border-transparent text-slate-400;
+            }
+
+            .tab-button.active {
+                @apply text-aurora-cyan border-aurora-cyan;
+            }
+        }
+
+        body {
+            @apply selection:bg-aurora-cyan/30 selection:text-white font-body;
+        }
+
+// 页面特定样式
+.pages-container {
+  min-height: calc(100vh - 84px);
+}
+
+
+</style>

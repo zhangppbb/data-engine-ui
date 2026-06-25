@@ -1,0 +1,1355 @@
+<html lang="zh-CN">
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>
+   多行业案例馆 - 专业解决方案服务商
+  </title>
+  <script src="https://res.gemcoder.com/js/reload.js">
+  </script>
+  <script src="https://cdn.tailwindcss.com">
+  </script>
+  <link href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+  <script>
+   tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        void: {
+          900: '#02040a',
+          // 深渊黑
+          800: '#050b14',
+          // 深空蓝
+          700: '#0a1525'
+        },
+        aurora: {
+          green: '#00ffa3',
+          // 极光绿
+          cyan: '#00d2ff',
+          // 赛博蓝
+          purple: '#7000ff',
+          // 伴生紫
+          nav: '#0b1021'
+        },
+        glass: {
+          surface: 'rgba(255, 255, 255, 0.03)',
+          stroke: 'rgba(255, 255, 255, 0.08)',
+          highlight: 'rgba(255, 255, 255, 0.15)'
+        }
+      },
+      fontFamily: {
+        display: ['system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'sans-serif'],
+        body: ['system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'sans-serif']
+      },
+      boxShadow: {
+        'glow-sm': '0 0 10px rgba(0, 255, 163, 0.2)',
+        'glow-md': '0 0 20px rgba(0, 210, 255, 0.3)',
+        'glow-lg': '0 0 30px rgba(0, 255, 163, 0.4)',
+        'glass': '0 8px 32px 0 rgba(0, 0, 0, 0.36)'
+      },
+      backgroundImage: {
+        'aurora-gradient': 'linear-gradient(135deg, #050b14 0%, #0a1525 100%)',
+        'accent-gradient': 'linear-gradient(90deg, #00d2ff 0%, #00ffa3 100%)'
+      },
+      animation: {
+        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+        'float': 'float 6s ease-in-out infinite'
+      },
+      keyframes: {
+        float: {
+          '0%, 100%': {
+            transform: 'translateY(0)'
+          },
+          '50%': {
+            transform: 'translateY(-10px)'
+          }
+        }
+      }
+    }
+  }
+};
+  </script>
+  <style type="text/tailwindcss">
+   @layer utilities {
+            /* 星空粒子背景模拟 */
+            .bg-stars {
+                background-color: #02040a;
+                background-image: 
+                    radial-gradient(white, rgba(255,255,255,.2) 2px, transparent 3px),
+                    radial-gradient(white, rgba(255,255,255,.15) 1px, transparent 2px),
+                    radial-gradient(white, rgba(255,255,255,.1) 2px, transparent 3px);
+                background-size: 550px 550px, 350px 350px, 250px 250px;
+                background-position: 0 0, 40px 60px, 130px 270px;
+            }
+            /* 文本渐变 */
+            .text-gradient {
+                background: linear-gradient(to right, #00d2ff, #00ffa3);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+                color: transparent;
+            }
+            
+            /* 极光背景光晕 */
+            .aurora-blur {
+                position: absolute;
+                filter: blur(80px);
+                opacity: 0.4;
+                z-index: 0;
+                border-radius: 50%;
+                pointer-events: none;
+            }
+            /* 磨砂玻璃面板工具类 */
+            .glass-panel-base {
+                background: rgba(255, 255, 255, 0.03);
+                backdrop-filter: blur(12px);
+                -webkit-backdrop-filter: blur(12px);
+                border: 1px solid rgba(255, 255, 255, 0.08);
+                box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            }
+            
+            /* 细微的网格背景 */
+            .bg-grid-white {
+                background-image: linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+                                  linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+                background-size: 40px 40px;
+            }
+        }
+        @layer components {
+            /* 按钮组件 */
+            .btn-primary {
+                @apply relative overflow-hidden inline-flex items-center justify-center px-8 py-3 rounded-full font-bold text-void-900 transition-all duration-300;
+                background: linear-gradient(90deg, #00d2ff 0%, #00ffa3 100%);
+            }
+            .btn-primary:hover {
+                @apply shadow-glow-md transform -translate-y-0.5 scale-105;
+            }
+            .btn-secondary {
+                @apply inline-flex items-center justify-center px-8 py-3 rounded-full font-medium text-white transition-all duration-300 border border-white/20 hover:border-aurora-cyan/50 hover:bg-white/5;
+            }
+            .btn-link {
+                @apply inline-flex items-center text-aurora-cyan hover:text-aurora-green transition-colors font-medium text-sm;
+            }
+            .filter-tag {
+                @apply px-4 py-2 rounded-full text-sm border border-white/10 bg-white/5 text-slate-300 cursor-pointer transition-all duration-300 hover:border-aurora-cyan/50 hover:text-aurora-cyan;
+            }
+            
+            .filter-tag.active {
+                @apply bg-accent-gradient text-void-900 border-transparent font-semibold shadow-glow-sm;
+            }
+            /* 卡片组件 */
+            .card-glass {
+                @apply glass-panel-base rounded-2xl p-6 transition-all duration-300 hover:bg-white/5 hover:border-aurora-cyan/30 hover:shadow-glow-sm;
+            }
+            /* 标签徽章 */
+            .badge {
+                @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider bg-white/5 border border-white/10 text-aurora-cyan;
+            }
+            /* 输入框 */
+            .input-glass {
+                @apply w-full bg-void-900/50 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-aurora-cyan/50 focus:ring-1 focus:ring-aurora-cyan/50 transition-all;
+            }
+        }
+        
+        body {
+            @apply selection:bg-aurora-cyan/30 selection:text-white font-body;
+        }
+        .filter-item.hidden {
+            display: none !important;
+        }
+  </style>
+ </head>
+ <body class="bg-stars text-slate-300 min-h-screen relative overflow-x-hidden">
+  <!-- 全局背景光晕 -->
+  <div class="fixed top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
+   <div class="aurora-blur bg-aurora-cyan w-[500px] h-[500px] top-[-100px] left-[-100px] animate-pulse-slow">
+   </div>
+   <div class="aurora-blur bg-aurora-green w-[400px] h-[400px] bottom-[-50px] right-[-50px] opacity-20">
+   </div>
+   <div class="aurora-blur bg-aurora-purple w-[600px] h-[600px] top-[40%] left-[30%] opacity-10 blur-[120px]">
+   </div>
+  </div>
+    <!-- 顶部导航栏 -->
+    <header class="relative z-20 glass-panel-base border-x-0 border-t-0 sticky top-0 bg-void-900/80">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <a href="../index.html" class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-lg bg-accent-gradient flex items-center justify-center shadow-glow-sm">
+                        <i class="fa-solid fa-dog text-void-900 text-lg"></i>
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="text-xl font-bold text-white tracking-wide">数擎平台</span>
+                        <span class="opacity-50 text-[10px] tracking-wide">企业级数据服务平台</span>
+                    </div>
+                </a>
+            </div>
+            <nav class="hidden md:flex gap-8 text-sm font-medium flex-1 justify-center">
+                <a href="../index.html" class="hover:text-aurora-cyan transition-colors">首页</a>
+                <a href="../apps/apps.html" class="hover:text-aurora-cyan transition-colors">应用馆</a>
+                <a href="../resources/resources.html" class="hover:text-aurora-cyan transition-colors">资源馆</a>
+                <a href="cases.html" class="text-aurora-green font-semibold">案例馆</a>
+            </nav>
+            <div class="flex items-center gap-4">
+                <a href="../workspace.html" class="text-sm font-medium hover:text-aurora-cyan transition-colors hidden md:block">工作空间</a>
+                <!-- 用户头像下拉菜单 -->
+                <div class="relative">
+                    <button class="flex items-center gap-2 focus:outline-none" id="user-menu-button">
+                        <div class="w-8 h-8 rounded-full bg-gradient-to-br from-aurora-cyan to-aurora-green flex items-center justify-center">
+                            <span class="text-void-900 font-bold">黄</span>
+                        </div>
+                    </button>
+                    <!-- 下拉菜单 -->
+                    <div class="absolute right-0 mt-2 w-80 glass-panel-base rounded-xl p-4 border border-white/10 shadow-lg z-99999 hidden" id="user-menu">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="w-12 h-12 rounded-full bg-gradient-to-br from-aurora-cyan to-aurora-green flex items-center justify-center">
+                                <span class="text-void-900 text-xl font-bold">黄</span>
+                            </div>
+                            <div>
+                                <p class="text-white font-medium">18****48</p>
+                                <div class="flex items-center gap-1 mt-1">
+                                    <span class="text-xs bg-yellow-500/20 text-yellow-500 px-2 py-0.5 rounded-full">VIP试用</span>
+                                </div>
+                            </div>
+                            <a href="../profile.html" class="ml-auto text-sm text-aurora-cyan hover:text-aurora-green transition">进入个人中心 &gt;</a>
+                        </div>
+                        <div class="border-t border-white/10 py-3 mb-3">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-slate-400 text-sm">客户类型：</span>
+                                <span class="text-white font-medium" id="current-client-type">投资类客户</span>
+                            </div>
+                            <div class="grid grid-cols-2 gap-2 mt-2">
+                                <button class="py-2 px-3 rounded-lg text-sm bg-white/5 border border-white/10 hover:border-aurora-cyan/50 hover:bg-aurora-cyan/10 transition client-type-option" data-type="investment">投资类客户</button>
+                                <button class="py-2 px-3 rounded-lg text-sm bg-white/5 border border-white/10 hover:border-aurora-cyan/50 hover:bg-aurora-cyan/10 transition client-type-option" data-type="market">市场类客户</button>
+                                <button class="py-2 px-3 rounded-lg text-sm bg-white/5 border border-white/10 hover:border-aurora-cyan/50 hover:bg-aurora-cyan/10 transition client-type-option" data-type="enterprise">企业类客户</button>
+                                <button class="py-2 px-3 rounded-lg text-sm bg-white/5 border border-white/10 hover:border-aurora-cyan/50 hover:bg-aurora-cyan/10 transition client-type-option" data-type="government">政府类客户</button>
+                            </div>
+                        </div>
+                        <div class="border-t border-white/10 py-3 mb-3">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-slate-400 text-sm">剩余点数：</span>
+                                <span class="text-aurora-green font-bold">1,234</span>
+                            </div>
+                            <button class="w-full py-2 rounded-lg bg-aurora-cyan/20 text-aurora-cyan border border-aurora-cyan/30 hover:bg-aurora-cyan/30 transition text-sm">充值</button>
+                        </div>
+                        <div class="grid grid-cols-3 gap-2 mb-4">
+                            <a href="#" class="flex flex-col items-center p-2 rounded-lg hover:bg-white/5 transition">
+                                <i class="fa-solid fa-download text-aurora-cyan mb-1"></i>
+                                <span class="text-xs text-slate-300">下载记录</span>
+                            </a>
+                            <a href="#" class="flex flex-col items-center p-2 rounded-lg hover:bg-white/5 transition">
+                                <i class="fa-solid fa-history text-aurora-cyan mb-1"></i>
+                                <span class="text-xs text-slate-300">浏览历史</span>
+                            </a>
+                            <a href="#" class="flex flex-col items-center p-2 rounded-lg hover:bg-white/5 transition">
+                                <i class="fa-solid fa-heart text-aurora-cyan mb-1"></i>
+                                <span class="text-xs text-slate-300">我的关注</span>
+                            </a>
+                        </div>
+                        <div class="grid grid-cols-3 gap-2">
+                            <a href="#" class="flex flex-col items-center p-2 rounded-lg hover:bg-white/5 transition">
+                                <i class="fa-solid fa-building text-aurora-cyan mb-1"></i>
+                                <span class="text-xs text-slate-300">我的企业</span>
+                            </a>
+                            <a href="#" class="flex flex-col items-center p-2 rounded-lg hover:bg-white/5 transition">
+                                <i class="fa-solid fa-shopping-cart text-aurora-cyan mb-1"></i>
+                                <span class="text-xs text-slate-300">我的订单</span>
+                            </a>
+                            <a href="#" class="flex flex-col items-center p-2 rounded-lg hover:bg-white/5 transition">
+                                <i class="fa-solid fa-file-invoice text-aurora-cyan mb-1"></i>
+                                <span class="text-xs text-slate-300">我的发票</span>
+                            </a>
+                        </div>
+                        <div class="border-t border-white/10 mt-4 pt-4 flex justify-between">
+                            <a href="#" class="text-sm text-slate-400 hover:text-white transition">客服中心</a>
+                            <a href="#" class="text-sm text-slate-400 hover:text-white transition">我的反馈</a>
+                            <a href="#" class="text-sm text-slate-400 hover:text-white transition">退出登录</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+  <main class="relative z-10 max-w-7xl mx-auto px-6 py-12 space-y-16">
+   <!-- [MODULE] 12a_公司实力展示区域 -->
+   <!-- [MODULE] 47b_顶部公司实力展示 -->
+   <section class="relative overflow-hidden rounded-3xl glass-panel-base p-8 md:p-12">
+    <div class="relative max-w-3xl mx-auto text-center">
+     <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-aurora-cyan/10 border border-aurora-cyan/20 text-aurora-cyan text-xs font-bold uppercase tracking-wider mb-6">
+      <span class="w-2 h-2 rounded-full bg-aurora-green animate-pulse">
+      </span>
+      实力鉴证
+     </div>
+     <h1 class="text-4xl md:text-5xl font-bold text-white mb-6 leading-tight">
+      <span class="text-gradient">
+       专业团队
+      </span>
+      <br/>
+      具备多行业解决方案
+     </h1>
+     <p class="text-lg md:text-xl text-slate-300 leading-relaxed mb-8">
+      我们拥有专业的技术团队和丰富的行业经验，致力于为各领域客户提供定制化解决方案
+     </p>
+     <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div class="flex flex-col items-center gap-2 px-4 py-6 rounded-lg bg-white/5 border border-white/10">
+       <i class="fa-solid fa-users text-aurora-cyan text-2xl">
+       </i>
+       <span class="text-white text-xl font-bold">
+        500+
+       </span>
+       <span class="text-slate-400 text-sm">
+        服务客户
+       </span>
+      </div>
+      <div class="flex flex-col items-center gap-2 px-4 py-6 rounded-lg bg-white/5 border border-white/10">
+       <i class="fa-solid fa-certificate text-aurora-cyan text-2xl">
+       </i>
+       <span class="text-white text-xl font-bold">
+        100+
+       </span>
+       <span class="text-slate-400 text-sm">
+        成功案例
+       </span>
+      </div>
+      <div class="flex flex-col items-center gap-2 px-4 py-6 rounded-lg bg-white/5 border border-white/10">
+       <i class="fa-solid fa-industry text-aurora-cyan text-2xl">
+       </i>
+       <span class="text-white text-xl font-bold">
+        12+
+       </span>
+       <span class="text-slate-400 text-sm">
+        覆盖行业
+       </span>
+      </div>
+      <div class="flex flex-col items-center gap-2 px-4 py-6 rounded-lg bg-white/5 border border-white/10">
+       <i class="fa-solid fa-user-tie text-aurora-cyan text-2xl">
+       </i>
+       <span class="text-white text-xl font-bold">
+        150+
+       </span>
+       <span class="text-slate-400 text-sm">
+        专业团队
+       </span>
+      </div>
+     </div>
+    </div>
+   </section>
+   <!-- [/MODULE] 47b_顶部公司实力展示 -- 展示公司团队、资金、背景实力，搭配核心数据，奠定专业基调 -->
+   <!-- [/MODULE] 12a_公司实力展示区域 -->
+   <!-- [MODULE] 34f_导航筛选区域 -->
+   <section class="glass-panel-base rounded-2xl p-6 bg-grid-white">
+    <h3 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+     <i class="fa-solid fa-filter-list text-aurora-cyan">
+     </i>
+     行业筛选
+    </h3>
+    <div class="flex flex-wrap gap-3" id="filter-container">
+     <button class="filter-tag active" data-filter="all">
+      全部行业
+     </button>
+     <button class="filter-tag" data-filter="market">
+      市场竞争分析
+     </button>
+     <button class="filter-tag" data-filter="enterprise">
+      企业分析
+     </button>
+     <button class="filter-tag" data-filter="chain">
+      产业链
+     </button>
+     <button class="filter-tag" data-filter="energy">
+      交能融合
+     </button>
+     <button class="filter-tag" data-filter="transport">
+      交通数字底座
+     </button>
+     <button class="filter-tag" data-filter="investment">
+      产业招商
+     </button>
+     <button class="filter-tag" data-filter="university">
+      校企成果转化
+     </button>
+     <button class="filter-tag" data-filter="supply">
+      供应链金融
+     </button>
+     <button class="filter-tag" data-filter="research">
+      投资研判
+     </button>
+    </div>
+   </section>
+   <!-- [/MODULE] 34f_导航筛选区域 -- 提供各行业筛选功能，点击可筛选对应行业项目 -->
+   <!-- [MODULE] 56k_核心案例展示区域 -->
+   <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="case-container">
+    <!-- 市场竞争分析 -->
+    <!-- [MODULE] 76g_市场竞争分析案例卡片 -->
+    <div class="filter-item" data-category="market">
+     <a href="case-detail.html" class="block">
+     <div class="card-glass p-0 overflow-hidden group cursor-pointer">
+      <div class="h-48 overflow-hidden relative">
+       <img alt="电商行业竞争分析项目" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" src="https://design.gemcoder.com/api/searchImage?query=business data analytics dashboard with market share bar charts and competitor analysis, dark professional background, modern data visualization&amp;width=600&amp;height=400"/>
+       <div class="absolute top-4 left-4">
+        <span class="badge">
+         市场竞争分析
+        </span>
+       </div>
+      </div>
+      <div class="p-6">
+       <h3 class="text-xl font-bold text-white mb-2 group-hover:text-aurora-cyan transition-colors" >
+        头部电商平台竞争格局分析
+       </h3>
+       <p class="text-sm text-slate-400 mb-4">
+        帮助头部电商平台梳理行业竞争格局，识别竞争对手优势劣势，提供战略发展建议。
+       </p>
+       <div class="flex flex-wrap gap-2 mb-4">
+        <span class="px-2 py-1 rounded-full bg-aurora-cyan/10 text-aurora-cyan text-xs">
+         用户画像
+        </span>
+        <span class="px-2 py-1 rounded-full bg-aurora-green/10 text-aurora-green text-xs">
+         竞品监测
+        </span>
+        <span class="px-2 py-1 rounded-full bg-white/5 text-slate-300 text-xs">
+         战略咨询
+        </span>
+       </div>
+       <div class="flex justify-between items-center pt-4 border-t border-white/5">
+        <span class="text-xs text-slate-500">
+         更新于 2024.03
+        </span>
+        <i class="fa-solid fa-arrow-right text-white/20 group-hover:text-aurora-green transition-colors">
+        </i>
+       </div>
+      </div>
+     </div>
+     </a>
+    </div>
+    <div class="filter-item" data-category="market">
+     <a href="case-detail.html" class="block">
+     <div class="card-glass p-0 overflow-hidden group cursor-pointer">
+      <div class="h-48 overflow-hidden relative">
+       <img alt="新能源汽车市场分析" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" src="https://design.gemcoder.com/api/searchImage?query=new energy vehicle market trend analysis infographic, multiple brand logos, data visualization, dark professional background&amp;width=600&amp;height=400"/>
+       <div class="absolute top-4 left-4">
+        <span class="badge">
+         市场竞争分析
+        </span>
+       </div>
+      </div>
+      <div class="p-6">
+       <h3 class="text-xl font-bold text-white mb-2 group-hover:text-aurora-cyan transition-colors">
+        新能源汽车细分市场进入分析
+       </h3>
+       <p class="text-sm text-slate-400 mb-4">
+        为传统车企进入新能源细分市场提供可行性分析，识别市场机会与风险点。
+       </p>
+       <div class="flex flex-wrap gap-2 mb-4">
+        <span 10="" bg-aurora-green="" class="px-2 py-1 rounded-full bg-aurora-cyan/10 text-aurora-cyan text-xs进入分析&lt;/span&gt; &lt;span class=" px-2="" py-1="" rounded-full="" text-aurora-green="" text-xs"="">
+         政策解读
+        </span>
+        <span class="px-2 py-1 rounded-full bg-white/5 text-slate-300 text-xs">
+         机会识别
+        </span>
+       </div>
+       <div class="flex justify-between items-center pt-4 border-t border-white/5">
+        <span class="text-xs text-slate-500">
+         更新于 2024.01
+        </span>
+        <i class="fa-solid fa-arrow-right text-white/20 group-hover:text-aurora-green transition-colors">
+        </i>
+       </div>
+      </div>
+     </div>
+     </a>
+    </div>
+    <!-- [/MODULE] 76g_市场竞争分析案例卡片 -- 两个市场竞争分析行业案例卡片 -->
+    <!-- 企业分析 -->
+    <!-- [MODULE] 23b_企业分析案例卡片 -->
+    <div class="filter-item" data-category="enterprise">
+     <a href="case-detail.html" class="block">
+     <div class="card-glass p-0 overflow-hidden group cursor-pointer">
+      <div class="h-48 overflow-hidden relative">
+       <img alt="集团企业数字化转型诊断" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" src="https://design.gemcoder.com/api/searchImage?query=corporate organizational structure and financial health analysis dashboard, professional business charts, dark blue background&amp;width=600&amp;height=400"/>
+       <div class="absolute top-4 left-4">
+        <span class="badge">
+         企业分析
+        </span>
+       </div>
+      </div>
+      <div class="p-6">
+       <h3 class="text-xl font-bold text-white mb-2 group-hover:text-aurora-cyan transition-colors">
+        大型制造集团数字化转型诊断
+       </h3>
+       <p class="text-sm text-slate-400 mb-4">
+        对大型制造集团进行全面数字化诊断分析，梳理现有能力短板，提供转型实施路径。
+       </p>
+       <div class="flex flex-wrap gap-2 mb-4">
+        <span class="px-2 py-1 rounded-full bg-aurora-cyan/10 text-aurora-cyan text-xs">
+         能力诊断
+        </span>
+        <span class="px-2 py-1 rounded-full bg-aurora-green/10 text-aurora-green text-xs">
+         路径规划
+        </span>
+        <span class="px-2 py-1 rounded-full bg-white/5 text-slate-300 text-xs">
+         战略落地
+        </span>
+       </div>
+       <div class="flex justify-between items-center pt-4 border-t border-white/5">
+        <span class="text-xs text-slate-500">
+         更新于 2023.12
+        </span>
+        <i class="fa-solid fa-arrow-right text-white/20 group-hover:text-aurora-green transition-colors">
+        </i>
+       </div>
+      </div>
+     </div>
+     </a>
+    </div>
+    <div class="filter-item" data-category="enterprise">
+     <a href="case-detail.html" class="block">
+     <div class="card-glass p-0 overflow-hidden group cursor-pointer">
+      <div class="h-48 overflow-hidden relative">
+       <img alt="科创企业估值分析" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" src="https://design.gemcoder.com/api/searchImage?query=startup company valuation and business potential analysis, modern business report, dark professional style&amp;width=600&amp;height=400"/>
+       <div class="absolute top-4 left-4">
+        <span class="badge">
+         企业分析
+        </span>
+       </div>
+      </div>
+      <div class="p-6">
+       <h3 class="text-xl font-bold text-white mb-2 group-hover:text-aurora-cyan transition-colors">
+        科创型企业估值与增长分析
+       </h3>
+       <p class="text-sm text-slate-400 mb-4">
+        为投资机构提供科创标的企业全方位分析，评估增长潜力与投资价值。
+       </p>
+       <div class="flex flex-wrap gap-2 mb-4">
+        <span class="px-2 py-1 rounded-full bg-aurora-cyan/10 text-aurora-cyan text-xs">
+         估值建模
+        </span>
+        <span class="px-2 py-1 rounded-full bg-aurora-green/10 text-aurora-green text-xs">
+         风险评估
+        </span>
+        <span class="px-2 py-1 rounded-full bg-white/5 text-slate-300 text-xs">
+         投研支持
+        </span>
+       </div>
+       <div class="flex justify-between items-center pt-4 border-t border-white/5">
+        <span class="text-xs text-slate-500">
+         更新于 2024.02
+        </span>
+        <i class="fa-solid fa-arrow-right text-white/20 group-hover:text-aurora-green transition-colors">
+        </i>
+       </div>
+      </div>
+     </div>
+     </a>
+    </div>
+    <!-- [/MODULE] 23b_企业分析案例卡片 -- 两个企业分析行业案例卡片 -->
+    <!-- 产业链 -->
+    <!-- [MODULE] 99c_产业链案例卡片 -->
+    <div class="filter-item" data-category="chain">
+     <a href="case-detail.html" class="block">
+     <div class="card-glass p-0 overflow-hidden group cursor-pointer">
+      <div class="h-48 overflow-hidden relative">
+       <img alt="半导体产业链梳理" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" src="https://design.gemcoder.com/api/searchImage?query=semi-conductor industry supply chain map visualization, global chip industry chain diagram, dark technical background&amp;width=600&amp;height=400"/>
+       <div class="absolute top-4 left-4">
+        <span class="badge">
+         产业链
+        </span>
+       </div>
+      </div>
+      <div class="p-6">
+       <h3 class="text-xl font-bold text-white mb-2 group-hover:text-aurora-cyan transition-colors">
+        半导体全产业链价值分析
+       </h3>
+       <p class="text-sm text-slate-400 mb-4">
+        全面梳理全球半导体产业链各个环节，分析价值分配格局与国产替代机会。
+       </p>
+       <div class="flex flex-wrap gap-2 mb-4">
+        <span class="px-2 py-1 rounded-full bg-aurora-cyan/10 text-aurora-cyan text-xs">
+         图谱构建
+        </span>
+        <span class="px-2 py-1 rounded-full bg-aurora-green/10 text-aurora-green text-xs">
+         价值分析
+        </span>
+        <span class="px-2 py-1 rounded-full bg-white/5 text-slate-300 text-xs">
+         国产替代
+        </span>
+       </div>
+       <div class="flex justify-between items-center pt-4 border-t border-white/5">
+        <span class="text-xs text-slate-500">
+         更新于 2024.04
+        </span>
+        <i class="fa-solid fa-arrow-right text-white/20 group-hover:text-aurora-green transition-colors">
+        </i>
+       </div>
+      </div>
+     </div>
+     </a>
+    </div>
+    <!-- [/MODULE] 99c_产业链案例卡片 -- 一个产业链行业案例卡片 -->
+    <!-- 交能融合 -->
+    <!-- [MODULE] 55h_交能融合案例卡片 -->
+    <div class="filter-item" data-category="energy">
+     <a href="case-detail.html" class="block">
+     <div class="card-glass p-0 overflow-hidden group cursor-pointer">
+      <div class="h-48 overflow-hidden relative">
+       <img alt="高速公路交能融合项目" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" src="https://design.gemcoder.com/api/searchImage?query=highway with photovoltaic power stations along the road, smart transportation and energy integration, future smart infrastructure, blue tone professional photography&amp;width=600&amp;height=400"/>
+       <div class="absolute top-4 left-4">
+        <span class="badge">
+         交能融合
+        </span>
+       </div>
+      </div>
+      <div class="p-6">
+       <h3 class="text-xl font-bold text-white mb-2 group-hover:text-aurora-cyan transition-colors">
+        高速公路光储充一体化项目
+       </h3>
+       <p class="text-sm text-slate-400 mb-4">
+        打造高速公路沿线光伏+储能+充电一体化解决方案，实现交通与能源深度融合。
+       </p>
+       <div class="flex flex-wrap gap-2 mb-4">
+        <span class="px-2 py-1 rounded-full bg-aurora-cyan/10 text-aurora-cyan text-xs">
+         规划设计
+        </span>
+        <span class="px-2 py-1 rounded-full bg-aurora-green/10 text-aurora-green text-xs">
+         商业模式
+        </span>
+        <span class="px-2 py-1 rounded-full bg-white/5 text-slate-300 text-xs">
+         运营方案
+        </span>
+       </div>
+       <div class="flex justify-between items-center pt-4 border-t border-white/5">
+        <span class="text-xs text-slate-500">
+         更新于 2024.01
+        </span>
+        <i class="fa-solid fa-arrow-right text-white/20 group-hover:text-aurora-green transition-colors">
+        </i>
+       </div>
+      </div>
+     </div>
+     </a>
+    </div>
+    <!-- [/MODULE] 55h_交能融合案例卡片 -- 一个交能融合行业案例卡片 -->
+    <!-- 交通数字底座 -->
+    <!-- [MODULE] 88j_交通数字底座案例卡片 -->
+    <div class="filter-item" data-category="transport">
+     <a href="case-detail.html" class="block">
+     <div class="card-glass p-0 overflow-hidden group cursor-pointer">
+      <div class="h-48 overflow-hidden relative">
+       <img alt="智慧交通数字底座项目" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" src="https://design.gemcoder.com/api/searchImage?query=smart city digital twin traffic management system, 3d map visualization, blue glowing high tech background&amp;width=600&amp;height=400"/>
+       <div class="absolute top-4 left-4">
+        <span class="badge">
+         交通数字底座
+        </span>
+       </div>
+      </div>
+      <div class="p-6">
+       <h3 class="text-xl font-bold text-white mb-2 group-hover:text-aurora-cyan transition-colors">
+        城市智慧交通数字孪生底座
+       </h3>
+       <p class="text-sm text-slate-400 mb-4">
+        构建城市级交通数字孪生底座，支撑各类智慧交通应用开发与运营决策。
+       </p>
+       <div class="flex flex-wrap gap-2 mb-4">
+        <span class="px-2 py-1 rounded-full bg-aurora-cyan/10 text-aurora-cyan text-xs">
+         数字孪生
+        </span>
+        <span class="px-2 py-1 rounded-full bg-aurora-green/10 text-aurora-green text-xs">
+         数据中台
+        </span>
+        <span class="px-2 py-1 rounded-full bg-white/5 text-slate-300 text-xs">
+         底座建设
+        </span>
+       </div>
+       <div class="flex justify-between items-center pt-4 border-t border-white/5">
+        <span class="text-xs text-slate-500">
+         更新于 2023.11
+        </span>
+        <i class="fa-solid fa-arrow-right text-white/20 group-hover:text-aurora-green transition-colors">
+        </i>
+       </div>
+      </div>
+     </div>
+     </a>
+    </div>
+    <div class="filter-item" data-category="transport">
+     <a href="case-detail.html" class="block">
+     <div class="card-glass p-0 overflow-hidden group cursor-pointer">
+      <div class="h-48 overflow-hidden relative">
+       <img alt="高铁运行监测平台" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" src="https://design.gemcoder.com/api/searchImage?query=high-speed rail big data operation monitoring center, multiple large screens displaying train data, dark modern control room&amp;width=600&amp;height=400"/>
+       <div class="absolute top-4 left-4">
+        <span class="badge">
+         交通数字底座
+        </span>
+       </div>
+      </div>
+      <div class="p-6">
+       <h3 class="text-xl font-bold text-white mb-2 group-hover:text-aurora-cyan transition-colors">
+        高铁运行安全监测数据平台
+       </h3>
+       <p class="text-sm text-slate-400 mb-4">
+        搭建高铁运行全维度数据采集与分析平台，支撑安全监测与预测性维护。
+       </p>
+       <div class="flex flex-wrap gap-2 mb-4">
+        <span class="px-2 py-1 rounded-full bg-aurora-cyan/10 text-aurora-cyan text-xs">
+         大数据平台
+        </span>
+        <span class="px-2 py-1 rounded-full bg-aurora-green/10 text-aurora-green text-xs">
+         安全监测
+        </span>
+        <span class="px-2 py-1 rounded-full bg-white/5 text-slate-300 text-xs">
+         预测维护
+        </span>
+       </div>
+       <div class="flex justify-between items-center pt-4 border-t border-white/5">
+        <span class="text-xs text-slate-500">
+         更新于 2023.09
+        </span>
+        <i class="fa-solid fa-arrow-right text-white/20 group-hover:text-aurora-green transition-colors">
+        </i>
+       </div>
+      </div>
+     </div>
+     </a>
+    </div>
+    <!-- [/MODULE] 88j_交通数字底座案例卡片 -- 两个交通数字底座行业案例卡片 -->
+    <!-- 产业招商 -->
+    <!-- [MODULE] 11q_产业招商案例卡片 -->
+    <div class="filter-item" data-category="investment">
+     <a href="case-detail.html" class="block">
+     <div class="card-glass p-0 overflow-hidden group cursor-pointer">
+      <div class="h-48 overflow-hidden relative">
+       <img alt="产业园招商规划项目" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" src="https://design.gemcoder.com/api/searchImage?query=industrial park master planning modern industrial zone, drone aerial view of new industrial park, professional architectural photography&amp;width=600&amp;height=400"/>
+       <div class="absolute top-4 left-4">
+        <span class="badge">
+         产业招商
+        </span>
+       </div>
+      </div>
+      <div class="p-6">
+       <h3 class="text-xl font-bold text-white mb-2 group-hover:text-aurora-cyan transition-colors">
+        新能源产业园招商定位规划
+       </h3>
+       <p class="text-sm text-slate-400 mb-4">
+        为地方政府新能源产业园提供产业定位、目标企业筛选与整体招商方案设计。
+       </p>
+       <div class="flex flex-wrap gap-2 mb-4">
+        <span class="px-2 py-1 rounded-full bg-aurora-cyan/10 text-aurora-cyan text-xs">
+         产业定位
+        </span>
+        <span class="px-2 py-1 rounded-full bg-aurora-green/10 text-aurora-green text-xs">
+         企业筛选
+        </span>
+        <span class="px-2 py-1 rounded-full bg-white/5 text-slate-300 text-xs">
+         方案设计
+        </span>
+       </div>
+       <div class="flex justify-between items-center pt-4 border-t border-white/5">
+        <span class="text-xs text-slate-500">
+         更新于 2024.02
+        </span>
+        <i class="fa-solid fa-arrow-right text-white/20 group-hover:text-aurora-green transition-colors">
+        </i>
+       </div>
+      </div>
+     </div>
+     </a>
+    </div>
+    <!-- [/MODULE] 11q_产业招商案例卡片 -- 一个产业招商行业案例卡片 -->
+    <!-- 校企成果转化 -->
+    <!-- [MODULE] 44w_校企成果转化案例卡片 -->
+    <div class="filter-item" data-category="university">
+     <a href="case-detail.html" class="block">
+     <div class="card-glass p-0 overflow-hidden group cursor-pointer">
+      <div class="h-48 overflow-hidden relative">
+       <img alt="高校科技成果转化项目" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" src="https://design.gemcoder.com/api/searchImage?query=university laboratory with scientists working on new material technology, modern research center, blue scientific lighting&amp;width=600&amp;height=400"/>
+       <div class="absolute top-4 left-4">
+        <span class="badge">
+         校企成果转化
+        </span>
+       </div>
+      </div>
+      <div class="p-6">
+       <h3 class="text-xl font-bold text-white mb-2 group-hover:text-aurora-cyan transition-colors">
+        新型材料实验室成果产业化
+       </h3>
+       <p class="text-sm text-slate-400 mb-4">
+        帮助顶尖高校科研团队梳理技术成果，对接产业资本，推动产业化落地。
+       </p>
+       <div class="flex flex-wrap gap-2 mb-4">
+        <span class="px-2 py-1 rounded-full bg-aurora-cyan/10 text-aurora-cyan text-xs">
+         成果梳理
+        </span>
+        <span class="px-2 py-1 rounded-full bg-aurora-green/10 text-aurora-green text-xs">
+         产业对接
+        </span>
+        <span class="px-2 py-1 rounded-full bg-white/5 text-slate-300 text-xs">
+         孵化落地
+        </span>
+       </div>
+       <div class="flex justify-between items-center pt-4 border-t border-white/5">
+        <span class="text-xs text-slate-500">
+         更新于 2023.10
+        </span>
+        <i class="fa-solid fa-arrow-right text-white/20 group-hover:text-aurora-green transition-colors">
+        </i>
+       </div>
+      </div>
+     </div>
+     </a>
+    </div>
+    <div class="filter-item" data-category="university">
+     <a href="case-detail.html" class="block">
+     <div class="card-glass p-0 overflow-hidden group cursor-pointer">
+      <div class="h-48 overflow-hidden relative">
+       <img alt="人工智能产学研项目" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" src="https://design.gemcoder.com/api/searchImage?query=ai research lab with multiple computers running machine learning algorithms, modern university research environment, dark futuristic design&amp;width=600&amp;height=400"/>
+       <div class="absolute top-4 left-4">
+        <span class="badge">
+         校企成果转化
+        </span>
+       </div>
+      </div>
+      <div class="p-6">
+       <h3 class="text-xl font-bold text-white mb-2 group-hover:text-aurora-cyan transition-colors">
+        人工智能产学研合作平台建设
+       </h3>
+       <p class="text-sm text-slate-400 mb-4">
+        搭建高校与企业人工智能领域合作平台，促进技术成果与产业需求精准对接。
+       </p>
+       <div class="flex flex-wrap gap-2 mb-4">
+        <span class="px-2 py-1 rounded-full bg-aurora-cyan/10 text-aurora-cyan text-xs">
+         平台建设
+        </span>
+        <span class="px-2 py-1 rounded-full bg-aurora-green/10 text-aurora-green text-xs">
+         需求对接
+        </span>
+        <span class="px-2 py-1 rounded-full bg-white/5 text-slate-300 text-xs">
+         联合研发
+        </span>
+       </div>
+       <div class="flex justify-between items-center pt-4 border-t border-white/5">
+        <span class="text-xs text-slate-500">
+         更新于 2024.03
+        </span>
+        <i class="fa-solid fa-arrow-right text-white/20 group-hover:text-aurora-green transition-colors">
+        </i>
+       </div>
+      </div>
+     </div>
+     </a>
+    </div>
+    <!-- [/MODULE] 44w_校企成果转化案例卡片 -- 两个校企成果转化行业案例卡片 -->
+    <!-- 供应链金融 -->
+    <!-- [MODULE] 77v_供应链金融案例卡片 -->
+    <div class="filter-item" data-category="supply">
+     <a href="case-detail.html" class="block">
+     <div class="card-glass p-0 overflow-hidden group cursor-pointer">
+      <div class="h-48 overflow-hidden relative">
+       <img alt="汽车供应链金融平台" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" src="https://design.gemcoder.com/api/searchImage?query=global supply chain finance technology platform, digital trade and logistics data visualization, dark fintech background&amp;width=600&amp;height=400"/>
+       <div class="absolute top-4 left-4">
+        <span class="badge">
+         供应链金融
+        </span>
+       </div>
+      </div>
+      <div class="p-6">
+       <h3 class="text-xl font-bold text-white mb-2 group-hover:text-aurora-cyan transition-colors">
+        汽车产业链供应链金融服务平台
+       </h3>
+       <p class="text-sm text-slate-400 mb-4">
+        搭建核心企业主导的供应链金融服务平台，解决中小企业融资难问题。
+       </p>
+       <div class="flex flex-wrap gap-2 mb-4">
+        <span class="px-2 py-1 rounded-full bg-aurora-cyan/10 text-aurora-cyan text-xs">
+         平台设计
+        </span>
+        <span class="px-2 py-1 rounded-full bg-aurora-green/10 text-aurora-green text-xs">
+         风控模型
+        </span>
+        <span class="px-2 py-1 rounded-full bg-white/5 text-slate-300 text-xs">
+         生态搭建
+        </span>
+       </div>
+       <div class="flex justify-between items-center pt-4 border-t border-white/5">
+        <span class="text-xs text-slate-500">
+         更新于 2023.08
+        </span>
+        <i class="fa-solid fa-arrow-right text-white/20 group-hover:text-aurora-green transition-colors">
+        </i>
+       </div>
+      </div>
+     </div>
+     </a>
+    </div>
+    <!-- [/MODULE] 77v_供应链金融案例卡片 -- 一个供应链金融行业案例卡片 -->
+    <!-- 投资研判 -->
+    <!-- [MODULE] 22x_投资研判案例卡片 -->
+    <div class="filter-item" data-category="research">
+     <a href="case-detail.html" class="block">
+     <div class="card-glass p-0 overflow-hidden group cursor-pointer">
+      <div class="h-48 overflow-hidden relative">
+       <img alt="硬科技项目投资研判" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" src="https://design.gemcoder.com/api/searchImage?query=venture capital investment analysis meeting, business people discussing startup investment opportunities, modern office, dark professional style&amp;width=600&amp;height=400"/>
+       <div class="absolute top-4 left-4">
+        <span class="badge">
+         投资研判
+        </span>
+       </div>
+      </div>
+      <div class="p-6">
+       <h3 class="text-xl font-bold text-white mb-2 group-hover:text-aurora-cyan transition-colors">
+        硬科技赛道投资机会系统性研判
+       </h3>
+       <p class="text-sm text-slate-400 mb-4">
+        为头部PE机构提供硬科技赛道系统性梳理，识别细分领域投资机会与潜在风险。
+       </p>
+       <div class="flex flex-wrap gap-2 mb-4">
+        <span class="px-2 py-1 rounded-full bg-aurora-cyan/10 text-aurora-cyan text-xs">
+         赛道梳理
+        </span>
+        <span class="px-2 py-1 rounded-full bg-aurora-green/10 text-aurora-green text-xs">
+         机会识别
+        </span>
+        <span class="px-2 py-1 rounded-full bg-white/5 text-slate-300 text-xs">
+         风险提示
+        </span>
+       </div>
+       <div class="flex justify-between items-center pt-4 border-t border-white/5">
+        <span class="text-xs text-slate-500">
+         更新于 2024.04
+        </span>
+        <i class="fa-solid fa-arrow-right text-white/20 group-hover:text-aurora-green transition-colors">
+        </i>
+       </div>
+      </div>
+     </div>
+     </a>
+    </div>
+    <div class="filter-item" data-category="research">
+     <a href="case-detail.html" class="block">
+     <div class="card-glass p-0 overflow-hidden group cursor-pointer">
+      <div class="h-48 overflow-hidden relative">
+       <img alt="绿色能源投资组合分析" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" src="https://design.gemcoder.com/api/searchImage?query=green energy investment portfolio financial data chart, renewable energy investment analysis, dark modern financial background&amp;width=600&amp;height=400"/>
+       <div class="absolute top-4 left-4">
+        <span class="badge">
+         投资研判
+        </span>
+       </div>
+      </div>
+      <div class="p-6">
+       <h3 class="text-xl font-bold text-white mb-2 group-hover:text-aurora-cyan transition-colors">
+        绿色能源领域投资组合配置分析
+       </h3>
+       <p class="text-sm text-slate-400 mb-4">
+        为主权基金提供绿色能源领域投资组合配置研究，提供中长期配置建议。
+       </p>
+       <div class="flex flex-wrap gap-2 mb-4">
+        <span class="px-2 py-1 rounded-full bg-aurora-cyan/10 text-aurora-cyan text-xs">
+         配置研究
+        </span>
+        <span class="px-2 py-1 rounded-full bg-aurora-green/10 text-aurora-green text-xs">
+         趋势预测
+        </span>
+        <span class="px-2 py-1 rounded-full bg-white/5 text-slate-300 text-xs">
+         策略建议
+        </span>
+       </div>
+       <div class="flex justify-between items-center pt-4 border-t border-white/5">
+        <span class="text-xs text-slate-500">
+         更新于 2024.02
+        </span>
+        <i class="fa-solid fa-arrow-right text-white/20 group-hover:text-aurora-green transition-colors">
+        </i>
+       </div>
+      </div>
+     </div>
+     </a>
+    </div>
+    <!-- [/MODULE] 22x_投资研判案例卡片 -- 两个投资研判行业案例卡片 -->
+   </section>
+   <!-- [/MODULE] 56k_核心案例展示区域 -- 卡片式布局展示各行业案例，每个项目包含名称、行业、标签、缩略图 -->
+   <!-- [MODULE] 66y_功能提示区域 -->
+   <section class="glass-panel-base rounded-2xl p-8">
+    <div class="flex flex-col md:flex-row items-center gap-6">
+     <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-aurora-cyan/20 to-aurora-purple/10 flex items-center justify-center flex-shrink-0">
+      <i class="fa-solid fa-lightbulb text-aurora-cyan text-2xl">
+      </i>
+     </div>
+     <div class="flex-1 text-center md:text-left">
+      <h3 class="text-2xl font-bold text-white mb-2">
+       筛选对应行业，查看各领域落地项目
+      </h3>
+      <p class="text-slate-400">
+       了解多场景解决方案实操效果，我们在多个行业拥有丰富的项目经验，可根据您的具体需求提供定制化服务。
+      </p>
+     </div>
+     <div class="flex-shrink-0">
+      <a class="btn-secondary" href="javascript:void(0);">
+       <i class="fa-solid fa-handshake mr-2">
+       </i>
+       咨询需求
+      </a>
+     </div>
+    </div>
+   </section>
+   <!-- [/MODULE] 66y_功能提示区域 -- 展示案例馆核心价值提示，搭配咨询入口 -->
+  </main>
+  <!-- 页脚 -->
+  <footer class="border-t border-white/10 mt-12 bg-void-900 z-10 relative">
+   <div class="max-w-7xl mx-auto px-6 py-12">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
+     <div>
+      <h4 class="text-white font-bold mb-4">
+       关于我们
+      </h4>
+      <ul class="space-y-2 text-sm text-slate-400">
+       <li>
+        <a class="hover:text-aurora-cyan transition" href="javascript:void(0);">
+         公司简介
+        </a>
+       </li>
+       <li>
+        <a class="hover:text-aurora-cyan transition" href="javascript:void(0);">
+         团队介绍
+        </a>
+       </li>
+       <li>
+        <a class="hover:text-aurora-cyan transition" href="javascript:void(0);">
+         发展历程
+        </a>
+       </li>
+      </ul>
+     </div>
+     <div>
+      <h4 class="text-white font-bold mb-4">
+       解决方案
+      </h4>
+      <ul class="space-y-2 text-sm text-slate-400">
+       <li>
+        <a class="hover:text-aurora-cyan transition" href="javascript:void(0);">
+         产业研究
+        </a>
+       </li>
+       <li>
+        <a class="hover:text-aurora-cyan transition" href="javascript:void(0);">
+         战略咨询
+        </a>
+       </li>
+       <li>
+        <a class="hover:text-aurora-cyan transition" href="javascript:void(0);">
+         数字转型
+        </a>
+       </li>
+      </ul>
+     </div>
+     <div>
+      <h4 class="text-white font-bold mb-4">
+       客户服务
+      </h4>
+      <ul class="space-y-2 text-sm text-slate-400">
+       <li>
+        <a class="hover:text-aurora-cyan transition" href="javascript:void(0);">
+         需求咨询
+        </a>
+       </li>
+       <li>
+        <a class="hover:text-aurora-cyan transition" href="javascript:void(0);">
+         项目流程
+        </a>
+       </li>
+       <li>
+        <a class="hover:text-aurora-cyan transition" href="javascript:void(0);">
+         售后服务
+        </a>
+       </li>
+      </ul>
+     </div>
+     <div>
+      <h4 class="text-white font-bold mb-4">
+       联系我们
+      </h4>
+      <ul class="space-y-2 text-sm text-slate-400">
+       <li class="flex items-center gap-2">
+        <i class="fa-solid fa-map-marker-alt text-aurora-cyan">
+        </i>
+        北京市朝阳区
+       </li>
+       <li class="flex items-center gap-2">
+        <i class="fa-solid fa-phone text-aurora-cyan">
+        </i>
+        400-888-8888
+       </li>
+       <li class="flex items-center gap-2">
+        <i class="fa-solid fa-envelope text-aurora-cyan">
+        </i>
+        contact@example.com
+       </li>
+      </ul>
+     </div>
+    </div>
+    <div class="flex flex-col md:flex-row justify-between items-center pt-8 border-t border-white/5">
+     <div class="flex items-center gap-2 mb-4 md:mb-0">
+      <div class="w-6 h-6 rounded bg-gradient-to-tr from-aurora-cyan to-aurora-green">
+      </div>
+      <span class="font-bold text-white text-lg">
+       智策数字
+      </span>
+     </div>
+     <div class="flex gap-4">
+      <a class="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-slate-400 hover:bg-aurora-cyan hover:text-void-900 transition" href="javascript:void(0);">
+       <i class="fa-brands fa-weixin">
+       </i>
+      </a>
+      <a class="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-slate-400 hover:bg-aurora-cyan hover:text-void-900 transition" href="javascript:void(0);">
+       <i class="fa-brands fa-weibo">
+       </i>
+      </a>
+      <a class="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-slate-400 hover:bg-aurora-cyan hover:text-void-900 transition" href="javascript:void(0);">
+       <i class="fa-brands fa-linkedin">
+       </i>
+      </a>
+     </div>
+    </div>
+    <div class="text-center text-slate-500 text-xs mt-8">
+     © 2024 智策数字科技有限公司. All rights reserved.
+    </div>
+   </div>
+  </footer>
+  <!-- [MODULE] 77x_联系我们弹窗 -->
+  <div class="fixed inset-0 z-50 hidden items-center justify-center" id="contact-modal">
+   <div class="absolute inset-0 bg-black/70 backdrop-blur-sm">
+   </div>
+   <div class="relative glass-panel-base rounded-2xl p-8 max-w-md w-full mx-4">
+    <div class="flex justify-between items-center mb-6">
+     <h3 class="text-2xl font-bold text-white">
+      联系我们
+     </h3>
+     <button class="text-slate-400 hover:text-white transition-colors" id="close-modal">
+      <i class="fa-solid fa-xmark text-xl">
+      </i>
+     </button>
+    </div>
+    <div class="space-y-4">
+     <div class="flex items-center gap-3">
+      <i class="fa-solid fa-phone text-aurora-cyan text-xl w-8">
+      </i>
+      <div>
+       <p class="text-slate-400 text-sm">
+        联系电话
+       </p>
+       <p class="text-white font-medium">
+        400-888-8888
+       </p>
+      </div>
+     </div>
+     <div class="flex items-center gap-3">
+      <i class="fa-solid fa-envelope text-aurora-cyan text-xl w-8">
+      </i>
+      <div>
+       <p class="text-slate-400 text-sm">
+        邮箱地址
+       </p>
+       <p class="text-white font-medium">
+        contact@example.com
+       </p>
+      </div>
+     </div>
+     <div class="flex items-center gap-3">
+      <i class="fa-solid fa-map-marker-alt text-aurora-cyan text-xl w-8">
+      </i>
+      <div>
+       <p class="text-slate-400 text-sm">
+        公司地址
+       </p>
+       <p class="text-white font-medium">
+        北京市朝阳区建国路88号
+       </p>
+      </div>
+     </div>
+    </div>
+    <div class="mt-8">
+     <button class="btn-primary w-full" id="modal-contact-btn">
+      <i class="fa-solid fa-phone mr-2">
+      </i>
+      立即联系
+     </button>
+    </div>
+   </div>
+  </div>
+  <!-- [/MODULE] 77x_联系我们弹窗 -- 展示联系方式信息，包含电话、邮箱、地址 -->
+ </body>
+ <!-- [JSMOD] a1b_筛选交互功能 -->
+ <script id="filter-script">
+  document.addEventListener('DOMContentLoaded', function () {
+  var filterTags = document.querySelectorAll('.filter-tag');
+  var filterItems = document.querySelectorAll('.filter-item');
+  filterTags.forEach(function (tag) {
+    tag.addEventListener('click', function () {
+      // 移除所有激活状态
+      filterTags.forEach(function (t) {
+        return t.classList.remove('active');
+      });
+      // 添加当前激活状态
+      this.classList.add('active');
+      var filterValue = this.getAttribute('data-filter');
+
+      // 筛选项目
+      filterItems.forEach(function (item) {
+        if (filterValue === 'all') {
+          item.classList.remove('hidden');
+        } else {
+          if (item.getAttribute('data-category') === filterValue) {
+            item.classList.remove('hidden');
+          } else {
+            item.classList.add('hidden');
+          }
+        }
+      });
+    });
+  });
+});
+ </script>
+ <!-- [/JSMOD] a1b_筛选交互功能 -- 处理行业筛选逻辑，点击筛选标签显示对应行业项目 -->
+ <!-- [JSMOD] c3d_联系弹窗交互功能 -->
+ <script id="contact-modal-script">
+  document.addEventListener('DOMContentLoaded', function () {
+  var contactBtn = document.querySelector('.btn-secondary');
+  var contactModal = document.getElementById('contact-modal');
+  var closeModal = document.getElementById('close-modal');
+  var modalContactBtn = document.getElementById('modal-contact-btn');
+
+  // 打开弹窗
+  contactBtn.addEventListener('click', function () {
+    contactModal.classList.remove('hidden');
+    contactModal.classList.add('flex');
+    document.body.style.overflow = 'hidden';
+  });
+
+  // 关闭弹窗
+  function closeModalFunc() {
+    contactModal.classList.add('hidden');
+    contactModal.classList.remove('flex');
+    document.body.style.overflow = '';
+  }
+  closeModal.addEventListener('click', closeModalFunc);
+  modalContactBtn.addEventListener('click', function () {
+    alert('感谢您的咨询，我们会尽快与您联系！');
+    closeModalFunc();
+  });
+
+  // 点击背景关闭弹窗
+  contactModal.addEventListener('click', function (e) {
+    if (e.target === contactModal) {
+      closeModalFunc();
+    }
+  });
+});
+ </script>
+ <!-- [/JSMOD] c3d_联系弹窗交互功能 -- 处理联系弹窗的打开和关闭逻辑，点击按钮显示联系方式 -->
+  <!-- 用户菜单和客户类型下拉功能 -->
+  <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 客户类型切换
+            const clientTypeOptions = document.querySelectorAll('.client-type-option');
+            const currentClientType = document.getElementById('current-client-type');
+            
+            // 加载保存的客户类型
+            const savedClientType = localStorage.getItem('clientType') || 'investment';
+            
+            // 更新当前客户类型显示
+            if (currentClientType) {
+                let typeText = '投资类客户';
+                switch(savedClientType) {
+                    case 'investment':
+                        typeText = '投资类客户';
+                        break;
+                    case 'market':
+                        typeText = '市场类客户';
+                        break;
+                    case 'enterprise':
+                        typeText = '企业类客户';
+                        break;
+                    case 'government':
+                        typeText = '政府类客户';
+                        break;
+                }
+                currentClientType.textContent = typeText;
+            }
+            
+            // 客户类型切换
+            clientTypeOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    const clientType = this.getAttribute('data-type');
+                    
+                    // 保存客户类型到本地存储
+                    localStorage.setItem('clientType', clientType);
+                    
+                    // 更新当前客户类型显示
+                    if (currentClientType) {
+                        let typeText = '投资类客户';
+                        switch(clientType) {
+                            case 'investment':
+                                typeText = '投资类客户';
+                                break;
+                            case 'market':
+                                typeText = '市场类客户';
+                                break;
+                            case 'enterprise':
+                                typeText = '企业类客户';
+                                break;
+                            case 'government':
+                                typeText = '政府类客户';
+                                break;
+                        }
+                        currentClientType.textContent = typeText;
+                    }
+                    
+                    switchClientType(clientType);
+                });
+            });
+
+            // 用户菜单下拉
+            const userMenuButton = document.getElementById('user-menu-button');
+            const userMenu = document.getElementById('user-menu');
+
+            if (userMenuButton && userMenu) {
+                userMenuButton.addEventListener('click', function() {
+                    userMenu.classList.toggle('hidden');
+                });
+
+                // 点击页面其他地方关闭菜单
+                document.addEventListener('click', function(event) {
+                    if (!userMenuButton.contains(event.target) && !userMenu.contains(event.target)) {
+                        userMenu.classList.add('hidden');
+                    }
+                });
+            }
+        });
+
+        // 切换客户类型
+        function switchClientType(clientType) {
+            // 根据客户类型显示不同的内容
+            console.log('切换到客户类型:', clientType);
+            
+            // 这里可以根据客户类型修改页面内容
+            // 例如：显示不同的推荐案例、调整布局等
+            
+            // 示例：修改页面标题
+            const pageTitle = document.querySelector('header .text-xl');
+            if (pageTitle) {
+                let title = '数擎平台';
+                switch(clientType) {
+                    case 'investment':
+                        title = '数擎平台 - 投资分析';
+                        break;
+                    case 'market':
+                        title = '数擎平台 - 市场洞察';
+                        break;
+                    case 'enterprise':
+                        title = '数擎平台 - 企业服务';
+                        break;
+                    case 'government':
+                        title = '数擎平台 - 政府决策';
+                        break;
+                }
+                pageTitle.textContent = title;
+            }
+        }
+    </script>
+</html>

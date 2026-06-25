@@ -1,0 +1,18 @@
+{
+  "name": "api-jdocs",
+  "leadAgentId": "0a15db3858154a00a010e6c12dfb48fb",
+  "workspacePath": "c:/project/data-engine/data-engine-ui",
+  "createdAt": "2026-06-18T06:00:29.830Z",
+  "options": {
+    "workspacePath": "c:/project/data-engine/data-engine-ui",
+    "isAutoTeam": false
+  },
+  "members": [
+    {
+      "memberId": "team-lead@api-jdocs",
+      "name": "team-lead",
+      "role": "Team Lead - coordinates the team and interacts with the user"
+    }
+  ],
+  "isAutoTeam": false
+}

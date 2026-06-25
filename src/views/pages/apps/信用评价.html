@@ -1,0 +1,1332 @@
+<html lang='zh-CN'>
+        <head >
+        <meta charset='UTF-8'/>
+<meta name='viewport' content='width=device-width, initial-scale=1.0'/>
+<title >企业信用评价平台 | 精准专业企业信用查询与评分</title>
+<!-- Google Fonts: Inter -->
+<link rel='preconnect' href='https://fonts.googleapis.com'/>
+<link rel='preconnect' href='https://fonts.gstatic.com' crossorigin/>
+<link href='https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap' rel='stylesheet'/>
+<!-- Font Awesome -->
+<link href='https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css' rel='stylesheet'/>
+<!-- Tailwind CSS -->
+<script src='https://res.gemcoder.com/js/reload.js'></script>
+<script src='https://cdn.tailwindcss.com'></script>
+<!-- ECharts -->
+<script src='https://cdn.bootcdn.net/ajax/libs/echarts/5.4.3/echarts.min.js'></script>
+<!-- Configuration -->
+<script >tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        primary: {
+          DEFAULT: '#1677FF',
+          light: '#4096FF',
+          dark: '#0958D9'
+        },
+        success: {
+          DEFAULT: '#36CFC9',
+          light: '#86E8DE'
+        },
+        slate: {
+          canvas: '#FFFFFF',
+          section: '#F5F7FA',
+          border: '#E5E6EB',
+          subtle: '#86909C',
+          body: '#1D2129',
+          heading: '#1D2129'
+        }
+      },
+      fontFamily: {
+        sans: ['Inter', 'sans-serif']
+      },
+      boxShadow: {
+        'card': '0 2px 8px 0 rgba(0, 0, 0, 0.08)',
+        'float': '0 4px 16px 0 rgba(0, 0, 0, 0.12)'
+      }
+    }
+  }
+};</script>
+<style type='text/tailwindcss'>
+        @layer utilities {
+            .grid-bg {
+                background-image: 
+                    linear-gradient(#F5F7FA 1px, transparent 1px),
+                    linear-gradient(90deg, #F5F7FA 1px, transparent 1px);
+                background-size: 24px 24px;
+            }
+            .progress-ring-circle {
+                transition: stroke-dashoffset 0.35s;
+                transform: rotate(-90deg);
+                transform-origin: 50% 50%;
+            }
+        }
+        @layer components {
+            .btn {
+                @apply inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-primary;
+            }
+            .btn-sm {
+                @apply px-3 py-1.5 text-xs;
+            }
+            .btn-primary {
+                @apply bg-primary text-white hover:bg-primary-dark shadow-card border border-transparent;
+            }
+            .btn-secondary {
+                @apply bg-white text-slate-body border border-slate-border hover:bg-slate-section shadow-sm;
+            }
+            .btn-ghost {
+                @apply text-slate-subtle hover:text-slate-body hover:bg-slate-section border border-transparent;
+            }
+            .card {
+                @apply bg-white border border-slate-border rounded-lg shadow-card;
+            }
+            .badge-success {
+                @apply bg-success/10 text-success;
+            }
+            .badge-neutral {
+                @apply bg-slate-section text-slate-subtle;
+            }
+            .badge {
+                @apply inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium;
+            }
+            .collapse-arrow {
+                @apply transition-transform duration-300;
+            }
+            .collapse-arrow.open {
+                @apply rotate-180;
+            }
+        }
+    </style>
+<style >
+        .modal-overlay.hidden {
+            display: none;
+        }
+        .modal-container.hidden {
+            display: none;
+        }
+        .dropdown-menu.hidden {
+            display: none;
+        }
+    </style>
+    </head>
+<body class='bg-slate-canvas text-slate-body font-sans antialiased min-h-screen'>
+        <!-- Page: 1 - Query Start Screen -->
+<div id='page-query' class='min-h-screen grid-bg'>
+        <div class='min-h-screen flex flex-col' data-ytextravalue='extra-miemq6m1e'>
+        <!-- Header -->
+<header class='py-6 px-4 sm:px-8' style data-ytoriginindex='0' data-ytindex='0'>
+        <div class='flex items-center gap-2'>
+        <div class='w-8 h-8 bg-primary rounded flex items-center justify-center text-white'>
+        <i class='fa-solid fa-shield-halved'>
+        </i>
+    </div>
+<div >
+        <h1 class='font-bold text-slate-heading text-lg leading-tight'>
+        企业信用评价
+    </h1>
+<p class='text-xs text-slate-subtle hidden sm:block'>
+        精准查询·专业评价·合规管控
+    </p>
+    </div>
+    </div>
+    </header>
+<!-- [MODULE] a1f_查询首页核心模块 -->
+<main class='flex-1 flex items-center justify-center px-4 py-12' style data-ytoriginindex='1' data-ytindex='1'>
+        <div class='w-full max-w-xl'>
+        <div class='text-center mb-8'>
+        <h2 class='text-[clamp(1.75rem,3vw,2.5rem)] font-bold text-slate-heading mb-3' contenteditable='false' style='outline: none;'>
+        企业信用评价
+    </h2>
+<p class='text-slate-subtle text-lg yt-editor' contenteditable='false' style='outline: none;'>
+        获取企业信用评分
+    </p>
+    </div>
+<div class='card p-1 bg-white/80 backdrop-blur-sm'>
+        <div class='flex items-center rounded-md overflow-hidden'>
+        <input type='text' id='query-input' placeholder='请输入企业名称或统一社会信用代码' class='flex-1 px-4 py-3 bg-transparent border-none focus:ring-0 text-slate-body placeholder-slate-subtle outline-none'/>
+<button id='start-query-btn' class='btn btn-primary mr-1 whitespace-nowrap'>
+        <i class='fa-solid fa-magnifying-glass mr-2'>
+        </i>
+查询
+    </button>
+    </div>
+    </div>
+<div class='mt-4 flex items-center justify-center text-xs text-slate-subtle'>
+        <i class='fa-solid fa-circle-info mr-1.5'>
+        </i>
+支持企业全称、关键字、统一社会信用代码精准匹配
+    </div>
+    </div>
+    </main>
+<!-- [/MODULE] a1f_查询首页核心模块 -- 企业查询输入页面，包含标题、输入框、查询按钮 -->
+<!-- Footer -->
+<footer class='py-6 px-8 text-center text-xs text-slate-subtle yt-editor' contenteditable='false' style='outline: none; opacity: 1; width: 1901px; height: 62px;width:;height:' data-ytparentvalue='extra-miemq6m1e' data-ytoriginindex='2' data-ytindex='2'>
+        © 2026数擎平台
+<span style='font-size: 0.75rem;'>
+        - 企业信用评价
+    </span>
+    </footer>
+    </div>
+    </div>
+<!-- Page: 2 - Loading Screen -->
+<div id='page-loading' class='hidden min-h-screen bg-slate-section'>
+        <div class='min-h-screen flex flex-col items-center justify-center px-4'>
+        <!-- [MODULE] b2d_加载页面模块 -->
+<div class='text-center max-w-md'>
+        <h3 class='text-lg font-semibold text-slate-body mb-8'>
+        正在分析企业信用数据，请稍候
+    </h3>
+<div class='relative w-32 h-32 mx-auto mb-8'>
+        <svg class='w-full h-full' viewBox='0 0 100 100'>
+        <circle cx='50' cy='50' r='44' fill='none' stroke='#E5E6EB' stroke-width='8'>
+        </circle>
+<circle id='progress-ring' cx='50' cy='50' r='44' fill='none' stroke='url(#progress-gradient)' stroke-width='8' stroke-linecap='round' class='progress-ring-circle' stroke-dasharray='276.5' stroke-dashoffset='276.5'>
+        </circle>
+<defs >
+        <linearGradient id='progress-gradient' x1='0%' y1='0%' x2='100%' y2='100%'>
+        <stop offset='0%' stop-color='#1677FF'>
+        </stop>
+<stop offset='100%' stop-color='#36CFC9'>
+        </stop>
+    </linearGradient>
+    </defs>
+    </svg>
+<div class='absolute inset-0 flex items-center justify-center'>
+        <span id='progress-text' class='text-xl font-bold text-primary'>
+        0%
+    </span>
+    </div>
+    </div>
+<div class='space-y-2 text-left text-sm'>
+        <div class='flex items-center gap-3 text-slate-subtle'>
+        <span class='w-5 h-5'>
+        <i class='fa-solid text-success hidden' id='check-1'>
+        </i>
+    </span>
+<span >
+        核验企业工商基础信息...
+    </span>
+    </div>
+<div class='flex items-center gap-3 text-slate-subtle'>
+        <span class='w-5 h-5'>
+        <i class='fa-solid text-success hidden' id='check-2'>
+        </i>
+    </span>
+<span >
+        计算综合信用评分...
+    </span>
+    </div>
+<div class='flex items-center gap-3 text-slate-subtle'>
+        <span class='w-5 h-5'>
+        <i class='fa-solid text-success hidden' id='check-3'>
+        </i>
+    </span>
+<span >
+        检索司法风险与经营异常记录...
+    </span>
+    </div>
+<div class='flex items-center gap-3 text-slate-subtle'>
+        <span class='w-5 h-5'>
+        <i class='fa-solid text-success hidden' id='check-4'>
+        </i>
+    </span>
+<span >
+        整合经营与财务数据分析...
+    </span>
+    </div>
+    </div>
+    </div>
+<!-- [/MODULE] b2d_加载页面模块 -- 环形加载动画与进度提示，自动完成跳转结果页 -->
+    </div>
+    </div>
+<!-- Page: 3 - Result Detail Screen -->
+<div id='page-result' class='hidden min-h-screen bg-slate-section'>
+        <!-- Top Navigation -->
+<!-- [MODULE] c3e_结果页顶部导航 -->
+<header class='bg-white border-b border-slate-border sticky top-0 z-40 shadow-sm'>
+        <div class='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between'>
+        <div class='flex items-center gap-2'>
+        <div class='w-7 h-7 bg-primary rounded flex items-center justify-center text-white'>
+        <i class='fa-solid fa-shield-halved text-sm'>
+        </i>
+    </div>
+<span class='font-semibold text-slate-heading text-lg'>
+        企业信用评价
+    </span>
+    </div>
+<button id='new-query-btn' class='btn btn-secondary btn-sm'>
+        <i class='fa-solid fa-magnifying-glass mr-1.5'>
+        </i>
+新查询
+    </button>
+    </div>
+    </header>
+<!-- [/MODULE] c3e_结果页顶部导航 -- 平台logo标题、返回查询按钮 -->
+<!-- Main Content -->
+<main class='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8'>
+        <div class='flex flex-col lg:flex-row gap-6'>
+        <!-- Left: Company Basic Info -->
+<div class='lg:w-80 lg:sticky lg:top-24 lg:self-start'>
+        <!-- [MODULE] d4f_左侧企业基础信息卡片 -->
+<div class='card overflow-hidden'>
+        <div class='p-5 border-b border-slate-border'>
+        <h3 class='text-lg font-bold text-slate-heading' id='result-company-name'>
+        北京字节跳动网络技术有限公司
+    </h3>
+<p class='text-xs text-slate-subtle mt-1'>
+        统一社会信用代码：91110108MA009GJ24K
+    </p>
+    </div>
+<div class='p-5 space-y-4 text-sm'>
+        <div class='grid grid-cols-3 gap-2'>
+        <div class='text-slate-subtle'>
+        法定代表人
+    </div>
+<div class='col-span-2 font-medium'>
+        张一鸣
+    </div>
+    </div>
+<div class='grid grid-cols-3 gap-2'>
+        <div class='text-slate-subtle'>
+        登记状态
+    </div>
+<div class='col-span-2'>
+        <span class='badge badge-success'>
+        存续（在营）
+    </span>
+    </div>
+    </div>
+<div class='grid grid-cols-3 gap-2'>
+        <div class='text-slate-subtle'>
+        成立日期
+    </div>
+<div class='col-span-2'>
+        2012-03-12
+    </div>
+    </div>
+<div class='grid grid-cols-3 gap-2'>
+        <div class='text-slate-subtle'>
+        注册资本
+    </div>
+<div class='col-span-2'>
+        100000 万元人民币
+    </div>
+    </div>
+<div class='grid grid-cols-3 gap-2'>
+        <div class='text-slate-subtle'>
+        所属行业
+    </div>
+<div class='col-span-2'>
+        互联网和相关服务
+    </div>
+    </div>
+<div class='grid grid-cols-3 gap-2'>
+        <div class='text-slate-subtle'>
+        注册地址
+    </div>
+<div class='col-span-2'>
+        北京市海淀区中关村互联网产业园
+    </div>
+    </div>
+<div class='grid grid-cols-3 gap-2'>
+        <div class='text-slate-subtle'>
+        经营范围
+    </div>
+<div class='col-span-2 text-slate-subtle text-xs leading-relaxed'>
+        技术开发、技术推广、技术转让、技术咨询、技术服务；计算机系统服务；数据处理；设计、制作、代理、发布广告；从事互联网文化活动；广播电视节目制作等。
+    </div>
+    </div>
+<div class='grid grid-cols-3 gap-2'>
+        <div class='text-slate-subtle'>
+        联系方式
+    </div>
+<div class='col-span-2'>
+        010-84115566
+    </div>
+    </div>
+    </div>
+    </div>
+<!-- [/MODULE] d4f_左侧企业基础信息卡片 -- 完整展示工商注册基础信息，状态标签高亮 -->
+    </div>
+<!-- Right: Credit Evaluation Dashboard -->
+<div class='flex-1'>
+        <!-- [MODULE] e5g_右侧信用评价主仪表盘 -->
+<!-- Credit Overall Score Card - 3 Column Layout -->
+<div class='card mb-6 overflow-hidden'>
+        <div class='grid grid-cols-1 md:grid-cols-3'>
+        <!-- Left: Score Overview -->
+<div class='p-6 border-b md:border-b-0 md:border-r border-slate-border'>
+        <h4 class='text-lg font-bold text-slate-heading mb-4'>
+        企业综合信用得分
+    </h4>
+<div class='flex items-baseline gap-2 mb-3'>
+        <span class='text-5xl font-bold text-slate-heading'>
+        86
+    </span>
+<span class='text-xl text-slate-subtle'>
+        /100
+    </span>
+    </div>
+<div class='mb-6'>
+        <span class='badge badge-success text-base px-3 py-1.5'>
+        A级 / 信用良好
+    </span>
+    </div>
+<p class='text-xs text-slate-subtle'>
+        评估日期：2024年01月15日
+    </p>
+    </div>
+<!-- Middle: Score Interpretation -->
+<div class='p-6 border-b md:border-b-0 md:border-r border-slate-border'>
+        <h4 class='text-lg font-bold text-slate-heading mb-4'>
+        分数解读
+    </h4>
+<p class='text-slate-subtle text-sm leading-relaxed'>
+        该企业整体信用表现
+<span class='font-semibold text-primary'>
+        良好
+    </span>
+，经营能力与风险管理能力
+<span class='font-semibold text-primary'>
+        相对较好
+    </span>
+，存在违约风险
+<span class='font-semibold text-primary'>
+        较低
+    </span>
+，可安全开展商务合作。
+    </p>
+    </div>
+<!-- Right: Radar Chart -->
+<div class='p-6'>
+        <div class='flex items-center justify-between mb-2'>
+        <h4 class='text-lg font-bold text-slate-heading'>
+        五维评价
+    </h4>
+<button id='show-rule-btn' class='btn btn-ghost btn-sm'>
+        <i class='fa-solid fa-circle-question mr-1'>
+        </i>
+规则说明
+    </button>
+    </div>
+<div id='radar-chart' class='w-full h-48'>
+        </div>
+    </div>
+    </div>
+    </div>
+<!-- Dimension Detail Fold Panels -->
+<div class='card p-6 mb-6'>
+        <div class='flex items-center justify-between mb-4'>
+        <h3 class='text-lg font-bold text-slate-heading'>
+        多维度评价详情
+    </h3>
+<div class='relative'>
+        <button id='export-dropdown-btn' class='btn btn-primary btn-sm'>
+        <i class='fa-solid fa-download mr-1.5'>
+        </i>
+报告导出
+<i class='fa-solid fa-chevron-down ml-1.5'>
+        </i>
+    </button>
+<div id='export-dropdown-menu' class='hidden absolute right-0 mt-1 w-56 bg-white border border-slate-border rounded-lg shadow-float z-30 py-1'>
+        <a href='javascript:void(0);' class='export-option block px-4 py-2 text-sm text-slate-body hover:bg-slate-section' data-type='pdf'>
+        <i class='fa-solid fa-file-pdf mr-2 text-red-500'>
+        </i>
+PDF完整版信用报告
+    </a>
+<a href='javascript:void(0);' class='export-option block px-4 py-2 text-sm text-slate-body hover:bg-slate-section' data-type='excel'>
+        <i class='fa-solid fa-file-excel mr-2 text-green-500'>
+        </i>
+Excel指标明细报表
+    </a>
+    </div>
+    </div>
+    </div>
+<div class='space-y-3'>
+        <!-- 1. 综合实力 -->
+<!-- [MODULE] f6h_一级维度:综合实力折叠面板 -->
+<div class='border border-slate-border rounded-lg overflow-hidden bg-white'>
+        <button class='dimension-header w-full flex items-center justify-between p-4 hover:bg-slate-50 transition-colors' data-dimension='1'>
+        <div class='text-left'>
+        <div class='text-primary font-bold text-base'>
+        1. 综合实力
+    </div>
+<div class='text-xs text-slate-subtle mt-1'>
+        满分14分，实际得分 12 分
+    </div>
+    </div>
+<i class='fa-solid fa-chevron-down collapse-arrow'>
+        </i>
+    </button>
+<div class='dimension-content p-4 border-t border-slate-border hidden'>
+        <ul class='space-y-3'>
+        <li class='space-y-1'>
+        <div class='flex justify-between items-center text-sm'>
+        <span class='font-medium text-slate-body'>
+        1.1 企业规模（6分）
+    </span>
+<span class='text-success font-medium'>
+        得分 6
+    </span>
+    </div>
+<div class='pl-4 text-sm text-slate-subtle space-y-1'>
+        <p >
+        · 工商注册年限：经营满11年，满分3分，
+<span class='text-success font-medium'>
+        得3分
+    </span>
+    </p>
+<p >
+        · 社保参保人数：参保人数超万人，企业规模大人员稳定，
+<span class='text-success font-medium'>
+        满分通过
+    </span>
+    </p>
+    </div>
+    </li>
+<li class='space-y-1'>
+        <div class='flex justify-between items-center text-sm'>
+        <span class='font-medium text-slate-body'>
+        1.2 标准信息（2分）
+    </span>
+<span class='text-success font-medium'>
+        得分 2
+    </span>
+    </div>
+<div class='pl-4 text-sm text-slate-subtle'>
+        <p >
+        · 参与制定多项国家与行业标准，
+<span class='text-success font-medium'>
+        满分通过
+    </span>
+    </p>
+    </div>
+    </li>
+<li class='space-y-1'>
+        <div class='flex justify-between items-center text-sm'>
+        <span class='font-medium text-slate-body'>
+        1.3 专利资质（3分）
+    </span>
+<span class='text-success font-medium'>
+        得分 2
+    </span>
+    </div>
+<div class='pl-4 text-sm text-slate-subtle'>
+        <p >
+        · 拥有发明专利超过500项，国家高新技术企业认证，
+<span class='text-success font-medium'>
+        得2分
+    </span>
+    </p>
+    </div>
+    </li>
+<li class='space-y-1'>
+        <div class='flex justify-between items-center text-sm'>
+        <span class='font-medium text-slate-body'>
+        1.4 企业荣誉（3分）
+    </span>
+<span class='text-success font-medium'>
+        得分 2
+    </span>
+    </div>
+<div class='pl-4 text-sm text-slate-subtle'>
+        <p >
+        · 多项国家级创新企业荣誉认证，
+<span class='text-success font-medium'>
+        得2分
+    </span>
+    </p>
+    </div>
+    </li>
+    </ul>
+    </div>
+    </div>
+<!-- [/MODULE] f6h_一级维度:综合实力折叠面板 -- 包含企业规模、标准信息、专利资质、企业荣誉多级评分明细 -->
+<!-- 2. 合规经营 -->
+<!-- [MODULE] g7i_一级维度:合规经营折叠面板 -->
+<div class='border border-slate-border rounded-lg overflow-hidden bg-white'>
+        <button class='dimension-header w-full flex items-center justify-between p-4 hover:bg-slate-50 transition-colors' data-dimension='2'>
+        <div class='text-left'>
+        <div class='text-primary font-bold text-base'>
+        2. 合规经营
+    </div>
+<div class='text-xs text-slate-subtle mt-1'>
+        满分60分，实际得分 52 分
+    </div>
+    </div>
+<i class='fa-solid fa-chevron-down collapse-arrow'>
+        </i>
+    </button>
+<div class='dimension-content p-4 border-t border-slate-border hidden'>
+        <ul class='space-y-3'>
+        <li class='space-y-1'>
+        <div class='flex justify-between items-center text-sm'>
+        <span class='font-medium text-slate-body'>
+        2.1 历史经营风险（20分）
+    </span>
+<span class='text-success font-medium'>
+        得分 18
+    </span>
+    </div>
+<div class='pl-4 text-sm text-slate-subtle space-y-1'>
+        <p >
+        · 行政处罚：0条记录，
+<span class='text-success font-medium'>
+        满分20分，得20分
+    </span>
+    </p>
+    </div>
+    </li>
+<li class='space-y-1'>
+        <div class='flex justify-between items-center text-sm'>
+        <span class='font-medium text-slate-body'>
+        2.2 司法风险计量（20分）
+    </span>
+<span class='text-success font-medium'>
+        得分 17
+    </span>
+    </div>
+<div class='pl-4 text-sm text-slate-subtle space-y-1'>
+        <p >
+        · 被执行人信息：无记录，满分10分
+    </p>
+<p >
+        · 法律诉讼：少量历史合同纠纷已结案，扣3分，
+<span class='text-success font-medium'>
+        得7分
+    </span>
+    </p>
+    </div>
+    </li>
+<li class='space-y-1'>
+        <div class='flex justify-between items-center text-sm'>
+        <span class='font-medium text-slate-body'>
+        2.3 异常经营（20分）
+    </span>
+<span class='text-success font-medium'>
+        得分 17
+    </span>
+    </div>
+<div class='pl-4 text-sm text-slate-subtle'>
+        <p >
+        · 经营异常：无记录，
+<span class='text-success font-medium'>
+        满分通过
+    </span>
+    </p>
+<p >
+        · 欠税公告：无记录，
+<span class='text-success font-medium'>
+        满分通过
+    </span>
+    </p>
+    </div>
+    </li>
+    </ul>
+    </div>
+    </div>
+<!-- [/MODULE] g7i_一级维度:合规经营折叠面板 -- 包含司法风险、经营异常等风险评分明细 -->
+<!-- 3. 发展潜力 -->
+<!-- [MODULE] h8j_一级维度:发展潜力折叠面板 -->
+<div class='border border-slate-border rounded-lg overflow-hidden bg-white'>
+        <button class='dimension-header w-full flex items-center justify-between p-4 hover:bg-slate-50 transition-colors' data-dimension='3'>
+        <div class='text-left'>
+        <div class='text-primary font-bold text-base'>
+        3. 发展潜力
+    </div>
+<div class='text-xs text-slate-subtle mt-1'>
+        满分6分，实际得分 5 分
+    </div>
+    </div>
+<i class='fa-solid fa-chevron-down collapse-arrow'>
+        </i>
+    </button>
+<div class='dimension-content p-4 border-t border-slate-border hidden'>
+        <ul class='space-y-3'>
+        <li class='space-y-1'>
+        <div class='flex justify-between items-center text-sm'>
+        <span class='font-medium text-slate-body'>
+        3.1 纳税人资质（2分）
+    </span>
+<span class='text-success font-medium'>
+        得分 2
+    </span>
+    </div>
+<div class='pl-4 text-sm text-slate-subtle'>
+        <p >
+        · 一般纳税人，状态正常，
+<span class='text-success font-medium'>
+        满分通过
+    </span>
+    </p>
+    </div>
+    </li>
+<li class='space-y-1'>
+        <div class='flex justify-between items-center text-sm'>
+        <span class='font-medium text-slate-body'>
+        3.2 体系认证（2分）
+    </span>
+<span class='text-success font-medium'>
+        得分 2
+    </span>
+    </div>
+<div class='pl-4 text-sm text-slate-subtle'>
+        <p >
+        · ISO9001质量体系认证有效，
+<span class='text-success font-medium'>
+        满分通过
+    </span>
+    </p>
+    </div>
+    </li>
+<li class='space-y-1'>
+        <div class='flex justify-between items-center text-sm'>
+        <span class='font-medium text-slate-body'>
+        3.3 绿色认证（1分）
+    </span>
+<span class='text-success font-medium'>
+        得分 0
+    </span>
+    </div>
+<div class='pl-4 text-sm text-slate-subtle'>
+        <p >
+        · 暂未查询到绿色环保认证，
+<span class='text-slate-subtle'>
+        不得分
+    </span>
+    </p>
+    </div>
+    </li>
+<li class='space-y-1'>
+        <div class='flex justify-between items-center text-sm'>
+        <span class='font-medium text-slate-body'>
+        3.4 科技荣誉（1分）
+    </span>
+<span class='text-success font-medium'>
+        得分 1
+    </span>
+    </div>
+<div class='pl-4 text-sm text-slate-subtle'>
+        <p >
+        · 国家级高新技术企业，
+<span class='text-success font-medium'>
+        满分通过
+    </span>
+    </p>
+    </div>
+    </li>
+    </ul>
+    </div>
+    </div>
+<!-- [/MODULE] h8j_一级维度:发展潜力折叠面板 -- 包含纳税人资质、体系认证等发展潜力评分 -->
+<!-- 4. 财务能力 -->
+<!-- [MODULE] i9k_一级维度:财务能力折叠面板 -->
+<div class='border border-slate-border rounded-lg overflow-hidden bg-white'>
+        <button class='dimension-header w-full flex items-center justify-between p-4 hover:bg-slate-50 transition-colors' data-dimension='4'>
+        <div class='text-left'>
+        <div class='text-primary font-bold text-base'>
+        4. 财务能力
+    </div>
+<div class='text-xs text-slate-subtle mt-1'>
+        满分5分，实际得分 4 分
+    </div>
+    </div>
+<i class='fa-solid fa-chevron-down collapse-arrow'>
+        </i>
+    </button>
+<div class='dimension-content p-4 border-t border-slate-border hidden'>
+        <ul class='space-y-3'>
+        <li class='space-y-1'>
+        <div class='flex justify-between items-center text-sm'>
+        <span class='font-medium text-slate-body'>
+        4.1 资金管理（3分）
+    </span>
+<span class='text-success font-medium'>
+        得分 2
+    </span>
+    </div>
+<div class='pl-4 text-sm text-slate-subtle'>
+        <p >
+        · 近三年无不良负债记录，
+<span class='text-success font-medium'>
+        得2分
+    </span>
+    </p>
+    </div>
+    </li>
+<li class='space-y-1'>
+        <div class='flex justify-between items-center text-sm'>
+        <span class='font-medium text-slate-body'>
+        4.2 交易情况（2分）
+    </span>
+<span class='text-success font-medium'>
+        得分 2
+    </span>
+    </div>
+<div class='pl-4 text-sm text-slate-subtle'>
+        <p >
+        · 年度交易流水稳定增长，履约记录良好，
+<span class='text-success font-medium'>
+        满分通过
+    </span>
+    </p>
+    </div>
+    </li>
+    </ul>
+    </div>
+    </div>
+<!-- [/MODULE] i9k_一级维度:财务能力折叠面板 -- 包含资金管理与交易情况评分明细 -->
+<!-- 5. 合作能力 -->
+<!-- [MODULE] j0l_一级维度:合作能力折叠面板 -->
+<div class='border border-slate-border rounded-lg overflow-hidden bg-white'>
+        <button class='dimension-header w-full flex items-center justify-between p-4 hover:bg-slate-50 transition-colors' data-dimension='5'>
+        <div class='text-left'>
+        <div class='text-primary font-bold text-base'>
+        5. 合作能力
+    </div>
+<div class='text-xs text-slate-subtle mt-1'>
+        满分15分，实际得分 13 分
+    </div>
+    </div>
+<i class='fa-solid fa-chevron-down collapse-arrow'>
+        </i>
+    </button>
+<div class='dimension-content p-4 border-t border-slate-border hidden'>
+        <ul class='space-y-3'>
+        <li class='space-y-1'>
+        <div class='flex justify-between items-center text-sm'>
+        <span class='font-medium text-slate-body'>
+        5.1 公开客户信息（2分）
+    </span>
+<span class='text-success font-medium'>
+        得分 2
+    </span>
+    </div>
+<div class='pl-4 text-sm text-slate-subtle'>
+        <p >
+        · 公开信息完备，多行业头部企业合作背景，
+<span class='text-success font-medium'>
+        满分通过
+    </span>
+    </p>
+    </div>
+    </li>
+<li class='space-y-1'>
+        <div class='flex justify-between items-center text-sm'>
+        <span class='font-medium text-slate-body'>
+        5.2 基础服务能力（3分）
+    </span>
+<span class='text-success font-medium'>
+        得分 3
+    </span>
+    </div>
+<div class='pl-4 text-sm text-slate-subtle'>
+        <p >
+        · 交付能力满足行业标准，客户满意度调查良好，
+<span class='text-success font-medium'>
+        满分通过
+    </span>
+    </p>
+    </div>
+    </li>
+<li class='space-y-1'>
+        <div class='flex justify-between items-center text-sm'>
+        <span class='font-medium text-slate-body'>
+        5.3 历史合作评价（4分）
+    </span>
+<span class='text-success font-medium'>
+        得分 3
+    </span>
+    </div>
+<div class='pl-4 text-sm text-slate-subtle'>
+        <p >
+        · 历史履约评价优秀，无重大违约投诉记录，
+<span class='text-success font-medium'>
+        得3分
+    </span>
+    </p>
+    </div>
+    </li>
+<li class='space-y-1'>
+        <div class='flex justify-between items-center text-sm'>
+        <span class='font-medium text-slate-body'>
+        5.4 合作连续性（3分）
+    </span>
+<span class='text-success font-medium'>
+        得分 3
+    </span>
+    </div>
+<div class='pl-4 text-sm text-slate-subtle'>
+        <p >
+        · 长期合作伙伴超过5年合作期，合作关系稳定，
+<span class='text-success font-medium'>
+        满分通过
+    </span>
+    </p>
+    </div>
+    </li>
+<li class='space-y-1'>
+        <div class='flex justify-between items-center text-sm'>
+        <span class='font-medium text-slate-body'>
+        5.5 累计合同金额（3分）
+    </span>
+<span class='text-success font-medium'>
+        得分 2
+    </span>
+    </div>
+<div class='pl-4 text-sm text-slate-subtle'>
+        <p >
+        · 年度合作合同金额超千万，合作体量充足，
+<span class='text-success font-medium'>
+        得2分
+    </span>
+    </p>
+    </div>
+    </li>
+    </ul>
+    </div>
+    </div>
+<!-- [/MODULE] j0l_一级维度:合作能力折叠面板 -- 包含合作评价、连续性等评分明细 -->
+    </div>
+    </div>
+<!-- [/MODULE] e5g_右侧信用评价主仪表盘 -- 包含综合得分、分数解读、雷达图、多维度折叠面板详情 -->
+    </div>
+    </div>
+    </main>
+    </div>
+<!-- [/MODULE] c3e_结果页顶部导航 -- 完整结果页面容器 -->
+<!-- Rule Modal -->
+<div id='rule-modal-overlay' class='modal-overlay hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4'>
+        <div class='modal-container bg-white rounded-xl shadow-float max-w-lg w-full max-h-[80vh] overflow-y-auto'>
+        <div class='p-6 border-b border-slate-border'>
+        <div class='flex items-center justify-between'>
+        <h3 class='text-xl font-bold text-slate-heading'>
+        信用评价规则说明
+    </h3>
+<button id='close-rule-modal' class='text-slate-subtle hover:text-slate-body text-xl'>
+        <i class='fa-solid fa-xmark'>
+        </i>
+    </button>
+    </div>
+    </div>
+<div class='p-6 text-sm leading-relaxed'>
+        <p class='mb-4 text-slate-subtle'>
+        企业信用评价得分依据多维度合规、经营、实力数据综合计算，满分100分，分值越低风险越高，分值越高信用资质越优良。
+    </p>
+<div class='grid grid-cols-1 gap-2'>
+        <div class='flex justify-between p-2 bg-slate-50 rounded'>
+        <span class='font-medium'>
+        L1
+    </span>
+<span >
+        0～10分
+    </span>
+<span class='text-slate-subtle'>
+        信用极差，高违约风险
+    </span>
+    </div>
+<div class='flex justify-between p-2 bg-slate-50 rounded'>
+        <span class='font-medium'>
+        L2
+    </span>
+<span >
+        11～20分
+    </span>
+<span class='text-slate-subtle'>
+        信用较差，较高违约风险
+    </span>
+    </div>
+<div class='flex justify-between p-2 bg-slate-50 rounded'>
+        <span class='font-medium'>
+        L3
+    </span>
+<span >
+        21～30分
+    </span>
+<span class='text-slate-subtle'>
+        信用偏弱，存在明显经营风险
+    </span>
+    </div>
+<div class='flex justify-between p-2 bg-slate-50 rounded'>
+        <span class='font-medium'>
+        L4
+    </span>
+<span >
+        31～40分
+    </span>
+<span class='text-slate-subtle'>
+        信用一般，整体经营稳定性不足
+    </span>
+    </div>
+<div class='flex justify-between p-2 bg-slate-50 rounded'>
+        <span class='font-medium'>
+        L5
+    </span>
+<span >
+        41～50分
+    </span>
+<span class='text-slate-subtle'>
+        信用中等，抗风险能力一般
+    </span>
+    </div>
+<div class='flex justify-between p-2 bg-slate-50 rounded'>
+        <span class='font-medium'>
+        L6
+    </span>
+<span >
+        51～60分
+    </span>
+<span class='text-slate-subtle'>
+        信用合格，整体经营状况平稳
+    </span>
+    </div>
+<div class='flex justify-between p-2 bg-slate-50 rounded'>
+        <span class='font-medium'>
+        L7
+    </span>
+<span >
+        61～70分
+    </span>
+<span class='text-slate-subtle'>
+        信用良好，合规履约表现稳定
+    </span>
+    </div>
+<div class='flex justify-between p-2 bg-slate-50 rounded'>
+        <span class='font-medium'>
+        L8
+    </span>
+<span >
+        71～80分
+    </span>
+<span class='text-slate-subtle'>
+        信用优良，综合实力与风控能力较好
+    </span>
+    </div>
+<div class='flex justify-between p-2 bg-slate-50 rounded'>
+        <span class='font-medium'>
+        L9
+    </span>
+<span >
+        81～90分
+    </span>
+<span class='text-success font-medium'>
+        信用优秀，企业资质与履约能力强
+    </span>
+    </div>
+<div class='flex justify-between p-2 bg-slate-50 rounded'>
+        <span class='font-medium'>
+        L10
+    </span>
+<span >
+        91～100分
+    </span>
+<span class='text-success font-medium'>
+        信用极佳，综合竞争力强、风险极低
+    </span>
+    </div>
+    </div>
+    </div>
+    </div>
+    </div>
+<!-- Export Modal -->
+<div id='export-modal-overlay' class='modal-overlay hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4'>
+        <div class='modal-container bg-white rounded-xl shadow-float max-w-md w-full'>
+        <div class='p-6 border-b border-slate-border'>
+        <div class='flex items-center justify-between'>
+        <h3 class='text-xl font-bold text-slate-heading'>
+        导出报告
+    </h3>
+<button id='close-export-modal' class='text-slate-subtle hover:text-slate-body text-xl'>
+        <i class='fa-solid fa-xmark'>
+        </i>
+    </button>
+    </div>
+    </div>
+<div class='p-6 space-y-4'>
+        <div >
+        <label class='block text-sm font-medium text-slate-body mb-2'>
+        报告文件名
+    </label>
+<input type='text' id='export-filename' value='北京字节跳动网络技术有限公司信用报告' class='w-full px-3 py-2 border border-slate-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary'/>
+    </div>
+<div class='space-y-3'>
+        <label class='flex items-center gap-2'>
+        <input type='checkbox' id='export-watermark' checked class='rounded text-primary'/>
+<span class='text-sm text-slate-body'>
+        添加防篡改水印
+    </span>
+    </label>
+<label class='flex items-center gap-2'>
+        <input type='checkbox' id='export-qrcode' checked class='rounded text-primary'/>
+<span class='text-sm text-slate-body'>
+        添加核验二维码
+    </span>
+    </label>
+    </div>
+<div id='export-status' class='hidden text-center py-2'>
+        <span class='inline-block animate-spin mr-2'>
+        <i class='fa-solid fa-spinner'>
+        </i>
+    </span>
+<span class='text-sm text-slate-subtle'>
+        正在生成报告...
+    </span>
+    </div>
+<div id='export-success' class='hidden text-center py-2 bg-success/10 rounded'>
+        <i class='fa-solid fa-check-circle text-success mr-1'>
+        </i>
+<span class='text-sm text-success'>
+        报告导出成功
+    </span>
+    </div>
+<div class='pt-2'>
+        <button id='confirm-export-btn' class='btn btn-primary w-full'>
+        <i class='fa-solid fa-download mr-1.5'>
+        </i>
+确认导出
+    </button>
+    </div>
+    </div>
+    </div>
+    </div>
+<!-- Toast Notification -->
+<div id='toast' class='fixed bottom-6 left-1/2 -translate-x-1/2 z-50 px-6 py-3 bg-success text-white rounded-lg shadow-float hidden'>
+        <span >
+        <i class='fa-solid fa-check-circle mr-2'>
+        </i>
+操作成功
+    </span>
+    </div>
+<!-- [JSMOD] k1m_页面切换基础逻辑 -->
+<script id='page-switch'>// Page Switching
+var pageQuery = document.getElementById('page-query');
+var pageLoading = document.getElementById('page-loading');
+var pageResult = document.getElementById('page-result');
+var startQueryBtn = document.getElementById('start-query-btn');
+var newQueryBtn = document.getElementById('new-query-btn');
+var queryInput = document.getElementById('query-input');
+startQueryBtn.addEventListener('click', function () {
+  if (!queryInput.value.trim()) {
+    showToast('请输入企业名称或统一信用代码');
+    return;
+  }
+  pageQuery.classList.add('hidden');
+  pageLoading.classList.remove('hidden');
+  pageResult.classList.add('hidden');
+  startLoadingProgress();
+});
+newQueryBtn.addEventListener('click', function () {
+  pageResult.classList.add('hidden');
+  pageQuery.classList.remove('hidden');
+  pageLoading.classList.add('hidden');
+  queryInput.focus();
+});</script>
+<!-- [/JSMOD] k1m_页面切换基础逻辑 -- 处理三个页面之间的切换显示隐藏 -->
+<!-- [JSMOD] l2n_加载进度动画逻辑 -->
+<script id='loading-progress'>// Loading Progress Animation
+var progressRing = document.getElementById('progress-ring');
+var progressText = document.getElementById('progress-text');
+var circumference = 2 * Math.PI * 44;
+function setProgress(percent) {
+  var offset = circumference - percent / 100 * circumference;
+  progressRing.style.strokeDashoffset = offset;
+  progressText.textContent = percent + '%';
+}
+function startLoadingProgress() {
+  var progress = 0;
+  var checks = ['check-1', 'check-2', 'check-3', 'check-4'];
+  var checkPoints = [25, 45, 70, 90];
+  var checkIndex = 0;
+  var interval = setInterval(function () {
+    progress += 1;
+    setProgress(progress);
+    if (checkIndex < checkPoints.length && progress >= checkPoints[checkIndex]) {
+      document.getElementById(checks[checkIndex]).classList.remove('hidden');
+      checkIndex++;
+    }
+    if (progress >= 100) {
+      clearInterval(interval);
+      setTimeout(function () {
+        pageLoading.classList.add('hidden');
+        pageResult.classList.remove('hidden');
+      }, 800);
+    }
+  }, 30);
+}
+// Toast Notification
+var toast = document.getElementById('toast');
+function showToast(message) {
+  toast.querySelector('span').innerHTML = '<i class="fa-solid fa-check-circle mr-2"></i>' + message;
+  toast.classList.remove('hidden');
+  setTimeout(function () {
+    toast.classList.add('hidden');
+  }, 2000);
+}</script>
+<!-- [/JSMOD] l2n_加载进度动画逻辑 -- 环形进度条加载动画，逐步显示核验完成对勾，完成后自动跳转 -->
+<!-- [JSMOD] m3o_雷达图初始化 -->
+<script id='radar-chart-init'>// Initialize ECharts Radar Chart
+var myChart;
+window.addEventListener('load', function () {
+  if (document.getElementById('radar-chart')) {
+    myChart = echarts.init(document.getElementById('radar-chart'));
+    var option = {
+      radar: {
+        indicator: [{
+          name: '综合实力',
+          max: 15
+        }, {
+          name: '合规经营',
+          max: 60
+        }, {
+          name: '发展潜力',
+          max: 6
+        }, {
+          name: '财务能力',
+          max: 5
+        }, {
+          name: '合作能力',
+          max: 15
+        }],
+        center: ['50%', '50%'],
+        radius: '70%',
+        axisName: {
+          color: '#1D2129',
+          fontSize: 12
+        },
+        splitArea: {
+          areaStyle: {
+            color: ['#F5F7FA', '#FFFFFF', '#F5F7FA', '#FFFFFF', '#F5F7FA']
+          }
+        },
+        splitLine: {
+          lineStyle: {
+            color: '#E5E6EB'
+          }
+        }
+      },
+      series: [{
+        type: 'radar',
+        data: [{
+          value: [12, 52, 5, 4, 13],
+          name: '企业得分',
+          areaStyle: {
+            color: 'rgba(22, 119, 255, 0.3)'
+          },
+          lineStyle: {
+            color: '#1677FF'
+          },
+          itemStyle: {
+            color: '#1677FF'
+          }
+        }]
+      }],
+      tooltip: {
+        trigger: 'item',
+        formatter: function formatter(params) {
+          var indicator = option.radar.indicator;
+          var html = '<div class="font-bold">' + params.name + '</div>';
+          params.value.forEach(function (v, i) {
+            html += '<div>' + indicator[i].name + ":" + v + '/' + indicator[i].max + '</div>';
+          });
+          return html;
+        }
+      }
+    };
+    myChart.setOption(option);
+  }
+  // Responsive resize
+  window.addEventListener('resize', function () {
+    if (myChart) {
+      myChart.resize();
+    }
+  });
+});</script>
+<!-- [/JSMOD] m3o_雷达图初始化 -- 使用echarts绘制五维信用评价雷达图，带hover tooltip -->
+<!-- [JSMOD] n4p_折叠面板交互逻辑 -->
+<script id='collapse-interaction'>// Dimension Collapse/Expand
+document.querySelectorAll('.dimension-header').forEach(function (header) {
+  header.addEventListener('click', function () {
+    var content = this.nextElementSibling;
+    var arrow = this.querySelector('.collapse-arrow');
+    if (content.classList.contains('hidden')) {
+      content.classList.remove('hidden');
+      arrow.classList.add('open');
+    } else {
+      content.classList.add('hidden');
+      arrow.classList.remove('open');
+    }
+    // Resize chart after animation
+    setTimeout(function () {
+      if (myChart) myChart.resize();
+    }, 350);
+  });
+});
+// Open first dimension by default
+document.querySelector('.dimension-header').click();</script>
+<!-- [/JSMOD] n4p_折叠面板交互逻辑 -- 处理一级维度面板点击展开/收起功能 -->
+<!-- [JSMOD] o5q_弹窗交互逻辑 -->
+<script id='modal-interaction'>// Rule Modal
+var ruleOverlay = document.getElementById('rule-modal-overlay');
+var showRuleBtn = document.getElementById('show-rule-btn');
+var closeRuleBtn = document.getElementById('close-rule-modal');
+showRuleBtn.addEventListener('click', function () {
+  ruleOverlay.classList.remove('hidden');
+});
+closeRuleBtn.addEventListener('click', function () {
+  ruleOverlay.classList.add('hidden');
+});
+ruleOverlay.addEventListener('click', function (e) {
+  if (e.target === ruleOverlay) {
+    ruleOverlay.classList.add('hidden');
+  }
+});
+// Export Dropdown & Modal
+var exportDropdownBtn = document.getElementById('export-dropdown-btn');
+var exportDropdownMenu = document.getElementById('export-dropdown-menu');
+var exportOverlay = document.getElementById('export-modal-overlay');
+var closeExportBtn = document.getElementById('close-export-modal');
+var confirmExportBtn = document.getElementById('confirm-export-btn');
+var exportStatus = document.getElementById('export-status');
+var exportSuccess = document.getElementById('export-success');
+exportDropdownBtn.addEventListener('click', function (e) {
+  e.stopPropagation();
+  exportDropdownMenu.classList.toggle('hidden');
+});
+document.addEventListener('click', function () {
+  exportDropdownMenu.classList.add('hidden');
+});
+// Handle export option click
+document.querySelectorAll('.export-option').forEach(function (item) {
+  item.addEventListener('click', function (e) {
+    var type = this.dataset.type;
+    exportDropdownMenu.classList.add('hidden');
+    exportOverlay.classList.remove('hidden');
+  });
+});
+closeExportBtn.addEventListener('click', function () {
+  exportOverlay.classList.add('hidden');
+});
+exportOverlay.addEventListener('click', function (e) {
+  if (e.target === exportOverlay) {
+    exportOverlay.classList.add('hidden');
+  }
+});
+confirmExportBtn.addEventListener('click', function () {
+  exportStatus.classList.remove('hidden');
+  exportSuccess.classList.add('hidden');
+  confirmExportBtn.disabled = true;
+  confirmExportBtn.classList.add('opacity-50');
+  setTimeout(function () {
+    exportStatus.classList.add('hidden');
+    exportSuccess.classList.remove('hidden');
+    setTimeout(function () {
+      exportOverlay.classList.add('hidden');
+      confirmExportBtn.disabled = false;
+      confirmExportBtn.classList.remove('opacity-50');
+      showToast('报告导出成功');
+    }, 1000);
+  }, 1500);
+});</script>
+<!-- [/JSMOD] o5q_弹窗交互逻辑 -- 规则说明弹窗和导出弹窗交互处理 -->
+    </body>
+    </html>

@@ -1,0 +1,1989 @@
+<html lang="zh-CN">
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>
+   建筑业公招市场洞察 | 数据看板
+  </title>
+  <!-- Google Fonts: Inter -->
+  <link href="https://fonts.googleapis.com" rel="preconnect"/>
+  <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+  <!-- Font Awesome -->
+  <link href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+  <!-- Tailwind CSS -->
+  <script src="https://res.gemcoder.com/js/reload.js">
+  </script>
+  <script src="https://cdn.tailwindcss.com">
+  </script>
+  <!-- ECharts -->
+  <script src="https://cdn.bootcdn.net/ajax/libs/echarts/5.4.3/echarts.min.js">
+  </script>
+  <script src="https://cdn.jsdmirror.com/npm/echarts/map/js/china.js">
+  </script>
+  <!-- Configuration -->
+  <script>
+   tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        primary: {
+          DEFAULT: '#1E40AF',
+          // Dark Blue 800
+          light: '#3B82F6',
+          // Blue 500
+          dark: '#1E3A8A',
+          // Blue 900
+          50: '#EFF6FF'
+        },
+        cta: {
+          DEFAULT: '#0EA5E9',
+          // Sky 500
+          hover: '#0284C7' // Sky 600
+        },
+        slate: {
+          canvas: '#F8FAFC',
+          // Slate 50
+          surface: '#FFFFFF',
+          // White
+          border: '#E2E8F0',
+          // Slate 200
+          subtle: '#94A3B8',
+          // Slate 400
+          body: '#1E293B',
+          // Slate 800 - Input Text
+          heading: '#0F172A' // Slate 900
+        },
+        status: {
+          success: '#10B981',
+          successBg: '#ECFDF5',
+          warning: '#F59E0B',
+          warningBg: '#FFFBEB',
+          danger: '#EF4444',
+          dangerBg: '#FEF2F2'
+        }
+      },
+      fontFamily: {
+        sans: ['Inter', 'sans-serif'],
+        mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', "Liberation Mono", "Courier New", 'monospace']
+      },
+      boxShadow: {
+        'card': '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
+        'float': '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+        'focus': '0 0 0 3px rgba(59, 130, 246, 0.4)'
+      },
+      spacing: {
+        '4.5': '1.125rem'
+      }
+    }
+  }
+};
+  </script>
+  <style type="text/tailwindcss">
+   @layer utilities {
+            .tabular-nums {
+                font-feature-settings: "tnum";
+                font-variant-numeric: tabular-nums;
+            }
+            .text-balance {
+                text-wrap: balance;
+            }
+            .scrollbar-hide::-webkit-scrollbar {
+                display: none;
+            }
+            .scrollbar-hide {
+                -ms-overflow-style: none;
+                scrollbar-width: none;
+            }
+            /* Custom thin scrollbar for dashboard tables */
+            .custom-scrollbar::-webkit-scrollbar {
+                width: 6px;
+                height: 6px;
+            }
+            .custom-scrollbar::-webkit-scrollbar-track {
+                background: transparent;
+            }
+            .custom-scrollbar::-webkit-scrollbar-thumb {
+                @apply bg-slate-300 rounded full;
+            }
+            .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+                @apply bg-slate-400;
+            }
+        }
+        @layer components {
+            .layout-container {
+                @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+            }
+            
+            /* Buttons */
+            .btn {
+                @apply inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-md transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-primary;
+            }
+            .btn-sm {
+                @apply px-3 py-1.5 text-xs;
+            }
+            .btn-primary {
+                @apply bg-primary text-white hover:bg-primary-dark shadow-sm border border-transparent;
+            }
+            .btn-secondary {
+                @apply bg-white text-slate-700 border border-slate-300 hover:bg-slate-50 shadow-sm;
+            }
+            .btn-cta {
+                @apply bg-cta text-white hover:bg-cta-hover shadow-sm border border-transparent;
+            }
+            .btn-ghost {
+                @apply text-slate-600 hover:text-slate-900 hover:bg-slate-100;
+            }
+            /* Cards */
+            .card {
+                @apply bg-white border border-slate-200 rounded-lg shadow-card;
+            }
+            .card-header {
+                @apply px-5 py-4 border-b border-slate-100 flex justify-between items-center;
+            }
+            .card-body {
+                @apply p-5;
+            }
+            /* Data Tables */
+            .data-table-container {
+                @apply overflow-x-auto rounded-lg border border-slate-200;
+            }
+            .data-table {
+                @apply min-w-full divide-y divide-slate-200;
+            }
+            .dt-th {
+                @apply px-4 py-3 bg-slate-50 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider whitespace-nowrap;
+            }
+            .dt-td {
+                @apply px-4 py-3 whitespace-nowrap text-sm text-slate-700 border-b border-slate-100 last:border-0;
+            }
+            .dt-row {
+                @apply hover:bg-slate-50 transition-colors duration-75;
+            }
+            /* Typography */
+            .heading-display {
+                @apply text-3xl font-bold text-slate-heading tracking-tight;
+            }
+            .heading-section {
+                @apply text-xl font-semibold text-slate-heading;
+            }
+            .heading-label {
+                @apply text-sm font-medium text-slate-500 uppercase tracking-wide;
+            }
+            .text-body {
+                @apply text-slate-600 text-sm leading-relaxed;
+            }
+            
+            /* Badges */
+            .badge {
+                @apply inline-flex items-center px-2 py-0.5 rounded text-xs font-medium;
+            }
+            .badge-success {
+                @apply bg-status-successBg text-status-success;
+            }
+            .badge-warning {
+                @apply bg-status-warningBg text-status-warning;
+            }
+            .badge-danger {
+                @apply bg-status-dangerBg text-status-danger;
+            }
+            .badge-neutral {
+                @apply bg-slate-100 text-slate-600;
+            }
+            /* Nav Item */
+            .nav-item {
+                @apply flex items-center gap-3 px-4 py-3 rounded-lg text-sm transition-colors duration-150 cursor-pointer;
+            }
+            .nav-item-active {
+                @apply bg-primary-50 text-primary-dark font-medium;
+            }
+            .nav-item-inactive {
+                @apply text-slate-600 hover:bg-slate-50 hover:text-slate-900;
+            }
+        }
+  </style>
+ </head>
+ <body class="bg-slate-canvas text-slate-body font-sans antialiased selection:bg-primary-light selection:text-white">
+  <!-- [MODULE] c45_整体布局 -->
+  <div class="flex flex-col min-h-screen">
+   <!-- [MODULE] a21_顶部标题栏 -->
+   <header class="bg-white border-b border-slate-200 sticky top-0 z-50">
+    <div class="h-16 flex items-center justify-between px-6">
+     <div class="flex items-center gap-3">
+      <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-primary to-cta flex items-center justify-center text-white">
+       <i class="fa-solid fa-building">
+       </i>
+      </div>
+      <div>
+       <h1 class="font-bold text-slate-900 text-lg leading-tight">
+        建筑业公招市场洞察
+       </h1>
+       <span class="text-[10px] text-slate-400 tracking-wide">
+        数据看板原型
+&middot;
+示例数据
+       </span>
+      </div>
+     </div>
+     <div class="hidden md:flex items-center gap-3">
+      <span class="badge badge-neutral">
+       <i class="fa-regular fa-calendar mr-1">
+       </i>
+       数据截至 2024-09
+      </span>
+      <button class="btn btn-primary btn-sm">
+       <i class="fa-solid fa-download mr-1">
+       </i>
+       导出报告
+      </button>
+     </div>
+    </div>
+   </header>
+   <!-- [/MODULE] a21_顶部标题栏 -- 页面品牌标识和导出功能 -->
+   <div class="flex flex-1 overflow-hidden">
+    <!-- [MODULE] b87_左侧分类导航 -->
+    <aside class="w-64 bg-white border-r border-slate-200 flex-shrink-0 h-[calc(100vh-4rem)] overflow-y-auto pt-6">
+     <nav class="space-y-1 px-3">
+      <div class="mb-4 px-4">
+       <h5 class="text-xs font-semibold text-slate-400 uppercase tracking-wider">
+        分析维度
+       </h5>
+      </div>
+      <div class="nav-item nav-item-active" data-target="market-overview">
+       <i class="fa-solid fa-chart-line w-5 text-center">
+       </i>
+       <span>
+        市场总量
+       </span>
+      </div>
+      <div class="nav-item nav-item-inactive" data-target="competition">
+       <i class="fa-solid fa-balance-scale w-5 text-center">
+       </i>
+       <span>
+        企业竞争格局
+       </span>
+      </div>
+      <div class="nav-item nav-item-inactive" data-target="industry">
+       <i class="fa-solid fa-sitemap w-5 text-center">
+       </i>
+       <span>
+        行业分布
+       </span>
+      </div>
+      <div class="nav-item nav-item-inactive" data-target="region">
+       <i class="fa-solid fa-map-location-dot w-5 text-center">
+       </i>
+       <span>
+        区域分析
+       </span>
+      </div>
+      <div class="nav-item nav-item-inactive" data-target="comparison">
+       <i class="fa-solid fa-people-group w-5 text-center">
+       </i>
+       <span>
+        八大央企对标
+       </span>
+      </div>
+      <div class="nav-item nav-item-inactive" data-target="cccg">
+       <i class="fa-solid fa-search w-5 text-center">
+       </i>
+       <span>
+        中交集团深度
+       </span>
+      </div>
+     </nav>
+     <div class="mt-8 px-4">
+      <div class="p-4 bg-primary-50 rounded-lg border border-primary-100">
+       <p class="text-xs text-primary-800 font-medium mb-1">
+        <i class="fa-solid fa-info-circle mr-1">
+        </i>
+        提示
+       </p>
+       <p class="text-[11px] text-primary-600">
+        点击左侧导航切换不同分析模块，图表支持悬停查看详细数值。
+       </p>
+      </div>
+     </div>
+    </aside>
+    <!-- [/MODULE] b87_左侧分类导航 -- 包含六个分析模块导航项 -->
+    <!-- [MODULE] d73_右侧内容区域 -->
+    <main class="flex-1 overflow-y-auto p-6 bg-slate-50 h-[calc(100vh-4rem)]">
+     <!-- [MODULE] e12_市场总量模块 -->
+     <section class="space-y-6" id="market-overview">
+      <div class="flex items-center justify-between mb-4">
+       <div>
+        <h2 class="heading-section">
+         市场总量
+&middot;
+核心指标
+        </h2>
+        <p class="text-xs text-slate-400">
+         全国建筑业公开招标市场整体概况（示例数据）
+        </p>
+       </div>
+       <span class="badge badge-neutral">
+        单位:亿元
+       </span>
+      </div>
+      <!-- 顶部指标卡 -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+       <!-- [MODULE] f98_指标卡:全国中标总额 -->
+       <div class="card p-6 hover:border-primary/40 transition-colors">
+        <div class="flex justify-between items-start mb-3">
+         <div class="text-xs font-semibold text-slate-500 uppercase">
+          全国中标总额
+         </div>
+         <div class="p-2 bg-blue-50 rounded text-primary">
+          <i class="fa-solid fa-globe text-sm">
+          </i>
+         </div>
+        </div>
+        <div class="text-3xl font-bold text-slate-900 tabular-nums mb-2">
+         12,458
+        </div>
+        <div class="flex items-center text-xs">
+         <span class="text-status-success font-medium flex items-center">
+          <i class="fa-solid fa-arrow-trend-up mr-1">
+          </i>
+          +8.2%
+         </span>
+         <span class="text-slate-400 ml-2">
+          同比去年
+         </span>
+        </div>
+       </div>
+       <!-- [/MODULE] f98_指标卡:全国中标总额 -->
+       <!-- [MODULE] g34_指标卡:同比变化 -->
+       <div class="card p-6 hover:border-primary/40 transition-colors">
+        <div class="flex justify-between items-start mb-3">
+         <div class="text-xs font-semibold text-slate-500 uppercase">
+          平均增长率
+         </div>
+         <div class="p-2 bg-green-50 rounded text-green-600">
+          <i class="fa-solid fa-percent text-sm">
+          </i>
+         </div>
+        </div>
+        <div class="text-3xl font-bold text-slate-900 tabular-nums mb-2">
+         7.6%
+        </div>
+        <div class="flex items-center text-xs">
+         <span class="text-status-success font-medium flex items-center">
+          <i class="fa-solid fa-arrow-trend-up mr-1">
+          </i>
+          +1.3pct
+         </span>
+         <span class="text-slate-400 ml-2">
+          较上季度
+         </span>
+        </div>
+       </div>
+       <!-- [/MODULE] g34_指标卡:同比变化 -->
+       <!-- [MODULE] h21_指标卡:八大央企份额 -->
+       <div class="card p-6 hover:border-primary/40 transition-colors">
+        <div class="flex justify-between items-start mb-3">
+         <div class="text-xs font-semibold text-slate-500 uppercase">
+          八大央企份额
+         </div>
+         <div class="p-2 bg-indigo-50 rounded text-indigo-600">
+          <i class="fa-solid fa-flag text-sm">
+          </i>
+         </div>
+        </div>
+        <div class="text-3xl font-bold text-slate-900 tabular-nums mb-2">
+         32.8%
+        </div>
+        <div class="flex items-center text-xs">
+         <span class="text-status-danger font-medium flex items-center">
+          <i class="fa-solid fa-arrow-trend-down mr-1">
+          </i>
+          -1.2%
+         </span>
+         <span class="text-slate-400 ml-2">
+          同比去年
+         </span>
+        </div>
+       </div>
+       <!-- [/MODULE] h21_指标卡:八大央企份额 -->
+       <!-- [MODULE] i56_指标卡:民营企业份额 -->
+       <div class="card p-6 hover:border-primary/40 transition-colors">
+        <div class="flex justify-between items-start mb-3">
+         <div class="text-xs font-semibold text-slate-500 uppercase">
+          民营企业份额
+         </div>
+         <div class="p-2 bg-orange-50 rounded text-orange-600">
+          <i class="fa-solid fa-people-group text-sm">
+          </i>
+         </div>
+        </div>
+        <div class="text-3xl font-bold text-slate-900 tabular-nums mb-2">
+         41.5%
+        </div>
+        <div class="flex items-center text-xs">
+         <span class="text-status-success font-medium flex items-center">
+          <i class="fa-solid fa-arrow-trend-up mr-1">
+          </i>
+          +2.4%
+         </span>
+         <span class="text-slate-400 ml-2">
+          同比去年
+         </span>
+        </div>
+       </div>
+       <!-- [/MODULE] i56_指标卡:民营企业份额 -->
+      </div>
+      <!-- 企业类型份额饼图 -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+       <div class="card">
+        <div class="card-header">
+         <h3 class="text-sm font-semibold text-slate-800">
+          企业性质中标份额分布
+         </h3>
+         <span class="text-xs text-slate-400">
+          单位: %
+         </span>
+        </div>
+        <div class="card-body">
+         <div class="w-full h-[320px]" id="enterprise-type-pie">
+         </div>
+        </div>
+       </div>
+       <div class="card">
+        <div class="card-header">
+         <h3 class="text-sm font-semibold text-slate-800">
+          近六个月中标总额趋势
+         </h3>
+         <span class="text-xs text-slate-400">
+          移动累计
+         </span>
+        </div>
+        <div class="card-body">
+         <div class="w-full h-[320px]" id="total-trend-line">
+         </div>
+        </div>
+       </div>
+      </div>
+      <!-- 新增图表 -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+       <div class="card">
+        <div class="card-header">
+         <h3 class="text-sm font-semibold text-slate-800">
+          项目规模结构分布
+         </h3>
+         <span class="text-xs text-slate-400">
+          单位: %
+         </span>
+        </div>
+        <div class="card-body">
+         <div class="w-full h-[320px]" id="project-size-stack">
+         </div>
+        </div>
+       </div>
+       <div class="card">
+        <div class="card-header">
+         <h3 class="text-sm font-semibold text-slate-800">
+          现汇 vs 投资类项目对比
+         </h3>
+         <span class="text-xs text-slate-400">
+          单位: 千亿元
+         </span>
+        </div>
+        <div class="card-body">
+         <div class="w-full h-[320px]" id="cash-vs-invest-bar">
+         </div>
+        </div>
+       </div>
+      </div>
+     </section>
+     <!-- [/MODULE] e12_市场总量模块 -- 包含核心指标卡和基础趋势图 -->
+     <!-- [MODULE] f45_企业竞争格局模块 -->
+     <section class="space-y-6 hidden" id="competition">
+      <div class="flex items-center justify-between mb-4">
+       <div>
+        <h2 class="heading-section">
+         企业竞争格局
+        </h2>
+        <p class="text-xs text-slate-400">
+         头部企业中标金额排名分析（示例数据）
+        </p>
+       </div>
+      </div>
+      <!-- 顶部指标卡 -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+       <div class="card p-5 hover:border-primary/40 transition-colors">
+        <div class="text-xs text-slate-500 mb-1">
+         八大央企中标总额
+        </div>
+        <div class="text-2xl font-bold tabular-nums text-slate-900 mb-1">
+         13,760 亿
+        </div>
+        <div class="text-xs text-status-danger">
+         <i class="fa-solid fa-arrow-down">
+         </i>
+         -1.2% YoY
+        </div>
+       </div>
+       <div class="card p-5 hover:border-primary/40 transition-colors">
+        <div class="text-xs text-slate-500 mb-1">
+         其他央国企总额
+        </div>
+        <div class="text-2xl font-bold tabular-nums text-slate-900 mb-1">
+         9,850 亿
+        </div>
+        <div class="text-xs text-status-success">
+         <i class="fa-solid fa-arrow-up">
+         </i>
+         +8.5% YoY
+        </div>
+       </div>
+      </div>
+      <!-- 八大央企排名与同比变化 -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+       <div class="card">
+        <div class="card-header">
+         <h3 class="text-sm font-semibold text-slate-800">
+          八大央企中标额排名 (2024)
+         </h3>
+         <span class="text-xs text-slate-400">
+          单位: 亿元
+         </span>
+        </div>
+        <div class="card-body">
+         <div class="w-full h-[400px]" id="top-8-horizontal-bar">
+         </div>
+        </div>
+       </div>
+       <div class="card">
+        <div class="card-header">
+         <h3 class="text-sm font-semibold text-slate-800">
+          八大央企同比变化 (%)
+         </h3>
+        </div>
+        <div class="card-body">
+         <div class="w-full h-[400px]" id="top-8-growth-bar">
+         </div>
+        </div>
+       </div>
+      </div>
+      <!-- 企业类型份额与对比 -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+       <div class="card">
+        <div class="card-header">
+         <h3 class="text-sm font-semibold text-slate-800">
+          企业类型份额分布
+         </h3>
+        </div>
+        <div class="card-body">
+         <div class="w-full h-[400px]" id="enterprise-type-ring">
+         </div>
+        </div>
+       </div>
+       <div class="card">
+        <div class="card-header">
+         <h3 class="text-sm font-semibold text-slate-800">
+          企业类型市场份额对比 (2024 vs 2025)
+         </h3>
+        </div>
+        <div class="card-body">
+         <div class="w-full h-[400px]" id="enterprise-share-comparison">
+         </div>
+        </div>
+       </div>
+      </div>
+     </section>
+     <!-- [/MODULE] f45_企业竞争格局模块 -- 包含八大央企排名柱状图和份额饼图 -->
+     <!-- [MODULE] g78_行业分布模块 -->
+     <section class="space-y-6 hidden" id="industry">
+      <div class="flex items-center justify-between mb-4">
+       <div>
+        <h2 class="heading-section">
+         行业分布分析
+        </h2>
+        <p class="text-xs text-slate-400">
+         不同细分行业中标规模与增长率分析（V10版本数据）
+        </p>
+       </div>
+      </div>
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+       <div class="card">
+        <div class="card-header">
+         <h3 class="text-sm font-semibold text-slate-800">
+          各行业中标额占比
+         </h3>
+         <span class="text-xs text-slate-400">
+          按中标金额排序
+         </span>
+        </div>
+        <div class="card-body">
+         <div class="w-full h-[400px]" id="industry-pie-chart">
+         </div>
+        </div>
+       </div>
+       <div class="card">
+        <div class="card-header">
+         <h3 class="text-sm font-semibold text-slate-800">
+          行业同比增长率
+         </h3>
+         <span class="text-xs text-slate-400">
+          正负增长区分显示
+         </span>
+        </div>
+        <div class="card-body">
+         <div class="w-full h-[400px]" id="industry-growth-bar">
+         </div>
+        </div>
+       </div>
+      </div>
+     </section>
+     <!-- [/MODULE] g78_行业分布模块 -- 饼图+增长率柱状图 -->
+     <!-- [MODULE] h89_区域分析模块 -->
+     <section class="space-y-6 hidden" id="region">
+      <div class="flex items-center justify-between mb-4">
+       <div>
+        <h2 class="heading-section">
+         区域市场分布
+        </h2>
+        <p class="text-xs text-slate-400">
+         按省份和经济区域划分的中标情况分析（V10版本数据）
+        </p>
+       </div>
+      </div>
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+       <div class="card lg:col-span-2">
+        <div class="card-header">
+         <h3 class="text-sm font-semibold text-slate-800">
+          全国区域中标额分布图
+         </h3>
+         <span class="text-xs text-slate-400">
+          点击省份查看详细数据
+         </span>
+        </div>
+        <div class="card-body">
+         <div class="w-full h-[450px]" id="china-region-map">
+         </div>
+        </div>
+       </div>
+       <div class="card">
+        <div class="card-header">
+         <h3 class="text-sm font-semibold text-slate-800">
+          区域中标额TOP5
+         </h3>
+         <span class="text-xs text-slate-400">
+          单位: 亿元
+         </span>
+        </div>
+        <div class="card-body">
+         <div class="w-full h-[220px]" id="top-region-bar">
+         </div>
+        </div>
+        <div class="px-5 pb-5 border-t border-slate-100 pt-4">
+         <h4 class="text-xs font-semibold text-slate-600 mb-3">
+          区域增长率对比
+         </h4>
+         <div class="w-full h-[200px]" id="region-growth-bar">
+         </div>
+        </div>
+       </div>
+      </div>
+     </section>
+     <!-- [/MODULE] h89_区域分析模块 -- 中国区域地图+TOP5区域柱状图+增长率对比 -->
+     <!-- [MODULE] i34_八大央企对标模块 -->
+     <section class="space-y-6 hidden" id="comparison">
+      <div class="flex items-center justify-between mb-4">
+       <div>
+        <h2 class="heading-section">
+         八大央企对标分析
+        </h2>
+        <p class="text-xs text-slate-400">
+         头部央企在不同维度的竞争对比（V10版本数据）
+        </p>
+       </div>
+      </div>
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+       <div class="card">
+        <div class="card-header">
+         <h3 class="text-sm font-semibold text-slate-800">
+          央企中标总额对比
+         </h3>
+         <span class="text-xs text-slate-400">
+          单位: 亿元
+         </span>
+        </div>
+        <div class="card-body">
+         <div class="w-full h-[350px]" id="central-enterprise-bar">
+         </div>
+        </div>
+       </div>
+       <div class="card">
+        <div class="card-header">
+         <h3 class="text-sm font-semibold text-slate-800">
+          央企行业分布对比
+         </h3>
+         <span class="text-xs text-slate-400">
+          按行业占比排序
+         </span>
+        </div>
+        <div class="card-body">
+         <div class="w-full h-[350px]" id="enterprise-industry-radar">
+         </div>
+        </div>
+       </div>
+      </div>
+      <div class="card">
+       <div class="card-header">
+        <h3 class="text-sm font-semibold text-slate-800">
+         央企同比增长率对比
+        </h3>
+        <span class="text-xs text-slate-400">
+         正负增长区分显示
+        </span>
+       </div>
+       <div class="card-body">
+        <div class="w-full h-[300px]" id="enterprise-growth-bar">
+        </div>
+       </div>
+      </div>
+     </section>
+     <!-- [/MODULE] i34_八大央企对标模块 -- 总额对比柱状图+行业分布雷达图+增长率对比 -->
+     <!-- [MODULE] j56_中交集团深度模块 -->
+     <section class="space-y-6 hidden" id="cccg">
+      <div class="flex items-center justify-between mb-4">
+       <div>
+        <h2 class="heading-section">
+         中交集团深度分析
+        </h2>
+        <p class="text-xs text-slate-400">
+         中交集团细分维度洞察（示例数据）
+        </p>
+       </div>
+      </div>
+      <!-- 核心指标卡 -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+       <div class="card p-5 hover:border-primary/40 transition-colors">
+        <div class="text-xs text-slate-500 mb-1">
+         中标总额
+        </div>
+        <div class="text-2xl font-bold tabular-nums text-slate-900 mb-1">
+         2,450 亿
+        </div>
+        <div class="text-xs text-status-success">
+         <i class="fa-solid fa-arrow-up">
+         </i>
+         +8.5% YoY
+        </div>
+       </div>
+       <div class="card p-5 hover:border-primary/40 transition-colors">
+        <div class="text-xs text-slate-500 mb-1">
+         市场份额
+        </div>
+        <div class="text-2xl font-bold tabular-nums text-slate-900 mb-1">
+         17.8%
+        </div>
+        <div class="text-xs text-status-success">
+         <i class="fa-solid fa-arrow-up">
+         </i>
+         +0.3pct YoY
+        </div>
+       </div>
+       <div class="card p-5 hover:border-primary/40 transition-colors">
+        <div class="text-xs text-slate-500 mb-1">
+         项目数量
+        </div>
+        <div class="text-2xl font-bold tabular-nums text-slate-900 mb-1">
+         862 个
+        </div>
+        <div class="text-xs text-status-danger">
+         <i class="fa-solid fa-arrow-down">
+         </i>
+         -5.2% YoY
+        </div>
+       </div>
+      </div>
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+       <div class="card">
+        <div class="card-header">
+         <h3 class="text-sm font-semibold text-slate-800">
+          二级单位中标额排名
+         </h3>
+         <span class="text-xs text-slate-400">
+          单位:亿元
+         </span>
+        </div>
+        <div class="card-body">
+         <div class="w-full h-[380px]" id="cccg-subsidiary-bar-updated">
+         </div>
+        </div>
+       </div>
+       <div class="card">
+        <div class="card-header">
+         <h3 class="text-sm font-semibold text-slate-800">
+          各区域中标额分布
+         </h3>
+         <span class="text-xs text-slate-400">
+          单位: 亿元
+         </span>
+        </div>
+        <div class="card-body">
+         <div class="w-full h-[380px]" id="cccg-region-bar">
+         </div>
+        </div>
+       </div>
+       <div class="card">
+        <div class="card-header">
+         <h3 class="text-sm font-semibold text-slate-800">
+          各行业中标额气泡图
+         </h3>
+         <span class="text-xs text-slate-400">
+          气泡大小代表中标额
+         </span>
+        </div>
+        <div class="card-body">
+         <div class="w-full h-[380px]" id="cccg-industry-bubble">
+         </div>
+        </div>
+       </div>
+      </div>
+     </section>
+     <!-- [/MODULE] j56_中交集团深度模块 -- 核心指标+二级单位排名+结构分析 -->
+    </main>
+    <!-- [/MODULE] d73_右侧内容区域 -- 所有分析图表内容容器 -->
+   </div>
+  </div>
+  <!-- [/MODULE] c45_整体布局 -- 侧边导航+主内容响应式布局 -->
+  <!-- 引入ECharts初始化脚本 -->
+  <!-- [JSMOD] 8s8_导航切换交互 -->
+  <script id="nav-switch">
+   document.addEventListener('DOMContentLoaded', function () {
+  var navItems = document.querySelectorAll('.nav-item');
+  var sections = document.querySelectorAll('main > section');
+  navItems.forEach(function (item) {
+    item.addEventListener('click', function () {
+      // 移除所有active状态
+      navItems.forEach(function (i) {
+        i.classList.remove('nav-item-active');
+        i.classList.add('nav-item-inactive');
+      });
+      // 添加当前active
+      this.classList.remove('nav-item-inactive');
+      this.classList.add('nav-item-active');
+      // 隐藏所有section
+      var targetId = this.getAttribute('data-target');
+      sections.forEach(function (sec) {
+        sec.classList.add('hidden');
+      });
+      // 显示目标section
+      document.getElementById(targetId).classList.remove('hidden');
+      // 延迟触发resize，让图表渲染正确
+      setTimeout(function () {
+        window.dispatchEvent(new Event('resize'));
+      }, 100);
+    });
+  });
+});
+  </script>
+  <!-- [/JSMOD] 8s8_导航切换交互 -- 实现左侧导航点击切换内容区域 -->
+  <!-- [JSMOD] a7c_charts-init 图表初始化 -->
+  <script id="charts-init">
+   function _typeof(o) {
+  "@babel/helpers - typeof";
+
+  return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) {
+    return typeof o;
+  } : function (o) {
+    return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o;
+  }, _typeof(o);
+}
+function _defineProperty(obj, key, value) {
+  key = _toPropertyKey(key);
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+  return obj;
+}
+function _toPropertyKey(t) {
+  var i = _toPrimitive(t, "string");
+  return "symbol" == _typeof(i) ? i : String(i);
+}
+function _toPrimitive(t, r) {
+  if ("object" != _typeof(t) || !t) return t;
+  var e = t[Symbol.toPrimitive];
+  if (void 0 !== e) {
+    var i = e.call(t, r || "default");
+    if ("object" != _typeof(i)) return i;
+    throw new TypeError("@@toPrimitive must return a primitive value.");
+  }
+  return ("string" === r ? String : Number)(t);
+}
+window.addEventListener('load', function () {
+  var resizeTimer;
+  // 1. 市场总量模块 - 企业类型饼图
+  var pieChartDom = document.getElementById('enterprise-type-pie');
+  if (pieChartDom) {
+    var pieChart = echarts.init(pieChartDom);
+    var pieOption = {
+      tooltip: {
+        trigger: 'item',
+        formatter: '{a} <br/>{b}: {c} ({d}%)'
+      },
+      legend: {
+        orient: 'vertical',
+        left: 'left'
+      },
+      series: [{
+        name: '中标份额',
+        type: 'pie',
+        radius: ['40%', '70%'],
+        avoidLabelOverlap: false,
+        itemStyle: {
+          borderRadius: 8,
+          borderColor: '#fff',
+          borderWidth: 2
+        },
+        label: {
+          show: true,
+          formatter: '{b}: {d}%'
+        },
+        data: [{
+          value: 32.8,
+          name: '八大央企',
+          itemStyle: {
+            color: '#1E40AF'
+          }
+        }, {
+          value: 25.7,
+          name: '其他央国企',
+          itemStyle: {
+            color: '#3B82F6'
+          }
+        }, {
+          value: 41.5,
+          name: '民营企业',
+          itemStyle: {
+            color: '#F97316'
+          }
+        }]
+      }]
+    };
+    pieChart.setOption(pieOption);
+    window.addEventListener('resize', function () {
+      pieChart.resize();
+    });
+  }
+  // 2. 市场总量模块 - 趋势线图
+  var trendDom = document.getElementById('total-trend-line');
+  if (trendDom) {
+    var trendChart = echarts.init(trendDom);
+    var trendOption = {
+      tooltip: {
+        trigger: 'axis'
+      },
+      grid: {
+        left: '3%',
+        right: '4%',
+        bottom: '3%',
+        containLabel: true
+      },
+      xAxis: {
+        type: 'category',
+        boundaryGap: false,
+        data: ['4月', '5月', '6月', '7月', '8月', '9月']
+      },
+      yAxis: {
+        type: 'value',
+        name: '千亿元'
+      },
+      series: [{
+        name: '累计中标总额',
+        type: 'line',
+        smooth: true,
+        data: [10.2, 10.8, 11.1, 11.5, 11.9, 12.5],
+        areaStyle: {
+          color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+            offset: 0,
+            color: 'rgba(30, 64, 175, 0.3)'
+          }, {
+            offset: 1,
+            color: 'rgba(30, 64, 175, 0.05)'
+          }])
+        },
+        lineStyle: {
+          color: '#1E40AF',
+          width: 2
+        }
+      }]
+    };
+    trendChart.setOption(trendOption);
+    window.addEventListener('resize', function () {
+      trendChart.resize();
+    });
+  }
+  // 10. 市场总量 - 项目规模结构分布
+  var projectSizeDom = document.getElementById('project-size-stack');
+  if (projectSizeDom) {
+    var projectSizeChart = echarts.init(projectSizeDom);
+    var projectSizeOption = {
+      tooltip: {
+        trigger: 'axis',
+        axisPointer: {
+          type: 'shadow'
+        }
+      },
+      legend: {
+        data: ['1-10亿', '10-50亿', '50-100亿', '100亿以上']
+      },
+      grid: {
+        left: '3%',
+        right: '4%',
+        bottom: '3%',
+        containLabel: true
+      },
+      xAxis: {
+        type: 'value',
+        name: '占比 (%)'
+      },
+      yAxis: {
+        type: 'category',
+        data: ['项目规模分布']
+      },
+      series: [{
+        name: '1-10亿',
+        type: 'bar',
+        stack: 'total',
+        data: [25.3],
+        itemStyle: {
+          color: '#1E40AF'
+        }
+      }, {
+        name: '10-50亿',
+        type: 'bar',
+        stack: 'total',
+        data: [38.7],
+        itemStyle: {
+          color: '#3B82F6'
+        }
+      }, {
+        name: '50-100亿',
+        type: 'bar',
+        stack: 'total',
+        data: [22.5],
+        itemStyle: {
+          color: '#60A5FA'
+        }
+      }, {
+        name: '100亿以上',
+        type: 'bar',
+        stack: 'total',
+        data: [13.5],
+        itemStyle: {
+          color: '#93C5FD'
+        }
+      }]
+    };
+    projectSizeChart.setOption(projectSizeOption);
+    window.addEventListener('resize', function () {
+      projectSizeChart.resize();
+    });
+  }
+  // 市场总量 - 现汇VS投资类项目对比
+  var cashVsInvestDom = document.getElementById('cash-vs-invest-bar');
+  if (cashVsInvestDom) {
+    var cashVsInvestChart = echarts.init(cashVsInvestDom);
+    var cashVsInvestOption = {
+      tooltip: {
+        trigger: 'axis',
+        axisPointer: {
+          type: 'shadow'
+        }
+      },
+      legend: {
+        data: ['现汇项目', '投资类项目']
+      },
+      grid: {
+        left: '3%',
+        right: '4%',
+        bottom: '3%',
+        containLabel: true
+      },
+      xAxis: {
+        type: 'category',
+        data: ['2024年', '2023年']
+      },
+      yAxis: {
+        type: 'value',
+        name: '千亿元'
+      },
+      series: [{
+        name: '现汇项目',
+        type: 'bar',
+        data: [7.8, 6.2],
+        itemStyle: {
+          color: '#1E40AF'
+        }
+      }, {
+        name: '投资类项目',
+        type: 'bar',
+        data: [4.6, 3.1],
+        itemStyle: {
+          color: '#0EA5E9'
+        }
+      }]
+    };
+    cashVsInvestChart.setOption(cashVsInvestOption);
+    window.addEventListener('resize', function () {
+      cashVsInvestChart.resize();
+    });
+  }
+  // 11. 央企对标 - 区域热力矩阵
+  var heatDom = document.getElementById('region-heatmap');
+  if (heatDom) {
+    var heatChart = echarts.init(heatDom);
+    var companies = ['中建', '中铁', '中铁建', '中交', '电建', '能建', '中冶', '水电'];
+    var regions = ['华东', '华南', '华北', '西南', '西北', '东北'];
+    var data = [];
+    for (var i = 0; i < companies.length; i++) {
+      for (var j = 0; j < regions.length; j++) {
+        data.push([i, j, Math.round(Math.random() * 20 + 5)]);
+      }
+    }
+    var heatOption = {
+      tooltip: {
+        formatter: function formatter(params) {
+          return companies[params.value[0]] + "-" + regions[params.value[1]] + "<br/>市场份额:" + params.value[2] + '%';
+        }
+      },
+      grid: {
+        left: '15%',
+        top: '10%'
+      },
+      xAxis: {
+        type: 'category',
+        data: companies,
+        splitArea: {
+          show: true
+        }
+      },
+      yAxis: {
+        type: 'category',
+        data: regions,
+        splitArea: {
+          show: true
+        }
+      },
+      visualMap: {
+        min: 0,
+        max: 25,
+        calculable: true,
+        orient: 'horizontal',
+        left: 'center',
+        bottom: '0%',
+        inRange: {
+          color: ['#f0f9e8', '#7bccc4', '#0868ac']
+        }
+      },
+      series: [{
+        type: 'heatmap',
+        data: data,
+        label: {
+          show: true,
+          fontSize: 10
+        },
+        emphasis: {
+          itemStyle: {
+            shadowBlur: 10,
+            shadowColor: 'rgba(0,0,0,0.5)'
+          }
+        }
+      }]
+    };
+    heatChart.setOption(heatOption);
+    window.addEventListener('resize', function () {
+      heatChart.resize();
+    });
+  }
+  // 11. 分行业分组柱状图
+  var groupedBarDom = document.getElementById('industry-grouped-bar');
+  if (groupedBarDom) {
+    var groupedBarChart = echarts.init(groupedBarDom);
+    var option = {
+      tooltip: {
+        trigger: 'axis',
+        axisPointer: {
+          type: 'shadow'
+        }
+      },
+      legend: {
+        data: ['中国建筑', '中国中铁', '中国交建']
+      },
+      grid: {
+        left: '3%',
+        right: '4%',
+        bottom: '3%',
+        containLabel: true
+      },
+      xAxis: {
+        type: 'category',
+        data: ['房建', '路桥', '市政', '水利', '新能源']
+      },
+      yAxis: {
+        type: 'value',
+        name: '百亿元'
+      },
+      series: [{
+        name: '中国建筑',
+        type: 'bar',
+        data: [12.5, 2.8, 3.2, 1.1, 0.8],
+        itemStyle: {
+          color: '#1E40AF'
+        }
+      }, {
+        name: '中国中铁',
+        type: 'bar',
+        data: [3.2, 9.8, 2.5, 1.8, 1.2],
+        itemStyle: {
+          color: '#3B82F6'
+        }
+      }, {
+        name: '中国交建',
+        type: 'bar',
+        data: [1.8, 8.5, 2.9, 2.4, 3.5],
+        itemStyle: {
+          color: '#0EA5E9'
+        }
+      }]
+    };
+    groupedBarChart.setOption(option);
+    window.addEventListener('resize', function () {
+      groupedBarChart.resize();
+    });
+  }
+  // 12. 项目类型堆叠柱状图
+  var stackBarDom = document.getElementById('project-stack-bar');
+  if (stackBarDom) {
+    var stackBarChart = echarts.init(stackBarDom);
+    var option = {
+      tooltip: {
+        trigger: 'axis',
+        axisPointer: {
+          type: 'shadow'
+        }
+      },
+      legend: {
+        data: ['施工类项目', '投资类项目']
+      },
+      grid: {
+        left: '3%',
+        right: '4%',
+        bottom: '3%',
+        containLabel: true
+      },
+      xAxis: {
+        type: 'category',
+        data: ['中建', '中铁', '中铁建', '中交', '电建', '能建']
+      },
+      yAxis: {
+        type: 'value',
+        name: '百亿元'
+      },
+      series: [{
+        name: '施工类项目',
+        type: 'bar',
+        stack: 'total',
+        emphasis: {
+          focus: 'series'
+        },
+        data: [8.5, 10.2, 11.5, 9.8, 4.2, 3.8],
+        itemStyle: {
+          color: '#3B82F6'
+        }
+      }, {
+        name: '投资类项目',
+        type: 'bar',
+        stack: 'total',
+        emphasis: {
+          focus: 'series'
+        },
+        data: [3.2, 4.5, 5.8, 8.2, 2.5, 2.1],
+        itemStyle: {
+          color: '#F59E0B'
+        }
+      }]
+    };
+    stackBarChart.setOption(option);
+    window.addEventListener('resize', function () {
+      stackBarChart.resize();
+    });
+  }
+  // 13. 中交集团 - 二级单位横向柱状图
+  var subsidiaryDom = document.getElementById('cccg-subsidiary-bar');
+  if (subsidiaryDom) {
+    var subsidiaryChart = echarts.init(subsidiaryDom);
+    var _data = [{
+      name: '一公局',
+      value: 320
+    }, {
+      name: '二公局',
+      value: 295
+    }, {
+      name: '航道局',
+      value: 270
+    }, {
+      name: '一航局',
+      value: 250
+    }, {
+      name: '四公局',
+      value: 210
+    }, {
+      name: '路桥集团',
+      value: 185
+    }, {
+      name: '中交地产',
+      value: 165
+    }, {
+      name: '中水航',
+      value: 150
+    }, {
+      name: '上航局',
+      value: 140
+    }];
+    var _sorted = _data.sort(function (a, b) {
+      return a.value - b.value;
+    });
+    var option = {
+      tooltip: {
+        trigger: 'axis'
+      },
+      grid: {
+        left: '20%',
+        right: '10%'
+      },
+      xAxis: {
+        type: 'value',
+        name: '亿元'
+      },
+      yAxis: {
+        type: 'category',
+        data: _sorted.map(function (d) {
+          return d.name;
+        })
+      },
+      series: [{
+        type: 'bar',
+        data: _sorted.map(function (d) {
+          return d.value;
+        }),
+        itemStyle: {
+          color: '#0EA5E9'
+        },
+        label: {
+          show: true,
+          position: 'right'
+        }
+      }]
+    };
+    subsidiaryChart.setOption(option);
+    window.addEventListener('resize', function () {
+      subsidiaryChart.resize();
+    });
+  }
+  // 中交集团各区域柱状图
+  var cccgRegionDom = document.getElementById('cccg-region-bar');
+  if (cccgRegionDom) {
+    var cccgRegionChart = echarts.init(cccgRegionDom);
+    var regionData = [{
+      name: '华东',
+      value: 890
+    }, {
+      name: '华南',
+      value: 450
+    }, {
+      name: '西南',
+      value: 320
+    }, {
+      name: '华北',
+      value: 280
+    }, {
+      name: '西北',
+      value: 190
+    }, {
+      name: '东北',
+      value: 120
+    }];
+    var sortedRegion = regionData.sort(function (a, b) {
+      return a.value - b.value;
+    });
+    var option = {
+      tooltip: {
+        trigger: 'axis'
+      },
+      grid: {
+        left: '25%',
+        right: '10%'
+      },
+      xAxis: {
+        type: 'value',
+        name: '亿元'
+      },
+      yAxis: {
+        type: 'category',
+        data: sortedRegion.map(function (d) {
+          return d.name;
+        })
+      },
+      series: [{
+        type: 'bar',
+        data: sortedRegion.map(function (d) {
+          return d.value;
+        }),
+        itemStyle: {
+          color: '#1E40AF'
+        },
+        label: {
+          show: true,
+          position: 'right'
+        }
+      }]
+    };
+    cccgRegionChart.setOption(option);
+    window.addEventListener('resize', function () {
+      return cccgRegionChart.resize();
+    });
+  }
+// 中交集团行业气泡图
+  var cccgBubbleDom = document.getElementById('cccg-industry-bubble');
+  if (cccgBubbleDom) {
+    var cccgBubbleChart = echarts.init(cccgBubbleDom);
+    var bubbleData = [{
+      name: '路桥',
+      value: [850, 8.2, 850]
+    }, {
+      name: '房建',
+      value: [420, 3.5, 420]
+    }, {
+      name: '市政',
+      value: [380, 10.5, 380]
+    }, {
+      name: '疏浚',
+      value: [290, 5.8, 290]
+    }, {
+      name: '铁路',
+      value: [180, -2.5, 180]
+    }, {
+      name: '机场',
+      value: [150, 12.3, 150]
+    }];
+    var option = {
+      tooltip: {
+        formatter: function formatter(params) {
+          return "".concat(params.data.name, "<br>\u4E2D\u6807\u989D:").concat(params.data.value[0], "\u4EBF<br>\u540C\u6BD4:").concat(params.data.value[1], "%");
+        }
+      },
+      grid: {
+        left: '10%',
+        right: '10%',
+        bottom: '10%'
+      },
+      xAxis: {
+        name: '中标额(亿)',
+        type: 'value'
+      },
+      yAxis: {
+        name: '同比增长率(%)',
+        type: 'value'
+      },
+      series: [{
+        type: 'scatter',
+        symbolSize: function symbolSize(data) {
+          return Math.sqrt(data[2]) * 3;
+        },
+        data: bubbleData,
+        itemStyle: {
+          color: function color(params) {
+            return params.data.value[1] >= 0 ? '#10B981' : '#EF4444';
+          }
+        },
+        label: {
+          show: true,
+          formatter: function formatter(params) {
+            return params.data.name;
+          }
+        }
+      }]
+    };
+    cccgBubbleChart.setOption(option);
+    window.addEventListener('resize', function () {
+      return cccgBubbleChart.resize();
+    });
+  }
+
+  // 八大央企对标 - 中标总额对比柱状图
+  var centralEnterpriseBarDom = document.getElementById('central-enterprise-bar');
+  if (centralEnterpriseBarDom) {
+    var centralEnterpriseBarChart = echarts.init(centralEnterpriseBarDom);
+    var enterpriseData = [
+      { name: '中国建筑', value: 1280 },
+      { name: '中国铁建', value: 1150 },
+      { name: '中国中铁', value: 1120 },
+      { name: '中国交建', value: 980 },
+      { name: '中国电建', value: 760 },
+      { name: '中国能建', value: 620 },
+      { name: '中国中冶', value: 580 },
+      { name: '中国化学', value: 450 }
+    ];
+    
+    // 按数值降序排序
+    enterpriseData.sort(function(a, b) {
+      return b.value - a.value;
+    });
+    
+    var barOption = {
+      tooltip: {
+        trigger: 'axis',
+        formatter: '{b}: {c} 亿元'
+      },
+      grid: {
+        left: '15%',
+        right: '8%',
+        top: '10%',
+        bottom: '15%',
+        containLabel: true
+      },
+      xAxis: {
+        type: 'value',
+        name: '中标总额 (亿元)',
+        axisLabel: {
+          formatter: '{value}'
+        }
+      },
+      yAxis: {
+        type: 'category',
+        data: enterpriseData.map(function(item) { return item.name; }),
+        axisLine: { show: false },
+        axisTick: { show: false }
+      },
+      series: [{
+        type: 'bar',
+        data: enterpriseData.map(function(item) { return item.value; }),
+        itemStyle: {
+          color: function(params) {
+            // 使用蓝色系渐变
+            var colors = ['#1E40AF', '#3B82F6', '#60A5FA', '#93C5FD', '#BFDBFE', '#DBEAFE', '#EFF6FF', '#F8FAFC'];
+            return colors[params.dataIndex % colors.length];
+          },
+          borderRadius: [0, 8, 8, 0]
+        },
+        label: {
+          show: true,
+          position: 'right',
+          formatter: '{c}'
+        }
+      }]
+    };
+    
+    centralEnterpriseBarChart.setOption(barOption);
+    
+    // 监听容器大小变化
+    var resizeObserver = new ResizeObserver(function(entries) {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(function() {
+        centralEnterpriseBarChart.resize();
+      }, 250);
+    });
+    resizeObserver.observe(centralEnterpriseBarDom);
+    
+    window.addEventListener('resize', function() {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(function() {
+        centralEnterpriseBarChart.resize();
+      }, 250);
+    });
+  }
+});
+  </script>
+  <!-- [/JSMOD] a7c_charts-init 图表初始化 -- 初始化市场总量模块基础图表 -->
+  <!-- [JSMOD] b2x_企业竞争格局图表初始化 -->
+  <script id="competition-charts">
+   window.addEventListener('load', function () {
+  // 1. 八大央企中标额排名横向柱状图
+  var top8HorizontalBarDom = document.getElementById('top-8-horizontal-bar');
+  if (top8HorizontalBarDom) {
+    var top8HorizontalBarChart = echarts.init(top8HorizontalBarDom);
+    var top8HorizontalOption = {
+      tooltip: {
+        trigger: 'axis',
+        axisPointer: {
+          type: 'shadow'
+        }
+      },
+      grid: {
+        left: '20%',
+        right: '15%',
+        bottom: '3%',
+        containLabel: true
+      },
+      xAxis: {
+        type: 'value',
+        name: '亿元',
+        max: 3800,
+        axisLabel: {
+          formatter: '{value}'
+        }
+      },
+      yAxis: {
+        type: 'category',
+        data: ['中国化学', '中国中冶', '中国能建', '中国电建', '中国交建', '中国中铁', '中国铁建', '中国建筑']
+      },
+      series: [{
+        name: '中标额',
+        type: 'bar',
+        data: [310, 570, 680, 1120, 1950, 2410, 2860, 3420],
+        itemStyle: {
+          color: '#1E3A8A'
+        },
+        label: {
+          show: true,
+          position: 'right',
+          formatter: '{c}亿'
+        }
+      }]
+    };
+    // 添加同比标注
+    var growthData = [2.5, -8.0, -5.2, -6.0, -4.5, -1.8, -3.2, -2.1];
+    top8HorizontalOption.series.push({
+      name: '同比',
+      type: 'scatter',
+      symbolSize: 0,
+      data: growthData.map(function (value, index) {
+        return {
+          value: [3420 + 150, index],
+          label: {
+            show: true,
+            formatter: (value >= 0 ? '▲' : '▼') + Math.abs(value) + '%',
+            color: value >= 0 ? '#10B981' : '#EF4444',
+            position: [30, 0]
+          }
+        };
+      })
+    });
+    top8HorizontalBarChart.setOption(top8HorizontalOption);
+    window.addEventListener('resize', function () {
+      top8HorizontalBarChart.resize();
+    });
+  }
+  // 2. 八大央企同比变化柱状图
+  var top8GrowthBarDom = document.getElementById('top-8-growth-bar');
+  if (top8GrowthBarDom) {
+    var top8GrowthBarChart = echarts.init(top8GrowthBarDom);
+    var top8GrowthOption = {
+      tooltip: {
+        trigger: 'axis',
+        axisPointer: {
+          type: 'shadow'
+        }
+      },
+      grid: {
+        left: '3%',
+        right: '4%',
+        bottom: '3%',
+        containLabel: true
+      },
+      xAxis: {
+        type: 'category',
+        data: ['中国建筑', '中国铁建', '中国中铁', '中国交建', '中国电建', '中国能建', '中国中冶', '中国化学']
+      },
+      yAxis: {
+        type: 'value',
+        name: '同比变化 (%)'
+      },
+      series: [{
+        name: '同比变化',
+        type: 'bar',
+        data: [-2.1, -3.2, -1.8, -4.5, -6.0, -5.2, -8.0, 2.5],
+        itemStyle: {
+          color: function color(params) {
+            return params.value >= 0 ? '#10B981' : '#EF4444';
+          }
+        },
+        label: {
+          show: true,
+          position: 'top',
+          formatter: '{value}%'
+        }
+      }]
+    };
+    top8GrowthBarChart.setOption(top8GrowthOption);
+    window.addEventListener('resize', function () {
+      top8GrowthBarChart.resize();
+    });
+  }
+  // 3. 企业类型份额环形图
+  var enterpriseTypeRingDom = document.getElementById('enterprise-type-ring');
+  if (enterpriseTypeRingDom) {
+    var enterpriseTypeRingChart = echarts.init(enterpriseTypeRingDom);
+    var enterpriseTypeRingOption = {
+      tooltip: {
+        trigger: 'item',
+        formatter: '{a} <br/>{b}: {c}% ({d}%)'
+      },
+      legend: {
+        orient: 'vertical',
+        right: '5%',
+        top: 'center'
+      },
+      series: [{
+        name: '市场份额',
+        type: 'pie',
+        radius: ['40%', '70%'],
+        center: ['40%', '50%'],
+        avoidLabelOverlap: false,
+        itemStyle: {
+          borderRadius: 8,
+          borderColor: '#fff',
+          borderWidth: 2
+        },
+        label: {
+          show: true,
+          formatter: '{b}: {d}%'
+        },
+        emphasis: {
+          label: {
+            show: true,
+            fontSize: 16,
+            fontWeight: 'bold'
+          }
+        },
+        data: [{
+          value: 32.8,
+          name: '八大央企',
+          itemStyle: {
+            color: '#1E3A8A'
+          }
+        }, {
+          value: 25.7,
+          name: '其他央国企',
+          itemStyle: {
+            color: '#3B82F6'
+          }
+        }, {
+          value: 41.5,
+          name: '民营企业',
+          itemStyle: {
+            color: '#F97316'
+          }
+        }]
+      }]
+    };
+    // 添加中心总金额标注
+    enterpriseTypeRingOption.series.push({
+      type: 'pie',
+      radius: ['0%', '38%'],
+      center: ['40%', '50%'],
+      label: {
+        show: true,
+        formatter: '总中标额\n23,450亿',
+        fontSize: 14,
+        align: 'center',
+        lineHeight: 20,
+        color: '#1E293B'
+      },
+      itemStyle: {
+        color: 'transparent'
+      },
+      data: [{
+        value: 100
+      }]
+    });
+    enterpriseTypeRingChart.setOption(enterpriseTypeRingOption);
+    window.addEventListener('resize', function () {
+      enterpriseTypeRingChart.resize();
+    });
+  }
+  // 4. 企业类型市场份额对比分组柱状图
+  var enterpriseShareComparisonDom = document.getElementById('enterprise-share-comparison');
+  if (enterpriseShareComparisonDom) {
+    var enterpriseShareComparisonChart = echarts.init(enterpriseShareComparisonDom);
+    var enterpriseShareComparisonOption = {
+      tooltip: {
+        trigger: 'axis',
+        axisPointer: {
+          type: 'shadow'
+        }
+      },
+      legend: {
+        data: ['2024年', '2025年'],
+        top: '0%'
+      },
+      grid: {
+        left: '3%',
+        right: '4%',
+        bottom: '3%',
+        containLabel: true
+      },
+      xAxis: {
+        type: 'category',
+        data: ['八大央企', '其他央国企', '民营企业']
+      },
+      yAxis: {
+        type: 'value',
+        name: '市场份额 (%)',
+        max: 50
+      },
+      series: [{
+        name: '2024年',
+        type: 'bar',
+        barWidth: '40%',
+        data: [34.0, 24.5, 41.5],
+        itemStyle: {
+          color: '#1E40AF'
+        },
+        label: {
+          show: true,
+          position: 'top',
+          formatter: '{value}%'
+        }
+      }, {
+        name: '2025年',
+        type: 'bar',
+        barWidth: '40%',
+        data: [32.8, 25.7, 41.5],
+        itemStyle: {
+          color: '#3B82F6'
+        },
+        label: {
+          show: true,
+          position: 'top',
+          formatter: '{value}%'
+        }
+      }]
+    };
+    enterpriseShareComparisonChart.setOption(enterpriseShareComparisonOption);
+    window.addEventListener('resize', function () {
+      enterpriseShareComparisonChart.resize();
+    });
+  }
+});
+  </script>
+  <!-- [/JSMOD] b2x_企业竞争格局图表初始化 -- 初始化企业竞争格局模块的四个图表 -->
+  <!-- [JSMOD] c3y_行业分布图表初始化 -->
+  <script id="industry-charts">
+   window.addEventListener('load', function () {
+  // 1. 各行业中标额占比饼图
+  var industryPieChartDom = document.getElementById('industry-pie-chart');
+  if (industryPieChartDom) {
+    var industryPieChart = echarts.init(industryPieChartDom);
+    var option = {
+      tooltip: {
+        trigger: 'item'
+      },
+      legend: {
+        orient: 'vertical',
+        left: 'left',
+        textStyle: {
+          fontSize: 12
+        }
+      },
+      series: [{
+        name: '中标额占比',
+        type: 'pie',
+        radius: ['40%', '70%'],
+        avoidLabelOverlap: false,
+        itemStyle: {
+          borderRadius: 10
+        },
+        label: {
+          show: false,
+          position: 'center'
+        },
+        emphasis: {
+          label: {
+            show: true,
+            fontSize: 16,
+            fontWeight: 'bold'
+          }
+        },
+        data: [{
+          value: 35,
+          name: '房屋建筑'
+        }, {
+          value: 25,
+          name: '交通运输'
+        }, {
+          value: 15,
+          name: '水利水电'
+        }, {
+          value: 10,
+          name: '能源电力'
+        }, {
+          value: 8,
+          name: '市政工程'
+        }, {
+          value: 7,
+          name: '其他'
+        }]
+      }]
+    };
+    industryPieChart.setOption(option);
+    window.addEventListener('resize', function () {
+      industryPieChart.resize();
+    });
+  }
+
+  // 2. 行业同比增长率柱状图
+  var industryGrowthBarDom = document.getElementById('industry-growth-bar');
+  if (industryGrowthBarDom) {
+    var industryGrowthBar = echarts.init(industryGrowthBarDom);
+    var option = {
+      tooltip: {
+        trigger: 'axis',
+        axisPointer: {
+          type: 'shadow'
+        }
+      },
+      grid: {
+        left: '3%',
+        right: '4%',
+        bottom: '3%',
+        containLabel: true
+      },
+      xAxis: {
+        type: 'category',
+        data: ['房屋建筑', '交通运输', '水利水电', '能源电力', '市政工程', '其他']
+      },
+      yAxis: {
+        type: 'value',
+        axisLabel: {
+          formatter: '{value}%'
+        }
+      },
+      series: [{
+        name: '同比增长率',
+        type: 'bar',
+        data: [2.1, -3.2, 1.8, -4.5, 6.0, -2.5],
+        itemStyle: {
+          color: function color(params) {
+            return params.value >= 0 ? '#10B981' : '#EF4444';
+          }
+        },
+        label: {
+          show: true,
+          position: 'top',
+          formatter: '{value}%'
+        }
+      }]
+    };
+    industryGrowthBar.setOption(option);
+    window.addEventListener('resize', function () {
+      industryGrowthBar.resize();
+    });
+  }
+});
+  </script>
+  <!-- [/JSMOD] c3y_行业分布图表初始化 -- 初始化行业饼图和增长率柱状图 -->
+ </body>
+</html>

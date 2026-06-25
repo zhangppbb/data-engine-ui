@@ -1,0 +1,61 @@
+@use '../foundation/color/color.scss' as *;
+
+.el-pagination.is-background {
+  --pagination-button-height: 30px;
+
+  .el-pager {
+    li {
+      --el-pagination-button-height: var(--pagination-button-height);
+      --el-pagination-bg-color: #fff;
+      --el-pagination-border-radius: 2px;
+      --el-color-primary: #fff;
+      color: var(--el-color-white);
+      border: 1px solid var(--grey-5);
+      box-sizing: border-box;
+      color: var(--grey-2);
+      background-color: white;
+      &.is-active {
+        --el-color-primary: #fff;
+        // --el-color-white: var(--brand-color);
+        color: var(--brand-color);
+        border-color: var(--brand-color);
+        font-weight: normal;
+      }
+
+      &.more {
+        color: var(--grey-5);
+        border-color: transparent !important;
+      }
+    }
+  }
+
+  .el-pagination__editor.el-input {
+    --el-component-size: var(--pagination-button-height);
+    width: 48px;
+  }
+
+  .el-select {
+    width: 93px;
+    .el-select__wrapper {
+      min-height: var(--pagination-button-height);
+      padding: 4px var(--spacing-xs);
+    }
+  }
+
+  .btn-prev,
+  .btn-next {
+    border: 1px solid var(--grey-5);
+    box-sizing: border-box;
+    --el-pagination-button-height: 30px;
+    --el-pagination-button-bg-color: white;
+    --el-pagination-button-color: var(--grey-2);
+  }
+
+  .btn-prev:disabled,
+  .btn-prev.is-disabled,
+  .btn-next:disabled,
+  .btn-next.is-disabled {
+    --el-text-color-placeholder: var(--grey-5);
+    --el-disabled-bg-color: white;
+  }
+}

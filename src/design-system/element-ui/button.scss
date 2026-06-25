@@ -1,0 +1,272 @@
+// button
+@use '../foundation/color/color.scss' as *;
+
+.el-button {
+  --el-text-color-regular: var(--grey-4);
+
+  padding: 6px 16px;
+}
+
+.el-button [class*='el-icon'] + span {
+  margin-left: 10px;
+}
+
+.el-button.el-button--small {
+  padding: 2px 7px;
+}
+
+.el-button.is-loading:before {
+  background-color: transparent;
+}
+
+.el-button--primary {
+  &:focus {
+    background-color: $Brand_color;
+  }
+
+  &:hover {
+    background-color: $Brand_4;
+  }
+
+  &:active {
+    background-color: $Brand_1;
+  }
+
+  &.is-disabled,
+  &.is-disabled:hover {
+    background-color: rgba($color: $Brand_color, $alpha: 0.3);
+  }
+
+  &.is-plain {
+    background-color: $Brand_7;
+    color: $Brand_color;
+    border-color: transparent;
+
+    &:hover {
+      border-color: $Brand_color;
+    }
+
+    &:active {
+      background-color: $Brand_6;
+    }
+
+    &.is-loading {
+      color: $Grey_3;
+    }
+  }
+
+  &.is-link {
+    background-color: transparent;
+
+    &:focus {
+      color: $Brand_color;
+    }
+
+    &:hover {
+      color: $Brand_4;
+    }
+
+    &:active {
+      color: $Brand_1;
+    }
+  }
+}
+
+.el-button--success {
+  &:focus {
+    background-color: $Success_2;
+  }
+
+  &:hover {
+    background-color: $Success_3;
+  }
+
+  &:active {
+    background-color: $Success_1;
+  }
+
+  &.is-disabled,
+  &.is-disabled:hover {
+    background-color: rgba($color: $Success_2, $alpha: 0.3);
+  }
+
+  &.is-plain {
+    background-color: $Success_5;
+    color: $Success_2;
+    border-color: transparent;
+
+    &:hover {
+      border-color: $Success_2;
+    }
+
+    &:active {
+      background-color: $Success_4;
+    }
+
+    &.is-loading {
+      color: $Grey_3;
+    }
+  }
+
+  &.is-link {
+    background-color: transparent;
+
+    &:focus {
+      color: $Success_2;
+    }
+
+    &:hover {
+      color: $Success_3;
+    }
+
+    &:active {
+      color: $Success_1;
+    }
+  }
+}
+
+.el-button--warning {
+  &:focus {
+    background-color: $Warning_2;
+  }
+
+  &:hover {
+    background-color: $Warning_3;
+  }
+
+  &:active {
+    background-color: $Warning_1;
+  }
+
+  &.is-disabled,
+  &.is-disabled:hover {
+    background-color: rgba($color: $Warning_2, $alpha: 0.3);
+  }
+
+  &.is-plain {
+    background-color: $Warning_5;
+    color: $Warning_2;
+    border-color: transparent;
+
+    &:hover {
+      border-color: $Warning_2;
+    }
+
+    &:active {
+      background-color: $Warning_4;
+    }
+
+    &.is-loading {
+      color: $Grey_3;
+    }
+  }
+
+  &.is-link {
+    background-color: transparent;
+
+    &:focus {
+      color: $Warning_2;
+    }
+
+    &:hover {
+      color: $Warning_3;
+    }
+
+    &:active {
+      color: $Warning_1;
+    }
+  }
+}
+
+.el-button--danger {
+  &:focus {
+    background-color: $Danger_2;
+  }
+
+  &:hover {
+    background-color: $Danger_3;
+  }
+
+  &:active {
+    background-color: $Danger_1;
+  }
+
+  &.is-disabled,
+  &.is-disabled:hover {
+    background-color: rgba($color: $Danger_2, $alpha: 0.3);
+  }
+
+  &.is-plain {
+    background-color: $Danger_5;
+    color: $Danger_2;
+    border-color: transparent;
+
+    &:hover {
+      border-color: $Danger_2;
+    }
+
+    &:active {
+      background-color: $Danger_4;
+    }
+
+    &.is-loading {
+      color: $Grey_3;
+    }
+  }
+
+  &.is-link {
+    background-color: transparent;
+
+    &:focus {
+      color: $Danger_2;
+    }
+
+    &:hover {
+      color: $Danger_3;
+    }
+
+    &:active {
+      color: $Danger_1;
+    }
+  }
+}
+
+.el-button.is-link {
+  padding-left: 0;
+  padding-right: 0;
+
+  & + .el-button {
+    margin-left: 4px;
+  }
+}
+
+.el-button.is-plain.is-disabled,
+.el-button.is-plain.is-disabled:hover {
+  background-color: $Grey_6;
+  color: $Grey_4;
+  border-color: transparent;
+}
+
+.el-button.is-link.is-disabled,
+.el-button.is-link.is-disabled:hover {
+  color: $Grey_4;
+}
+
+// switch
+.el-switch .el-switch__core {
+  background-color: $Grey_4;
+  border: none;
+}
+
+.el-switch.is-disabled .el-switch__core {
+  background-color: rgba($color: $Grey_4, $alpha: 0.5);
+}
+
+.el-switch.is-checked .el-switch__core {
+  background-color: $Brand_color;
+  border: none;
+}
+
+.el-switch.is-checked.is-disabled .el-switch__core {
+  background-color: rgba($color: $Brand_color, $alpha: 0.5);
+}

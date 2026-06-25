@@ -1,0 +1,6 @@
+@use './theme.scss' as *;
+
+:export {
+  fontXs: $font-xs;
+  fontSm: $font-sm;
+}
