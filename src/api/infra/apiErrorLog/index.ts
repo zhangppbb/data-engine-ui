@@ -1,6 +1,5 @@
 import request from '@/config/axios'
 
-/** API错误日志 VO */
 export interface ApiErrorLogVO {
   id: number
   traceId: string
@@ -28,32 +27,19 @@ export interface ApiErrorLogVO {
   createTime: Date
 }
 
-/**
- * 查询API错误日志分页列表
- * @param {PageParam} params 分页查询参数
- * @returns {Promise<any>} API错误日志分页数据
- */
+// 查询列表API 访问日志
 export const getApiErrorLogPage = (params: PageParam) => {
   return request.get({ url: '/admin-api/infra/api-error-log/page', params })
 }
 
-/**
- * 更新API错误日志的处理状态
- * @param {number} id 日志ID
- * @param {number} processStatus 处理状态
- * @returns {Promise<any>} 更新结果
- */
+// 更新 API 错误日志的处理状态
 export const updateApiErrorLogPage = (id: number, processStatus: number) => {
   return request.put({
     url: '/admin-api/infra/api-error-log/update-status?id=' + id + '&processStatus=' + processStatus
   })
 }
 
-/**
- * 导出API错误日志
- * @param {any} params 导出参数
- * @returns {Promise<any>} Excel文件流
- */
+// 导出API 访问日志
 export const exportApiErrorLog = (params) => {
   return request.download({
     url: '/admin-api/infra/api-error-log/export-excel',

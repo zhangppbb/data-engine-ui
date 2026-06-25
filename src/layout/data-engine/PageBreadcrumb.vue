@@ -8,37 +8,28 @@
 import { computed, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { Breadcrumb } from '@/components/Breadcrumb'
-import type { BreadcrumbItem } from './breadcrumb'
+import {
+  ROUTE_BREADCRUMBS,
+  ROUTE_BREADCRUMB_BASE,
+  type BreadcrumbItem
+} from './breadcrumb'
 import { useBreadcrumbTail } from './usePageBreadcrumb'
 
 const route = useRoute()
 const breadcrumbTail = useBreadcrumbTail()
 
 const items = computed<BreadcrumbItem[]>(() => {
-  const matched = route.matched
+  const name = route.name as string | undefined
+  if (!name) return []
 
-  const items: BreadcrumbItem[] = []
+  const staticItems = ROUTE_BREADCRUMBS[name]
+  if (staticItems) return staticItems
 
-  for (const record of matched) {
-    if (record.meta.hidden || record.meta.hideBreadcrumb || record.meta.breadcrumb === false) {
-      continue
-    }
-    if (!record.meta.title) {
-      continue
-    }
-
-    items.push({
-      label: record.meta.title as string,
-      path: record.path
-    })
-  }
+  const base = ROUTE_BREADCRUMB_BASE[name]
+  if (!base) return []
 
   const tail = breadcrumbTail.value
-  if (tail && items.length > 0) {
-    items[items.length - 1] = tail
-  }
-
-  return items
+  return tail ? [...base, tail] : base
 })
 
 const visible = computed(

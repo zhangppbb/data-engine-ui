@@ -75,10 +75,9 @@ const remainingRouter: AppRouteRecordRaw[] = [
     component: DataEngineLayout,
     redirect: '/index',
     name: 'Home',
-    meta: {
-      title: '首页'
-    },
+    meta: {},
     children: [
+      
       {
         path: 'workspace',
         component: () => import('@/views/workspace/Index.vue'),
@@ -115,15 +114,13 @@ const remainingRouter: AppRouteRecordRaw[] = [
           hideBreadcrumb: true
         }
       },
-
-      // 应用管
      {
         path: 'apps',
         component: RouterView,
         name: 'Apps',
-        redirect: '/apps/list',
         meta: {
-          title: '应用馆',
+          title: '应用中心',
+          icon: 'ep:grid'
         },
         children: [
           {
@@ -131,6 +128,7 @@ const remainingRouter: AppRouteRecordRaw[] = [
             component: () => import('@/views/apps/list/Index.vue'),
             name: 'AppsList',
             meta: {
+              title: t('router.home'),
               icon: 'ep:home-filled',
               noCache: false,
               affix: true
@@ -141,20 +139,8 @@ const remainingRouter: AppRouteRecordRaw[] = [
             component: () => import('@/views/apps/details/Index.vue'),
             name: 'AppsDetails',
             meta: {
-              title: '应用详情',
+              title: t('router.home'),
               icon: 'ep:home-filled',
-              noCache: false,
-              affix: true
-            }
-          },
-
-          // 专区
-          {
-            path: 'zone',
-            component: () => import('@/views/apps/zone/Index.vue'),
-            name: 'AppsZone',
-            meta: {
-              title: '专区',
               noCache: false,
               affix: true
             }
@@ -163,192 +149,137 @@ const remainingRouter: AppRouteRecordRaw[] = [
           // 报告
           {
             path: 'report',
-            component: RouterView,
+            component: () => import('@/views/apps/report/list/Index.vue'),
             name: 'AppsReport',
             meta: {
-              title: '研究报告'
-            },
-            children: [
-              {
-                path: '',
-                component: () => import('@/views/apps/report/list/Index.vue'),
-                name: 'AppsReportList',
-                meta: {
-                  title: '',
-                  hidden: true
-                }
-              },
-              {
-                path: 'details/:id',
-                component: () => import('@/views/apps/report/details/Index.vue'),
-                name: 'AppsReportQuery',
-                meta: {
-                  title: '报告'
-                }
-              }
-            ]
+              title: '报告',
+              hidden: true
+            }
+          },
+          {
+            path: 'report/details/:id',
+            component: () => import('@/views/apps/report/details/Index.vue'),
+            name: 'AppsReportQuery',
+            meta: {
+              title: '报告',
+              hidden: true
+            }
           }
         ]
       },
 
       // resources
       {
-        path: 'resources',
-        component: RouterView,
-        name: 'Resources',
-        redirect: '/resources/list',
+        path: 'resources/list',
+        component: () => import('@/views/resources/list/Index.vue'),
+        name: 'ResourcesList',
         meta: {
-          title: '资源馆',
-          icon: 'ep:folder'
+          title: t('router.home'),
+          icon: 'ep:home-filled',
+          noCache: false,
+          affix: true
         },
-        children: [
-          {
-            path: 'list',
-            component: () => import('@/views/resources/list/Index.vue'),
-            name: 'ResourcesList',
-            meta: {
-              title: '',
-              icon: 'ep:home-filled',
-              noCache: false,
-              affix: true
-            }
-          },
-          {
-            path: 'api',
-            component: RouterView,
-            name: 'ResourcesApi',
-            redirect: '/resources/api/list',
-            meta: {
-              title: 'API集市'
-            },
-            children: [
-              {
-                path: '',
-                component: () => import('@/views/resources/api/list/Index.vue'),
-                name: 'ResourcesApiList',
-                meta: {
-                  icon: 'ep:home-filled',
-                  noCache: false,
-                  affix: true
-                }
-              },
-              {
-                path: 'details/:id',
-                component: () => import('@/views/resources/api/details/Index.vue'),
-                name: 'ResourcesApiDetails',
-                meta: {
-                  title: 'API详情',
-                  icon: 'ep:home-filled',
-                  noCache: false,
-                  affix: true
-                }
-              },
-              {
-                path: 'access-guide',
-                component: () => import('@/views/resources/api/access-guide/Index.vue'),
-                name: 'ResourcesApiAccessGuide',
-                meta: {
-                  title: '接入指南',
-                  icon: 'ep:home-filled',
-                  noCache: false,
-                  affix: true
-                }
-              }
-            ]
-          },
-          {
-            path: 'mcp',
-            component: () => import('@/views/resources/mcp/list/Index.vue'),
-            name: 'ResourcesMcp',
-            meta: {
-              title: 'MCP集市',
-              icon: 'ep:home-filled',
-              noCache: false,
-              affix: true
-            }
-          },
-          {
-            path: 'skill',
-            component: RouterView,
-            name: 'ResourcesSkillRouter',
-            redirect: '/resources/skill/list',
-            meta: {
-              title: 'SKILL广场'
-            },
-            children: [
-              {
-                path: '',
-                component: () => import('@/views/resources/skill/list/Index.vue'),
-                name: 'ResourcesSkill',
-                meta: {
-                  icon: 'ep:home-filled',
-                  noCache: false,
-                  affix: true
-                }
-              },
-              {
-                path: 'access-guide',
-                component: () => import('@/views/resources/skill/access-guide/Index.vue'),
-                name: 'ResourcesSkillAccessGuide',
-                meta: {
-                  title: '接入指南',
-                  icon: 'ep:home-filled',
-                  noCache: false,
-                  affix: true
-                }
-              },
-              {
-                path: 'kyb',
-                component: () => import('@/views/resources/skill/kyb/list/Index.vue'),
-                name: 'ResourcesSkillKyb',
-                meta: {
-                  title: '安装与使用',
-                  icon: 'ep:home-filled',
-                  noCache: false,
-                  affix: true
-                }
-              }
-            ]
-          }
-        ]
       },
-
-      // cases
       {
-        path: 'cases',
-        component: RouterView,
-        name: 'Cases',
-        redirect: '/cases/list',
+        path: 'resources/api',
+        component: () => import('@/views/resources/api/list/Index.vue'),
+        name: 'ResourcesApiList',
         meta: {
-          title: '案例馆',
-          icon: 'ep:list'
-        },
-        children: [
-          {
-            path: 'list',
-            component: () => import('@/views/cases/list/Index.vue'),
-            name: 'CasesList',
-            meta: {
-              // title: '案例馆',
-              icon: 'ep:home-filled',
-              noCache: false,
-              affix: true
-            }
-          },
-          {
-            path: 'details/:id',
-            component: () => import('@/views/cases/details/Index.vue'),
-            name: 'CasesDetails',
-            meta: {
-              title: '案例详情',
-              icon: 'ep:home-filled',
-              noCache: false,
-              affix: true
-            }
-          }
-        ]
+          title: t('router.home'),
+          icon: 'ep:home-filled',
+          noCache: false,
+          affix: true
+        }
+      },
+        {
+        path: 'resources/api/details/:id',
+        component: () => import('@/views/resources/api/details/Index.vue'),
+        name: 'ResourcesApiDetails',
+        meta: {
+          title: t('router.home'),
+          icon: 'ep:home-filled',
+          noCache: false,
+          affix: true
+        }
+      },
+      {
+        path: 'resources/api/access-guide',
+        component: () => import('@/views/resources/api/access-guide/Index.vue'),
+        name: 'ResourcesApiAccessGuide',
+        meta: {
+          title: t('router.home'),
+          icon: 'ep:home-filled',
+          noCache: false,
+          affix: true
+        }
+      },
+      {
+        path: 'resources/mcp',
+        component: () => import('@/views/resources/mcp/list/Index.vue'),
+        name: 'ResourcesMcp',
+        meta: {
+          title: t('router.home'),
+          icon: 'ep:home-filled',
+          noCache: false,
+          affix: true
+        }
+      },
+      {
+        path: 'resources/skill',
+        component: () => import('@/views/resources/skill/list/Index.vue'),
+        name: 'ResourcesSkill',
+        meta: {
+          title: t('router.home'),
+          icon: 'ep:home-filled',
+          noCache: false,
+          affix: true
+        }
+      },
+       {
+        path: 'resources/skill/access-guide',
+        component: () => import('@/views/resources/skill/access-guide/Index.vue'),
+        name: 'ResourcesSkillAccessGuide',
+        meta: {
+          title: t('router.home'),
+          icon: 'ep:home-filled',
+          noCache: false,
+          affix: true
+        }
+      },
+       {
+        path: 'resources/skill/kyb',
+        component: () => import('@/views/resources/skill/kyb/list/Index.vue'),
+        name: 'ResourcesSkillKyb',
+        meta: {
+          title: t('router.home'),
+          icon: 'ep:home-filled',
+          noCache: false,
+          affix: true
+        }
       },
 
+      {
+        path: 'cases/list',
+        component: () => import('@/views/cases/list/Index.vue'),
+        name: 'CasesList',
+        meta: {
+          title: t('router.home'),
+          icon: 'ep:home-filled',
+          noCache: false,
+          affix: true
+        }
+      },
+      {
+        path: 'cases/presentation/:id',
+        component: () => import('@/views/cases/presentation/Index.vue'),
+        name: 'CasesPresentation',
+        meta: {
+          title: t('router.home'),
+          icon: 'ep:home-filled',
+          noCache: false,
+          affix: true
+        }
+      },
       // 开发者中心
       {
         path: 'developer',
@@ -419,6 +350,246 @@ const remainingRouter: AppRouteRecordRaw[] = [
   //     }
   //   ]
   // },
+  // Pages 静态页面路由 - 独立布局（无系统菜单）
+  {
+    path: '/pages/index',
+    component: () => import('@/views/pages/Index.vue'),
+    name: 'PagesIndex',
+    meta: {
+      title: '首页',
+      icon: 'ep:home-filled',
+      hidden: true
+    }
+  },
+  {
+    path: '/pages/dashboard',
+    component: () => import('@/views/pages/Dashboard.vue'),
+    name: 'PagesDashboard',
+    meta: {
+      title: '数据仪表板',
+      icon: 'ep:monitor',
+      hidden: true
+    }
+  },
+  {
+    path: '/pages/workspace',
+    component: () => import('@/views/pages/Workspace.vue'),
+    name: 'PagesWorkspace',
+    meta: {
+      title: '工作空间',
+      icon: 'ep:office-building',
+      hidden: true
+    }
+  },
+  {
+    path: '/pages/search-results',
+    component: () => import('@/views/pages/SearchResults.vue'),
+    name: 'PagesSearchResults',
+    meta: {
+      title: '搜索结果',
+      icon: 'ep:search',
+      hidden: true
+    }
+  },
+  {
+    path: '/pages/profile',
+    component: () => import('@/views/pages/Profile.vue'),
+    name: 'PagesProfile',
+    meta: {
+      title: '个人资料',
+      icon: 'ep:user',
+      hidden: true
+    }
+  },
+  // Apps 应用页面 - 独立布局
+  {
+    path: '/pages/apps',
+    component: RouterView,
+    name: 'PagesApps',
+    meta: {
+      title: '应用中心',
+      icon: 'ep:grid'
+    },
+    children: [
+      {
+        path: 'list',
+        component: () => import('@/views/pages/apps/Apps.vue'),
+        name: 'PagesAppsList',
+        meta: {
+          title: '应用列表',
+          icon: 'ep:grid'
+        }
+      },
+      {
+        path: 'ai-agent',
+        component: () => import('@/views/pages/apps/AiAgent.vue'),
+        name: 'PagesAiAgent',
+        meta: {
+          title: 'AI智能体',
+          icon: 'ep:cpu'
+        }
+      },
+      {
+        path: 'credit-evaluation',
+        component: () => import('@/views/pages/apps/CreditEvaluation.vue'),
+        name: 'PagesCreditEvaluation',
+        meta: {
+          title: '信用评价',
+          icon: 'ep:medal'
+        }
+      },
+      {
+        path: 'compliance-review',
+        component: () => import('@/views/pages/apps/ComplianceReview.vue'),
+        name: 'PagesComplianceReview',
+        meta: {
+          title: '合规审查',
+          icon: 'ep:document-checked'
+        }
+      },
+      {
+        path: 'market-analysis',
+        component: () => import('@/views/pages/apps/MarketAnalysis.vue'),
+        name: 'PagesMarketAnalysis',
+        meta: {
+          title: '市场分析报告',
+          icon: 'ep:trend-charts'
+        }
+      },
+      {
+        path: 'market-competition',
+        component: () => import('@/views/pages/apps/MarketCompetition.vue'),
+        name: 'PagesMarketCompetition',
+        meta: {
+          title: '市场竞争分析',
+          icon: 'ep:data-line'
+        }
+      },
+
+      // 动态详情页
+      {
+        path: 'detail/:id',
+        component: () => import('@/views/pages/apps/AppDetail.vue'),
+        name: 'PagesAppDetail',
+        meta: {
+          title: '应用详情',
+          hidden: true
+        }
+      },
+
+      {
+        path: 'spec/:id',
+        component: () => import('@/views/pages/apps/AppSpec.vue'),
+        name: 'PagesAppSpec',
+        meta: {
+          title: '应用规格',
+          hidden: true
+        }
+      }
+    ]
+  },
+  // Cases 案例页面 - 独立布局
+  {
+    path: '/pages/cases/list',
+    component: () => import('@/views/pages/cases/Cases.vue'),
+    name: 'PagesCasesList',
+    meta: {
+      title: '案例列表',
+      icon: 'ep:list',
+      hidden: true
+    }
+  },
+  {
+    path: '/pages/cases/detail/:id',
+    component: () => import('@/views/pages/cases/CaseDetail.vue'),
+    name: 'PagesCaseDetail',
+    meta: {
+      title: '案例详情',
+      icon: 'ep:document',
+      hidden: true
+    }
+  },
+  // Resources 资源页面 - 独立布局
+  {
+    path: '/pages/resources/list',
+    component: () => import('@/views/pages/resources/Resources.vue'),
+    name: 'PagesResourcesList',
+    meta: {
+      title: '资源列表',
+      icon: 'ep:folder',
+      hidden: true
+    }
+  },
+  {
+    path: '/pages/resources/api-market',
+    component: () => import('@/views/pages/resources/ApiMarket.vue'),
+    name: 'PagesApiMarket',
+    meta: {
+      title: 'API市场',
+      icon: 'ep:connection',
+      hidden: true
+    }
+  },
+  {
+    path: '/pages/resources/api/:id',
+    component: () => import('@/views/pages/resources/ApiDetail.vue'),
+    name: 'PagesApiDetail',
+    meta: {
+      title: 'API详情',
+      icon: 'ep:document',
+      hidden: true
+    }
+  },
+  {
+    path: '/pages/resources/mcp-market',
+    component: () => import('@/views/pages/resources/McpMarket.vue'),
+    name: 'PagesMcpMarket',
+    meta: {
+      title: 'MCP市场',
+      icon: 'ep:box',
+      hidden: true
+    }
+  },
+  {
+    path: '/pages/resources/mcp/:id',
+    component: () => import('@/views/pages/resources/McpDetail.vue'),
+    name: 'PagesMcpDetail',
+    meta: {
+      title: 'MCP详情',
+      icon: 'ep:document',
+      hidden: true
+    }
+  },
+  {
+    path: '/pages/resources/skill-market',
+    component: () => import('@/views/pages/resources/SkillMarket.vue'),
+    name: 'PagesSkillMarket',
+    meta: {
+      title: '技能市场',
+      icon: 'ep:magic-stick',
+      hidden: true
+    }
+  },
+  {
+    path: '/pages/resources/skill/:id',
+    component: () => import('@/views/pages/resources/SkillDetail.vue'),
+    name: 'PagesSkillDetail',
+    meta: {
+      title: '技能详情',
+      icon: 'ep:document',
+      hidden: true
+    }
+  },
+  {
+    path: '/pages/resources/:id',
+    component: () => import('@/views/pages/resources/ResourceDetail.vue'),
+    name: 'PagesResourceDetail',
+    meta: {
+      title: '资源详情',
+      icon: 'ep:document',
+      hidden: true
+    }
+  },
   {
     path: '/user',
     component: Layout,

@@ -1,8 +1,6 @@
 
-
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
-import dayjs from 'dayjs'
+import { ref } from 'vue'
 import {
   ArrowRight,
   Timer,
@@ -15,57 +13,21 @@ import {
 } from '@element-plus/icons-vue'
 import { useRouter, useRoute } from 'vue-router'
 import { usePageBreadcrumb } from '@/layout/data-engine/usePageBreadcrumb'
-import { getReportInfoById, ReportInfo, fetchReportInfoPage, downloadReportFile, previewReportFile } from '@/api/apps/reportInfo'
+import mockData from '../mockData'
 import { saveAs } from 'file-saver'
 
 const router = useRouter()
 const route = useRoute()
 const { setBreadcrumbTail } = usePageBreadcrumb()
 
-/** 骨架屏加载状态 */
-const loading = ref(true)
-
-/** 报告详情数据 */
-const reportModel = ref<ReportInfo>({} as ReportInfo)
-
-/** 格式化发布时间（YYYY-MM） */
-const publishTimeFormatted = computed(() => {
-  if (!reportModel.value.publishTime) return ''
-  return dayjs(reportModel.value.publishTime).format('YYYY-MM')
+const reportModel = ref({
+  previewImages: []
 })
 
-/** 格式化报告年度 */
-const reportYearFormatted = computed(() => {
-  if (!reportModel.value.reportYear) return ''
-  return `${reportModel.value.reportYear}年`
-})
-
-/** 格式化文件大小（KB → MB） */
-const reportSizeFormatted = computed(() => {
-  const raw = reportModel.value.reportSize
-  if (!raw) return ''
-  const kb = Number(raw)
-  if (isNaN(kb)) return raw
-  if (kb >= 1024) {
-    return (kb / 1024).toFixed(2) + ' MB'
-  }
-  return kb.toFixed(2) + ' KB'
-})
-
-const initPage = async () => {
-  const id = route.params.id as string
-  if (!id) return
-  loading.value = true
-  try {
-    const res: any = await getReportInfoById(id)
-    reportModel.value = res?.data || res || {}
-    // 加载推荐列表
-    loadRecommendList()
-  } catch {
-    reportModel.value = {} as ReportInfo
-  } finally {
-    loading.value = false
-  }
+const initPage = () => {
+  const id = route.params.id
+  const index = mockData.findIndex(o => o.id === id)
+  reportModel.value = mockData[index]
 }
 initPage()
 
@@ -77,7 +39,7 @@ watch(
 )
 
 watch(
-  () => reportModel.value?.reportTitle,
+  () => reportModel.value?.title,
   (title) => {
     setBreadcrumbTail(
       title ? { label: title, path: '/apps/report/details' } : null
@@ -85,136 +47,48 @@ watch(
   },
   { immediate: true }
 )
-const recommendList = ref<ReportInfo[]>([])
-const recommendLoading = ref(false)
+
+const pageData = reactive({
+
+  report: {
+    tags: ['白皮书'],
+  },
+})
+
+const recommendList = ref(mockData.slice(0, 5))
 
 /**
- * 加载推荐报告（按当前报告标签查询）
+ * 下载报告
  */
-const loadRecommendList = async () => {
-  const tags = reportModel.value?.tagInfos
-  recommendLoading.value = true
-  try {
-    const result = await fetchReportInfoPage({
-      pageNum: 1,
-      pageSize: 4,
-      tagInfos: tags
-    })
-    // 排除当前报告
-    recommendList.value = (result?.rows || []).filter(
-      (item) => item.id !== reportModel.value.id
-    )
-  } catch {
-    recommendList.value = []
-  } finally {
-    recommendLoading.value = false
+const downloadReport = () => {
+  const file = reportModel.value.file
+  const name = reportModel.value.title
+  if (file) {
+    saveAs(file, `${name}-${Date.now()}.pdf`)
   }
 }
 
-/** 下载/预览按钮 loading */
-const downloadLoading = ref(false)
-const previewLoading = ref(false)
-
-/**
- * 下载报告（调用后端接口获取文件流）
- */
-const downloadReport = async () => {
-  downloadLoading.value = true
-  try {
-    const blob = await downloadReportFile(reportModel.value)
-    saveAs(blob, `${reportModel.value.reportTitle || 'report'}.pdf`)
-  } catch {
-    // ignore
-  } finally {
-    downloadLoading.value = false
-  }
-}
-
-/**
- * 预览报告（调用后端接口获取 reportFile 路径后打开）
- */
-const previewReport = async () => {
-  previewLoading.value = true
-  try {
-    const res: any = await previewReportFile(reportModel.value)
-    const reportFile = res?.data?.reportFile || res?.reportFile
-    if (reportFile) {
-      window.open(reportFile)
-    }
-  } catch {
-    // ignore
-  } finally {
-    previewLoading.value = false
+const previewReport = () => {
+  const file = reportModel.value.file
+  if (file) {
+    window.open(file)
   }
 }
 </script>
 
 <template>
-  <div class="mt-20px">
+  <div class="">
     <!-- main -->
     <main class="mx-auto w-1440px">
-      <el-skeleton :loading="loading" animated :throttle="{ leading: 200 }">
-        <template #template>
-          <!-- top card skeleton -->
-          <div class="h-260px flex card">
-            <el-skeleton-item variant="image" style="width: 428px; height: 220px; border-radius: 8px" />
-            <div class="ml-32px flex-1">
-              <el-skeleton-item variant="text" style="width: 60%; height: 24px; margin-bottom: 18px" />
-              <div class="flex items-center mb-16px">
-                <el-skeleton-item variant="text" style="width: 100px; height: 16px; margin-right: 60px" />
-                <el-skeleton-item variant="text" style="width: 120px; height: 16px" />
-              </div>
-              <div class="flex items-center mb-16px">
-                <el-skeleton-item variant="text" style="width: 80px; height: 32px" />
-              </div>
-              <div class="h-40px flex items-center rounded-4px mb-20px">
-                <el-skeleton-item variant="text" style="width: 25%; height: 16px" />
-              </div>
-              <div class="flex items-center">
-                <el-skeleton-item variant="text" style="width: 110px; height: 40px; margin-right: 12px" />
-                <el-skeleton-item variant="text" style="width: 110px; height: 40px" />
-              </div>
-            </div>
-          </div>
-          <!-- content skeleton -->
-          <div class="mt-20px flex justify-between pb-22px">
-            <div class="w-1000px card p-0!">
-              <div class="px-20px pt-20px">
-                <el-skeleton-item variant="text" style="width: 15%; height: 18px; margin-bottom: 20px" />
-                <div class="h-1px bg-[rgba(0,0,0,0.06)] mb-20px" />
-                <el-skeleton-item variant="text" style="width: 100%; height: 16px; margin-bottom: 8px" />
-                <el-skeleton-item variant="text" style="width: 90%; height: 16px; margin-bottom: 8px" />
-                <el-skeleton-item variant="text" style="width: 70%; height: 16px; margin-bottom: 40px" />
-                <el-skeleton-item variant="text" style="width: 15%; height: 18px; margin-bottom: 20px" />
-              </div>
-              <div class="px-20px pb-20px">
-                <el-skeleton-item variant="image" style="width: 100%; height: 400px" />
-              </div>
-            </div>
-            <div class="w-422px">
-              <el-skeleton-item variant="text" style="width: 30%; height: 18px; margin-bottom: 20px" />
-              <div v-for="i in 4" :key="i" class="mt-20px rounded-8px bg-white p-20px">
-                <div class="flex justify-between">
-                  <el-skeleton-item variant="image" style="width: 150px; height: 83px" />
-                  <div class="ml-12px h-80px flex flex-1 flex-col justify-between">
-                    <el-skeleton-item variant="text" style="width: 90%; height: 17px" />
-                    <el-skeleton-item variant="text" style="width: 45%; height: 16px" />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </template>
-        <template #default>
       <!-- top card -->
       <div
         class="h-260px flex card"
       >
         <!-- cover -->
         <img
-          :src="reportModel.coverImage"
+          :src="reportModel.cover"
           class="h-220px w-428px rounded-8px"
-          v-if="reportModel.coverImage"
+          v-if="reportModel.cover"
         />
 
         <!-- 卡片 -->
@@ -224,12 +98,12 @@ const previewReport = async () => {
         >
           <!-- 标题 -->
           <div class="text-22px font-600 line-clamp-2 text-center">
-            {{ reportModel.reportTitle }}
+            {{ reportModel.title }}
           </div>
 
           <!-- 发布时间 -->
           <div class="text-14px text-#fff mt-8px">
-            发布时间：{{ publishTimeFormatted }}
+            发布时间：{{ reportModel.publishTime }}
           </div>
         </div>
 
@@ -238,7 +112,7 @@ const previewReport = async () => {
           <div
             class="text-24px leading-24px font-600 text-#222"
           >
-            {{ reportModel.reportTitle }}
+            {{ reportModel.title }}
           </div>
 
           <!-- info -->
@@ -248,7 +122,7 @@ const previewReport = async () => {
             </span>
 
             <span class="text-16px leading-16px text-#444">
-              {{ reportYearFormatted }}
+              {{ reportModel.year }}年
             </span>
 
             <span class="ml-60px text-16px leading-16px text-#999">
@@ -256,7 +130,7 @@ const previewReport = async () => {
             </span>
 
             <span class="text-16px leading-16px text-#444">
-              {{ publishTimeFormatted }}
+              {{ reportModel.publishTime }}
             </span>
           </div>
 
@@ -270,12 +144,11 @@ const previewReport = async () => {
               {{ reportModel.region }}
             </div>
              <div
-              v-for="tag in reportModel.tagInfos"
-              :key="tag.id"
-              class="mr-12px h-32px flex items-center justify-center rounded-4px border border-solid px-20px text-14px leading-22px"
-              :style="{ borderColor: tag.color, color: tag.color }"
+              v-for="tag in pageData.report.tags"
+              :key="tag"
+              class="mr-12px h-32px flex items-center justify-center rounded-4px border border-solid border-#BFBFBF px-20px text-14px leading-22px text-#222"
             >
-              {{ tag.tagName }}
+              {{ tag }}
             </div>
           </div>
 
@@ -286,17 +159,17 @@ const previewReport = async () => {
             <div
               class="mr-50px text-16px leading-16px font-500 text-#8F99B7"
             >
-              浏览量：{{ reportModel.visitCount }}
+              浏览量：{{ reportModel.views }}
             </div>
             <div
               class="mr-50px text-16px leading-16px font-500 text-#8F99B7"
             >
-              下载量：{{ reportModel.downloadCount || 0 }}
+              下载量：233
             </div>
             <div
               class="mr-50px text-16px leading-16px font-500 text-#8F99B7"
             >
-              文件大小：{{ reportSizeFormatted }}
+              文件大小：{{ reportModel.fileSize }}
             </div>
           </div>
 
@@ -304,7 +177,6 @@ const previewReport = async () => {
           <div class="mt-20px flex items-center">
             <el-button
               type="primary"
-              :loading="downloadLoading"
               class="!h-40px !w-110px !rounded-4px !border-none !bg-brandColor"
               @click="downloadReport"
             >
@@ -313,7 +185,6 @@ const previewReport = async () => {
 
             <el-button
               plain
-              :loading="previewLoading"
               @click="previewReport"
               class="!ml-12px !h-40px !w-110px !rounded-4px !border-brandColor !text-brandColor"
             >
@@ -344,7 +215,7 @@ const previewReport = async () => {
             <div
               class="mt-20px text-16px leading-24px text-#222"
             >
-              {{ reportModel.description }}
+              {{ reportModel.summary }}
             </div>
 
             <div
@@ -357,7 +228,7 @@ const previewReport = async () => {
           <!-- preview -->
           <div class="mt-20px px-20px pb-20px">
             <img
-              v-for="(img, index) in (reportModel as any).previewImages"
+              v-for="(img, index) in reportModel.previewImages"
               :key="img"
               :src="img"
               class="w-960px border border-solid border-brandColor"
@@ -374,35 +245,6 @@ const previewReport = async () => {
             相关报告推荐
           </div>
 
-          <!-- 推荐列表骨架屏 -->
-          <template v-if="recommendLoading">
-            <div
-              v-for="i in 2"
-              :key="'sk-' + i"
-              class="mt-20px rounded-8px bg-white p-20px"
-            >
-              <div class="flex justify-between">
-                <el-skeleton animated>
-                  <template #template>
-                    <div class="h-83px w-150px rounded-4px bg-#f0f0f0" />
-                  </template>
-                </el-skeleton>
-                <div class="ml-12px h-80px flex flex-1 flex-col justify-between">
-                  <el-skeleton animated>
-                    <template #template>
-                      <div class="h-22px w-200px rounded-4px bg-#f0f0f0" />
-                    </template>
-                  </el-skeleton>
-                  <el-skeleton animated>
-                    <template #template>
-                      <div class="h-20px w-120px rounded-4px bg-#f0f0f0" />
-                    </template>
-                  </el-skeleton>
-                </div>
-              </div>
-            </div>
-          </template>
-
           <div
             v-for="item in recommendList"
             :key="item.id"
@@ -413,8 +255,8 @@ const previewReport = async () => {
             >
             <div class="flex justify-between">
               <img
-                :src="item.coverImage"
-                v-if="item.coverImage"
+                :src="item.cover"
+                v-if="item.cover"
                 class="h-83px w-150px rounded-4px"
               />
 
@@ -424,12 +266,12 @@ const previewReport = async () => {
               >
                 <!-- 标题 -->
                 <div class="text-12px font-600 line-clamp-2 text-center">
-                  {{ item.reportTitle }}
+                  {{ item.title }}
                 </div>
 
                 <!-- 发布时间 -->
                 <div class="text-11px text-#fff mt-8px truncate">
-                  发布时间：{{ dayjs(item.publishTime).format('YYYY-MM') }}
+                  发布时间：{{ item.publishTime }}
                 </div>
               </div>
 
@@ -439,28 +281,19 @@ const previewReport = async () => {
                 <div
                   class="line-clamp-2 text-17px leading-22px font-500 text-#222"
                 >
-                  {{ item.reportTitle }}
+                  {{ item.title }}
                 </div>
 
                 <div
                   class="text-16px leading-20px text-#666"
                 >
-                  发布时间：{{ dayjs(item.publishTime).format('YYYY-MM') }}
+                  发布时间：{{ item.publishTime }}
                 </div>
               </div>
             </div>
           </div>
-
-          <!-- 推荐列表空态 -->
-          <Empty
-            v-if="!recommendLoading && !recommendList.length"
-            class="mt-20px"
-            description="暂无相关报告推荐"
-          />
         </div>
       </div>
-        </template>
-      </el-skeleton>
     </main>
   </div>
 </template>

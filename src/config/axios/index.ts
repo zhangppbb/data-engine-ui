@@ -4,14 +4,6 @@ import { config } from './config'
 
 const { default_headers } = config
 
-type AnyObj = Record<string, any>
-
-const directReturnKeys = ['rows', 'token', 'total']
-
-function shouldReturnRaw(res: AnyObj, keys: string[]) {
-  return keys.some(k => Object.prototype.hasOwnProperty.call(res, k))
-}
-
 const request = (option: any) => {
   const { headersType, headers, ...otherOption } = option
   return service({
@@ -25,21 +17,11 @@ const request = (option: any) => {
 export default {
   get: async <T = any>(option: any) => {
     const res = await request({ method: 'GET', ...option })
-    
-    if (shouldReturnRaw(res, directReturnKeys)) {
-      return res
-    }
-
-    return res?.data as T
+    return res.data as unknown as T
   },
   post: async <T = any>(option: any) => {
     const res = await request({ method: 'POST', ...option })
-    
-    if (shouldReturnRaw(res, directReturnKeys)) {
-      return res
-    }
-
-    return res?.data as T
+    return res.data as unknown as T
   },
   postOriginal: async (option: any) => {
     const res = await request({ method: 'POST', ...option })

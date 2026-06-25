@@ -41,13 +41,11 @@ const loginOut = async () => {
       cancelButtonText: t('common.cancel'),
       type: 'warning'
     })
-  } catch {
-    return // 用户取消
-  }
-  // 退出登录接口不管成功失败，都清空数据并强制跳转首页
-  try { await userStore.loginOut() } catch {}
-  tagsViewStore.delAllViews()
-  window.location.href = window.location.origin + '/welcome'
+    await userStore.loginOut()
+    tagsViewStore.delAllViews()
+    // replace('/login?redirect=/welcome')
+    window.location.href = `${window.location.origin}/lzweb/portal/index.html#/login`
+  } catch {}
 }
 const toProfile = async () => {
   push('/user/profile')

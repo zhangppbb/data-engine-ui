@@ -1,12 +1,12 @@
 <script lang="ts" setup>
 import { formatDatetime } from '@/utils/formatTime'
 import * as NotifyMessageApi from '@/api/system/notify/message'
-import { useUserStore } from '@/store/modules/user'
+import { useUserStoreWithOut } from '@/store/modules/user'
 
 defineOptions({ name: 'Message' })
 
 const { push } = useRouter()
-const userStore = useUserStore()
+const userStore = useUserStoreWithOut()
 const activeName = ref('notice')
 const unreadCount = ref(0) // 未读消息数量
 const list = ref<any[]>([]) // 消息列表

@@ -8,8 +8,7 @@ export function usePagination(tableHooksRequest?: () => void, pag?: Table.Option
       paginationConfig: {
         total: 0, // 合计条数    -可以为空-
         currentPage: 1,
-        pageSize: 20,
-        layout: 'prev, pager, next'
+        pageSize: 20
         // handleCurrentChange: this.getList // 分页变化时回调加载数据的方法
       },
       searchNumber: 0,

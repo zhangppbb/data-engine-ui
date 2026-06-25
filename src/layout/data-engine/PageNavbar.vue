@@ -61,12 +61,9 @@
 
       <!-- 右侧功能区 -->
       <div class="flex items-center">
-        <div
-          v-if="isLoggedIn"
-          class="hover:text-brandColor text-18px hover:font-600 mr-20px cursor-pointer"
-          :class="route.path.startsWith('/workspace') ? 'text-brandColor font-600' : 'text-[#222]'"
-          @click="() => { router.push('/workspace') }"
-        >工作空间</div>
+        <div v-if="isLoggedIn" class="hover:text-brandColor text-18px hover:font-600 mr-20px cursor-pointer" @click="() => {
+          router.push('/workspace')
+        }" :class="route.path.startsWith('/workspace') ? 'text-brandColor font-600' : 'text-[#222]'">工作空间</div>
 
         <!-- 未登录状态：显示登录/注册按钮 -->
         <div v-if="!isLoggedIn" class="flex items-center  cursor-pointer">
@@ -102,10 +99,10 @@
                 <span class="text-void-900 text-xl font-bold">{{ getUserInitial() }}</span>
               </div>
               <div>
-                <div class="text-white font-medium">{{ clientUserInfo?.name || userInfo.nickname }}</div>
-                <!-- <div class="flex items-center gap-1 mt-1">
-                  <span class="text-xs bg-yellow-500/20 text-yellow-500 px-2 py-0.5 rounded-full">{{ clientUserInfo?.userType || 'VIP试用' }}</span>
-                </div> -->
+                <p class="text-white font-medium">{{ userInfo.nickname }}</p>
+                <div class="flex items-center gap-1 mt-1">
+                  <span class="text-xs bg-yellow-500/20 text-yellow-500 px-2 py-0.5 rounded-full">VIP试用</span>
+                </div>
               </div>
               <router-link
                 to="/profile"
@@ -117,7 +114,7 @@
             </div>
 
             <!-- 客户类型 -->
-            <!-- <div class="border-t border-white/10 py-3 mb-3">
+            <div class="border-t border-white/10 py-3 mb-3">
               <div class="flex items-center justify-between mb-2">
                 <span class="text-slate-400 text-sm">客户类型：</span>
                 <span class="text-white font-medium">{{ clientTypeLabel }}</span>
@@ -137,21 +134,21 @@
                   {{ type.label }}
                 </button>
               </div>
-            </div> -->
+            </div>
 
             <!-- 点数 -->
             <div class="border-t border-white/10 py-3 mb-3">
               <div class="flex items-center justify-between mb-2">
                 <span class="text-slate-400 text-sm">剩余点数：</span>
-                <span class="text-aurora-green font-bold">{{ formatNumber(clientUserInfo?.remainAmount) }}</span>
+                <span class="text-aurora-green font-bold">1,234</span>
               </div>
-              <!-- <button class="w-full py-2 rounded-lg bg-aurora-cyan/20 text-aurora-cyan border border-aurora-cyan/30 hover:bg-aurora-cyan/30 transition text-sm">
+              <button class="w-full py-2 rounded-lg bg-aurora-cyan/20 text-aurora-cyan border border-aurora-cyan/30 hover:bg-aurora-cyan/30 transition text-sm">
                 充值
-              </button> -->
+              </button>
             </div>
 
             <!-- 快捷入口 -->
-            <!-- <div class="grid grid-cols-3 gap-2 mb-4">
+            <div class="grid grid-cols-3 gap-2 mb-4">
               <a href="#" class="flex flex-col items-center p-2 rounded-lg hover:bg-white/5 transition">
                 <Icon icon="ep:download" class="text-aurora-cyan mb-1" />
                 <span class="text-xs text-slate-300">下载记录</span>
@@ -164,8 +161,8 @@
                 <Icon icon="ep:heart" class="text-aurora-cyan mb-1" />
                 <span class="text-xs text-slate-300">我的关注</span>
               </a>
-            </div> -->
-            <!-- <div class="grid grid-cols-3 gap-2">
+            </div>
+            <div class="grid grid-cols-3 gap-2">
               <a href="#" class="flex flex-col items-center p-2 rounded-lg hover:bg-white/5 transition">
                 <Icon icon="ep:office-building" class="text-aurora-cyan mb-1" />
                 <span class="text-xs text-slate-300">我的企业</span>
@@ -178,14 +175,13 @@
                 <Icon icon="ep:document" class="text-aurora-cyan mb-1" />
                 <span class="text-xs text-slate-300">我的发票</span>
               </a>
-            </div> -->
+            </div>
 
             <!-- 底部链接 -->
             <div class="border-t border-white/10 mt-4 pt-4 flex justify-between">
-              <div></div>
-              <!-- <a href="#" class="text-sm text-slate-400 hover:text-white transition">客服中心</a>
-              <a href="#" class="text-sm text-slate-400 hover:text-white transition">我的反馈</a> -->
-              <a href="#" class="text-sm text-slate-400 hover:text-white transition" @click.prevent="handleLogout">退出登录</a>
+              <a href="#" class="text-sm text-slate-400 hover:text-white transition">客服中心</a>
+              <a href="#" class="text-sm text-slate-400 hover:text-white transition">我的反馈</a>
+              <a href="#" class="text-sm text-slate-400 hover:text-white transition" @click="handleLogout">退出登录</a>
             </div>
           </div>
         </div>
@@ -195,7 +191,7 @@
           to="/workspace"
           class="text-14px ml-8px font-medium hover:text-brandColor transition-colors hidden md:block text-[rgba(0,0,0,0.65)]"
         >
-          {{ clientUserInfo?.name }}
+          {{ userInfo.nickname }}
         </router-link>
       </div>
     </div>
@@ -204,15 +200,14 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from 'vue'
-import { ElMessageBox } from 'element-plus'
 import Icon from '@/components/Icon/src/Icon.vue'
 import router from '@/router'
 import { useRoute } from 'vue-router'
-import { useUserStore } from '@/store/modules/user'
+import { useUserStoreWithOut } from '@/store/modules/user'
 import LoginModal from '@/components/LoginModal/LoginModal.vue'
 
 const route = useRoute()
-const userStore = useUserStore()
+const userStore = useUserStoreWithOut()
 
 // 用户菜单显示状态
 const showUserMenu = ref(false)
@@ -221,7 +216,6 @@ const userMenuRef = ref<HTMLElement | null>(null)
 // 登录状态
 const isLoggedIn = computed(() => userStore.getIsLoggedIn)
 const userInfo = computed(() => userStore.getUser)
-const clientUserInfo = computed(() => userStore.getClientUserInfo)
 
 // 切换用户菜单
 const toggleUserMenu = () => {
@@ -247,28 +241,13 @@ const openRegister = () => {
 
 // 退出登录
 const handleLogout = () => {
-  ElMessageBox.confirm('确定要退出登录吗？', '提示', {
-    confirmButtonText: '确定',
-    cancelButtonText: '取消',
-    type: 'warning'
-  }).then(() => {
-    userStore.loginOut()
-    showUserMenu.value = false
-    window.location.href = '/'
-  }).catch(() => {})
+  userStore.logoutAction()
+  showUserMenu.value = false
 }
 
 // 获取用户头像首字母
 const getUserInitial = () => {
   return userInfo.value.nickname?.charAt(0)?.toUpperCase() || 'U'
-}
-
-/**
- * 数字格式化：千分位
- */
-const formatNumber = (num: number | undefined | null): string => {
-  if (num === undefined || num === null) return '0'
-  return num.toLocaleString('zh-CN')
 }
 
 // 客户类型

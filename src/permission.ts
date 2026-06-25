@@ -7,7 +7,7 @@ import { useNProgress } from '@/hooks/web/useNProgress'
 import { usePageLoading } from '@/hooks/web/usePageLoading'
 import { useModuleStoreWithOut } from '@/store/modules/module'
 import { useDictStoreWithOut } from '@/store/modules/dict'
-import { useUserStore } from '@/store/modules/user'
+import { useUserStoreWithOut } from '@/store/modules/user'
 import { usePermissionStoreWithOut } from '@/store/modules/permission'
 
 const { start, done } = useNProgress()
@@ -75,7 +75,7 @@ const whiteList = [
 //       // 获取所有字典
 //       // const dictStore = useDictStoreWithOut()
 //       // const moduleStore = useModuleStoreWithOut()
-//       const userStore = useUserStore()
+//       const userStore = useUserStoreWithOut()
 //       const permissionStore = usePermissionStoreWithOut()
 //       // if (!moduleStore.getIsSetModule) {
 //       //   await moduleStore.setModuleMap()
@@ -114,60 +114,55 @@ const whiteList = [
 // })
 
 
-
-router.beforeEach(async (to, from) => {
+// 路由加载前
+router.beforeEach(async (to, from, next) => {
   start() // 开始Progress
   loadStart() // 开始页面加载
-  // if (getToken()) {
-  //   to.meta.title && useSettingsStore().setTitle(to.meta.title as string)
-  //   const isLock = useLockStore().isLock
+  // if (getAccessToken()) {
   //   if (to.path === '/login') {
-  //     NProgress.done()
-  //     return { path: '/' }
-  //   }
-  //   if (isWhiteList(to.path)) {
-  //     return true
-  //   }
-  //   if (isLock && to.path !== '/lock') {
-  //     NProgress.done()
-  //     return { path: '/lock' }
-  //   }
-  //   if (!isLock && to.path === '/lock') {
-  //     NProgress.done()
-  //     return { path: '/' }
-  //   }
-  //   if (useUserStore().roles.length === 0) {
-  //     isRelogin.show = true
-  //     try {
-  //       // 拉取user_info信息
-  //       await useUserStore().getInfo()
+  //     next({ path: '/' })
+  //   } else {
+  //     // 获取所有字典
+  //     // const dictStore = useDictStoreWithOut()
+  //     // const moduleStore = useModuleStoreWithOut()
+  //     const userStore = useUserStoreWithOut()
+  //     const permissionStore = usePermissionStoreWithOut()
+  //     // if (!moduleStore.getIsSetModule) {
+  //     //   await moduleStore.setModuleMap()
+  //     // }
+  //     // if (!dictStore.getIsSetDict) {
+  //     //   await dictStore.setDictMap()
+  //     // }
+  //     if (!userStore.getIsSetUser) {
+  //       isRelogin.show = true
+  //       await userStore.setUserInfoAction()
   //       isRelogin.show = false
-  //       // 根据roles权限生成可访问的路由
-  //       const accessRoutes = await usePermissionStore().generateRoutes()
-  //       accessRoutes.forEach((route: any) => {
-  //         if (!isHttp(route.path)) {
-  //           router.addRoute(route)
-  //         }
+  //       // 后端过滤菜单
+  //       await permissionStore.generateRoutes()
+  //       permissionStore.getAddRouters.forEach((route) => {
+  //         router.addRoute(route as unknown as RouteRecordRaw) // 动态添加可访问路由表
   //       })
-  //       // 重新导航到目标路由，确保动态路由已注册
-  //       return { ...to, replace: true }
-  //     } catch (err) {
-  //       await useUserStore().logOut()
-  //       ElMessage.error(err)
-  //       return { path: '/' }
+  //       const redirectPath = from.query.redirect || to.path
+  //       // 修复跳转时不带参数的问题
+  //       const redirect = decodeURIComponent(redirectPath as string)
+  //       const { paramsObject: query } = parseURL(redirect)
+  //       const nextData = to.path === redirect ? { ...to, replace: true } : { path: redirect, query }
+  //       next(nextData)
+  //     } else {
+  //       next()
   //     }
   //   }
-  //   return true
   // } else {
-  //   // 没有token
-  //   if (isWhiteList(to.path)) {
-  //     // 在免登录白名单，直接进入
-  //     return true
+  //   if (whiteList.indexOf(to.path) !== -1) {
+  //     next()
+  //   } else {
+  //     next(`/?redirect=${to.fullPath}`) // 否则全部重定向到登录页
+  //     // window.location.href = `${window.location.origin}/lzweb/portal/index.html#/login`
   //   }
-  //   NProgress.done()
-  //   return `/login?redirect=${to.fullPath}` // 否则全部重定向到登录页
   // }
+  next()
 })
+
 
 router.afterEach((to) => {
   useTitle(to?.meta?.title as string)

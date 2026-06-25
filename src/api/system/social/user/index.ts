@@ -1,6 +1,5 @@
 import request from '@/config/axios'
 
-/** 社交用户 VO */
 export interface SocialUserVO {
   id: number
   type: number
@@ -14,28 +13,17 @@ export interface SocialUserVO {
   state: string
 }
 
-/**
- * 查询社交用户分页列表
- * @param {any} params 分页查询参数
- * @returns {Promise<any>} 社交用户分页数据
- */
+// 查询社交用户列表
 export const getSocialUserPage = async (params: any) => {
   return await request.get({ url: `/system/social-user/page`, params })
 }
 
-/**
- * 查询社交用户详情
- * @param {number} id 社交用户ID
- * @returns {Promise<any>} 社交用户详情
- */
+// 查询社交用户详情
 export const getSocialUser = async (id: number) => {
   return await request.get({ url: `/system/social-user/get?id=` + id })
 }
 
-/**
- * 获得绑定社交用户列表
- * @returns {Promise<any>} 绑定社交用户列表
- */
+// 获得绑定社交用户列表
 export const getBindSocialUserList = async () => {
   return await request.get({ url: '/admin-api/system/social-user/get-bind-list' })
 }

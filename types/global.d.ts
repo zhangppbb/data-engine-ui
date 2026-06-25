@@ -46,7 +46,6 @@ declare global {
   interface PageParam {
     pageSize?: number
     pageNo?: number
-    pageNum?: number
   }
 
   interface Tree {
@@ -56,7 +55,6 @@ declare global {
   }
   // 分页数据公共返回
   interface PageResult<T> {
-    rows: T // 数据
     list: T // 数据
     total: number // 总量
   }

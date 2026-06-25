@@ -42,12 +42,6 @@ export default ({command, mode}: ConfigEnv): UserConfig => {
                 changeOrigin: true,
                 rewrite: (path) => path.replace(new RegExp(`^/c4ai-api`), ''),
               },
-            ['/lanyi-api']: {
-                target: env.VITE_LANYI_AI_BASE_URL,
-                ws: false,
-                changeOrigin: true,
-                rewrite: (path) => path.replace(new RegExp(`^/lanyi-api`), ''),
-              },
             },
         },
         // 项目使用的vite插件。 单独提取到build/vite/plugin中管理

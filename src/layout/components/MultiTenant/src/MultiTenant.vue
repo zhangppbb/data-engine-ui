@@ -20,7 +20,7 @@ import {
   setManagedTenantId
 } from '@/utils/auth'
 import { changeTenantToken } from '@/api/login/index'
-import { useUserStore } from '@/store/modules/user'
+import { useUserStoreWithOut } from '@/store/modules/user'
 import { useDictStoreWithOut } from '@/store/modules/dict'
 import { useModuleStoreWithOut } from '@/store/modules/module'
 const { replace } = useRouter()
@@ -30,7 +30,7 @@ defineOptions({ name: 'MultiTenant' })
 const tenantId = ref(getTenantId())
 const userTenants = getUserTenants()
 
-const userStoreWithOut = useUserStore() // 用户信息缓存
+const userStoreWithOut = useUserStoreWithOut() // 用户信息缓存
 const dictStoreWithOut = useDictStoreWithOut() // 字典信息缓存
 const moduleStoreWithOut = useModuleStoreWithOut() // 模块信息缓存
 

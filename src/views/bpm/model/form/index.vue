@@ -82,7 +82,7 @@
 import { useRoute, useRouter } from 'vue-router'
 import { useMessage } from '@/hooks/web/useMessage'
 import { useTagsViewStore } from '@/store/modules/tagsView'
-import { useUserStore } from '@/store/modules/user'
+import { useUserStoreWithOut } from '@/store/modules/user'
 import * as ModelApi from '@/api/bpm/model'
 import * as DefinitionApi from '@/api/bpm/definition'
 import { BpmModelFormType, BpmModelType, BpmAutoApproveType } from '@/utils/constants'
@@ -97,7 +97,7 @@ const { delView } = useTagsViewStore() // 视图操作
 const tagsView = useTagsView()
 const route = useRoute()
 const message = useMessage()
-const userStore = useUserStore()
+const userStore = useUserStoreWithOut()
 
 // 组件引用
 const basicInfoRef = ref()

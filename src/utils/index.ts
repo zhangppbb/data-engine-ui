@@ -554,13 +554,3 @@ export const padZero = (numStr: string, targetLength: number = 6): string => {
   }
   return numStr;
 };
-
-/**
- * 手机号脱敏：中间4位替换为 ****
- * @param phone - 原始手机号
- * @returns 脱敏后的手机号，如 138****5678；空值返回空字符串
- */
-export const maskPhone = (phone: string | undefined | null): string => {
-  if (!phone) return ''
-  return phone.replace(/^(\d{3})\d{4}(\d+)$/, '$1****$2')
-}

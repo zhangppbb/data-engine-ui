@@ -1,8 +1,8 @@
+import { store } from '@/store'
 import { defineStore } from 'pinia'
 import { getAccessToken, removeToken } from '@/utils/auth'
 import { CACHE_KEY, useCache, deleteUserCache } from '@/hooks/web/useCache'
 import { getInfo, loginOut } from '@/api/login'
-import { getPersonalCenterInfo, updatePersonalCenterInfo, type PersonalCenterInfo } from '@/api/personal-center'
 import { InfraBooleanStringEnum } from '@/utils/constants'
 
 const { wsCache } = useCache()
@@ -40,7 +40,7 @@ export interface PermissionDeptVO {
 }
 
 export const useUserStore = defineStore('admin-user', {
-  state: (): UserInfoVO & { isLoggedIn: boolean; showLoginDialog: boolean; showRegisterDialog: boolean; clientUserInfo: PersonalCenterInfo | null } => ({
+  state: (): UserInfoVO & { isLoggedIn: boolean; showLoginDialog: boolean; showRegisterDialog: boolean } => ({
     permissions: [],
     roles: [],
     depts: [],
@@ -48,7 +48,6 @@ export const useUserStore = defineStore('admin-user', {
     isLoggedIn: false,
     showLoginDialog: false,
     showRegisterDialog: false,
-    clientUserInfo: (wsCache.get(CACHE_KEY.CLIENT_USER_INFO) as PersonalCenterInfo | null) || null,
     user: {
       id: 0,
       avatar: '',
@@ -73,16 +72,13 @@ export const useUserStore = defineStore('admin-user', {
       return this.user
     },
     getIsLoggedIn(): boolean {
-      return this.isLoggedIn || !!getAccessToken()
+      return !!getAccessToken()
     },
     getShowLoginDialog(): boolean {
       return this.showLoginDialog
     },
     getShowRegisterDialog(): boolean {
       return this.showRegisterDialog
-    },
-    getClientUserInfo(): PersonalCenterInfo | null {
-      return this.clientUserInfo
     }
   },
   actions: {
@@ -156,20 +152,16 @@ export const useUserStore = defineStore('admin-user', {
       wsCache.set(CACHE_KEY.USER, userInfo)
     },
     async loginOut() {
-      // 退出登录接口不管成功失败，都清空数据并跳转
-      loginOut().catch(() => {})
+      await loginOut()
       removeToken()
-      deleteUserCache()
+      deleteUserCache() // 删除用户缓存
       this.resetState()
     },
     resetState() {
-      this.isLoggedIn = false
       this.permissions = []
       this.roles = []
       this.depts = []
       this.isSetUser = false
-      this.clientUserInfo = null
-      wsCache.delete(CACHE_KEY.CLIENT_USER_INFO)
       this.user = {
         id: 0,
         avatar: '',
@@ -178,10 +170,17 @@ export const useUserStore = defineStore('admin-user', {
       }
     },
     loginAction(userInfo: { nickname: string; avatar?: string }) {
-      this.isLoggedIn = true
       this.user.nickname = userInfo.nickname
       this.user.avatar = userInfo.avatar || ''
       this.showLoginDialog = false
+    },
+    logoutAction() {
+      this.user = {
+        id: 0,
+        avatar: '',
+        nickname: '',
+        mainDeptId: 0
+      }
     },
     openLoginDialog() {
       this.showLoginDialog = true
@@ -198,31 +197,13 @@ export const useUserStore = defineStore('admin-user', {
       this.showRegisterDialog = false
     },
     registerAction(userInfo: { nickname: string; avatar?: string }) {
-      this.isLoggedIn = true
       this.user.nickname = userInfo.nickname
       this.user.avatar = userInfo.avatar || ''
       this.showRegisterDialog = false
-    },
-    // ==================== 客户端用户信息 ====================
-    /**
-     * 获取客户端用户信息并存入 store（由 pinia-plugin-persistedstate 自动持久化）
-     */
-    async fetchClientUserInfoAction() {
-      const info = await getPersonalCenterInfo()
-      this.clientUserInfo = info
-      wsCache.set(CACHE_KEY.CLIENT_USER_INFO, info)
-      return info
-    },
-    /**
-     * 修改客户端用户信息（由 pinia-plugin-persistedstate 自动持久化）
-     */
-    async updateClientUserInfoAction(data: Partial<PersonalCenterInfo>) {
-      await updatePersonalCenterInfo(data)
-      if (this.clientUserInfo) {
-        Object.assign(this.clientUserInfo, data)
-        wsCache.set(CACHE_KEY.CLIENT_USER_INFO, this.clientUserInfo)
-      }
-    },
-  },
-  persist: true
+    }
+  }
 })
+
+export const useUserStoreWithOut = () => {
+  return useUserStore(store)
+}

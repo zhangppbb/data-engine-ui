@@ -1,70 +1,42 @@
 import request from '@/config/axios'
 
-/** BPM 流程分类 VO */
+// BPM 流程分类 VO
 export interface CategoryVO {
-  /** 分类编号 */
-  id: number
-  /** 分类名 */
-  name: string
-  /** 分类标志 */
-  code: string
-  /** 分类状态 */
-  status: number
-  /** 分类排序 */
-  sort: number
+  id: number // 分类编号
+  name: string // 分类名
+  code: string // 分类标志
+  status: number // 分类状态
+  sort: number // 分类排序
 }
 
-/** BPM 流程分类 API */
+// BPM 流程分类 API
 export const CategoryApi = {
-  /**
-   * 查询流程分类分页
-   * @param {any} params 分页查询参数
-   * @returns {Promise<any>} 流程分类分页数据
-   */
+  // 查询流程分类分页
   getCategoryPage: async (params: any) => {
     return await request.get({ url: `/bpm/category/page`, params })
   },
 
-  /**
-   * 查询流程分类精简列表
-   * @returns {Promise<any>} 流程分类精简列表
-   */
+  // 查询流程分类列表
   getCategorySimpleList: async () => {
     return await request.get({ url: `/bpm/category/simple-list` })
   },
 
-  /**
-   * 查询流程分类详情
-   * @param {number} id 分类编号
-   * @returns {Promise<any>} 流程分类详情
-   */
+  // 查询流程分类详情
   getCategory: async (id: number) => {
     return await request.get({ url: `/bpm/category/get?id=` + id })
   },
 
-  /**
-   * 新增流程分类
-   * @param {CategoryVO} data 流程分类数据
-   * @returns {Promise<any>} 新增结果
-   */
+  // 新增流程分类
   createCategory: async (data: CategoryVO) => {
     return await request.post({ url: `/bpm/category/create`, data })
   },
 
-  /**
-   * 修改流程分类
-   * @param {CategoryVO} data 流程分类数据
-   * @returns {Promise<any>} 修改结果
-   */
+  // 修改流程分类
   updateCategory: async (data: CategoryVO) => {
     return await request.put({ url: `/bpm/category/update`, data })
   },
 
-  /**
-   * 批量修改流程分类的排序
-   * @param {number[]} ids 分类ID数组
-   * @returns {Promise<any>} 批量修改结果
-   */
+  // 批量修改流程分类的排序
   updateCategorySortBatch: async (ids: number[]) => {
     return await request.put({
       url: `/bpm/category/update-sort-batch`,
@@ -74,11 +46,7 @@ export const CategoryApi = {
     })
   },
 
-  /**
-   * 删除流程分类
-   * @param {number} id 分类编号
-   * @returns {Promise<any>} 删除结果
-   */
+  // 删除流程分类
   deleteCategory: async (id: number) => {
     return await request.delete({ url: `/bpm/category/delete?id=` + id })
   }

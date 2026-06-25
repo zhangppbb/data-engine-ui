@@ -1,215 +1,55 @@
 <script setup lang="ts">
-import { computed, ref, onMounted, watch, onUnmounted } from 'vue';
+import { computed, ref } from 'vue';
+import banner1 from './assets/images/banner.png'
+import banner2 from './assets/images/banner2.png'
 import { ArrowRight, Search } from '@element-plus/icons-vue'
-import { debounce } from 'lodash-es'
-import AppCard from '@/components/AppCard/AppCard.vue'
+import AppCard from './components/AppCard.vue'
 import router from '@/router';
-import { fetchBannerList, AppBanner } from '@/api/banner'
-import { fetchAllTagCategory, TagCategory } from '@/api/apps/tagCategory'
-import { getAppList, AppInfo, AppListQueryDTO } from '@/api/apps/appInfo'
-import { usePagination } from '@/hooks/web/usePagination'
-import { ZONE_TYPE } from '@/constants/zone';
-
-/**
- * 骨架屏加载状态
- */
-const loading = ref({
-  banner: true,
-  category: true,
-  tagFilter: true,
-  appList: true
-})
+import mockData from '../mockData'
 
 
-/**
- * 标签筛选值
- * @description 用于筛选特定标签的应用
- */
 const val = ref('全部')
-
-/**
- * 排序选项
- * @description 当前选中的排序方式
- */
 const value = ref('按热度排序')
-
 /**
- * Banner列表数据
+ * 分类类型
  */
-const bannerList = ref<AppBanner[]>([])
-
-/**
- * 标签分类列表数据
- */
-const tagCategories = ref<TagCategory[]>([])
-
-/**
- * 应用列表数据
- */
-const appList = ref<AppInfo[]>([])
-
-/**
- * 获取Banner列表
- * @description 调用后端接口获取轮播图数据
- */
-const loadBannerList = async () => {
-  loading.value.banner = true
-  try {
-    const data = await fetchBannerList(ZONE_TYPE.APP)
-    bannerList.value = data || []
-  } catch (error) {
-    bannerList.value = []
-  } finally {
-    loading.value.banner = false
-  }
+interface CategoryItem {
+  label: string;
+  value: string;
+  icon: string;
+  color: string;
+  percent?: string
 }
 
 /**
- * 处理Banner点击事件
- * @description 点击Banner跳转至专区页面，携带bannerId和zoneId参数
- * @param banner Banner数据
+ * 卡片类型
  */
-const handleBannerClick = (banner: AppBanner) => {
-  router.push({
-    path: '/apps/zone',
-    query: {
-      bannerId: banner.id,
-      zoneId: banner.jumpZoneId
-    }
-  })
+interface AppCardItem {
+  id: number;
+  title: string;
+  badge?: string;
+  badgeType?: 'primary' | 'success' | 'warning' | 'danger';
+  desc: string;
+  href?: string;
+  path?: string;
+  tags: string[];
 }
 
 /**
- * 获取标签分类列表
- * @description 调用后端接口获取所有标签分类数据
+ * 模块类型
  */
-const loadTagCategories = async () => {
-  loading.value.category = true
-  loading.value.tagFilter = true
-  try {
-    const data = await fetchAllTagCategory({
-      categoryCode: ZONE_TYPE.APP
-    })
-    tagCategories.value = data || []
-  } catch (error) {
-    tagCategories.value = []
-  } finally {
-    loading.value.category = false
-    loading.value.tagFilter = false
-  }
+interface SectionItem {
+  title: string;
+  list: AppCardItem[];
 }
 
 /**
- * 搜索关键字
- * @description 用户输入的搜索关键词，用于模糊匹配应用名称和描述
+ * banner 数据
  */
-const keyword = ref('');
-
-/**
- * 当前选中的分类
- * @description 默认值为 'all'，表示全部分类
- */
-const activeCategory = ref('all')
-
-/**
- * 统一查询函数
- * @description 所有筛选条件都通过此函数调用后端接口获取应用分页列表
- * @returns {Promise<void>}
- */
-async function loadAppList() {
-  loading.value.appList = true
-  try {
-    const params: AppListQueryDTO = {
-      pageNum: pagination.paginationConfig!.currentPage || 1,
-      pageSize: pagination.paginationConfig!.pageSize,
-    }
-    
-    // 根据选中的标签获取分类ID
-    if (activeCategory.value !== 'all') {
-      // for (const category of tagCategories.value) {
-      //   const tag = category.tagInfos?.find((t) => t.tagCode === activeCategory.value)
-      //   if (tag) {
-      params.categoryId = activeCategory.value
-      //     break
-      //   }
-      // }
-    }
-    
-    // 添加关键字搜索条件
-    if (keyword.value) {
-      params.keyword = keyword.value
-    }
-    
-    // 调用后端接口，获取分页数据
-    const result = await getAppList(params)
-    appList.value = result.rows || []
-    pagination.paginationConfig!.total = result.total || 0
-  } catch (error) {
-    // 异常处理：清空列表
-    appList.value = []
-    pagination.paginationConfig!.total = 0
-  } finally {
-    loading.value.appList = false
-  }
-}
-
-/**
- * 分页相关状态与方法
- * @description 使用 usePagination hook 管理分页
- */
-const { pagination, paginationTotal, currentChange, sizeChange, refreshData } = usePagination(loadAppList, {
-  paginationConfig: { pageSize: 6 }
-})
-
-/**
- * 防抖刷新的包装函数
- * @description 使用 debounce 包装 refreshData，延迟 300ms 执行
- */
-const debouncedRefresh = debounce(() => refreshData(), 300)
-
-/**
- * 监听关键字变化
- * @description 当搜索关键字改变时，重置页码并触发防抖查询
- */
-watch(keyword, () => {
-  debouncedRefresh()
-})
-
-/**
- * 监听分类变化
- * @description 当选中的分类改变时，重置页码并触发防抖查询
- */
-watch(activeCategory, () => {
-  debouncedRefresh()
-})
-
-/**
- * 监听标签变化
- * @description 当标签筛选条件改变时，重置页码并触发防抖查询
- */
-watch(val, () => {
-  debouncedRefresh()
-})
-
-/**
- * 初始化页面
- */
-const initPage = () => {
-  loadBannerList()
-  loadTagCategories()
-  loadAppList()
-}
-
-initPage()
-
-
-/**
- * 组件卸载钩子
- * @description 清理防抖函数，防止内存泄漏
- */
-onUnmounted(() => {
-  debouncedRefresh.cancel()
-})
+const BANNER_LIST = [
+  { id: 1, title: '企业招商全流程专区', desc: '从潜客挖掘到区域分析，一站式助力产业招商', image: banner1 },
+  // { id: 2, title: 'AI 智能投标专区', desc: '基于大语言模型的智能数据分析师，自动完成', image: banner2 }
+];
 
 // /**
 //  * 应用标签 — 按图片中的应用分类重新定义
@@ -266,66 +106,85 @@ const CATEGORY_CONFIG = {
     color: '#2DD0E8'
   }
 }
+
+
+const activeCategory = ref('all')
 /**
- * 根据接口数据生成标签列表（从 tagInfos 中读取）
+ * 自动根据 appList 生成分类
  */
 const CATEGORY_LIST = computed(() => {
-  // 全部场景
-  const allCategory = {
-    label: '全部场景',
-    value: 'all',
-    icon: 'iconfont icon-quanbu',
-    color: '#3370FF',
-    count: appList.value.length
-  }
+    // 获取所有 tags
+  const allTags = mockData.flatMap((item) => item.tags || [])
 
-  // 如果接口数据为空，返回全部场景
-  if (!tagCategories.value.length) {
-    return [allCategory]
-  }
+  // 去重
+  const uniqueTags = [...new Set(allTags)]
 
-  // 从所有分类的 tagInfos 中提取标签列表
-  const tags: typeof allCategory[] = []
+  // 动态生成分类
+  const categories = uniqueTags.map((tag) => {
+    const count = mockData.filter((item) =>
+      item.tags?.includes(tag)
+    ).length
 
-  tagCategories.value.forEach((category) => {
-    if (category.tagInfos?.length) {
-      category.tagInfos.forEach((tag) => {
-        const count = appList.value.filter(
-          (app) => app.tagInfos?.some((appTag) => appTag.tagCode === tag.tagCode)
-        ).length
+    // 获取配置
+    const config = CATEGORY_CONFIG[tag] || {}
 
-        tags.push({
-          // color: tag.color || '#3370FF',
-          label: tag.tagName,
-          value: tag.id,
-          icon: tag.icon || 'iconfont icon-qiye2',
-          color: '#3370FF',
-          count
-        })
-      })
+    return {
+      label: tag,
+      value: config.value || tag,
+      icon: config.icon || 'iconfont icon-24gf-thumbsUp2',
+      color: config.color || '#3370FF',
+      count
     }
   })
 
-  return [allCategory, ...tags]
+  // 全部
+  return [
+    {
+      label: '全部场景',
+      value: 'all',
+      icon: 'iconfont icon-quanbu',
+      color: '#3370FF',
+      count: mockData.length
+    },
+
+    ...categories
+  ]
 })
 
+function openUrl(url: string) {
+  if (typeof window !== 'undefined') {
+    window.open(url);
+  }
+}
+
+const SECTION_LIST = mockData
+
 /**
- * 分类统计选项
- * @description 根据接口返回的应用数据动态生成分类统计列表
+ * 当前 banner
+ */
+const currentBanner = ref(0);
+
+/**
+ * 当前选中
+ */
+
+/**
+ * 分类统计
+ * 根据 categories 字段统计
  */
 const categoryOptions = computed(() => {
   // 所有分类
-  const allCategories = appList.value
-    .filter((item) => item.appCategoryInfo?.categoryName)
-    .map((item) => item.appCategoryInfo.categoryName)
+  const allCategories = mockData.flatMap(
+    (item) => item.categories || []
+  )
 
   // 去重
   const uniqueCategories = [...new Set(allCategories)]
 
   // 动态统计
   const list = uniqueCategories.map((category) => {
-    const count = appList.value.filter(
-      (item) => item.appCategoryInfo?.categoryName === category
+    const count = mockData.filter((item) =>
+      item.categories?.includes(category)
     ).length
 
     return {
@@ -338,19 +197,21 @@ const categoryOptions = computed(() => {
   // 全部
   return [
     {
-      label: `全部 ${appList.value.length}`,
+      label: `全部 ${mockData.length}`,
       value: '全部',
-      count: appList.value.length
+      count: mockData.length
     },
     ...list
   ]
 })
 
 /**
- * Badge类型映射函数
- * @description 根据传入的类型返回对应的Element Plus badge类型
- * @param {string} [type] - badge类型（success/warning/danger）
- * @returns {string} - Element Plus badge类型
+ * 搜索关键字
+ */
+const keyword = ref('');
+
+/**
+ * badge 类型映射
  */
 const getTagType = (type?: string) => {
   switch (type) {
@@ -360,6 +221,50 @@ const getTagType = (type?: string) => {
     default: return 'primary';
   }
 };
+
+/**
+ * 应用过滤
+ * SECTION_LIST 实际就是应用数组
+ */
+const filterSections = computed(() => {
+  return SECTION_LIST.filter((item) => {
+    /**
+     * 分类筛选
+     * tags
+     */
+    const categoryMatch =
+      activeCategory.value === 'all'
+        ? true
+        : item.tags?.includes(
+            CATEGORY_LIST.value.find(
+              (c) => c.value === activeCategory.value
+            )?.label
+          )
+
+    /**
+     * 标签筛选
+     * categories
+     */
+    const typeMatch =
+      val.value === '全部'
+        ? true
+        : item.categories?.includes(val.value)
+
+    /**
+     * 关键字筛选
+     */
+    const keywordMatch = keyword.value
+      ? item.name?.includes(keyword.value) ||
+        item.shortDescription?.includes(keyword.value) ||
+        item.longDescription?.includes(keyword.value)
+      : true
+
+    /**
+     * 同时满足
+     */
+    return categoryMatch && typeMatch && keywordMatch
+  })
+})
 </script>
 
 <template>
@@ -367,94 +272,98 @@ const getTagType = (type?: string) => {
     <!-- banner -->
     <div class="bg-white">
       <div class="max-w-1440px mx-auto">
-        <el-skeleton :loading="loading.banner" animated :throttle="{ leading: 300 }">
-          <template #template>
-            <el-skeleton-item variant="p" style="height: 260px;border-radius: 8px;" />
-          </template>
-          <template #default>
-            <el-carousel
-              height="260px"
-              :autoplay="true"
-              :interval="5000"
-              indicator-position="outside"
-              arrow="hover"
-            >
-              <el-carousel-item
-                v-for="item in bannerList"
-                :key="item.id"
-              >
-                <div
-                  class="group relative bg-cover h-full overflow-hidden hover:shadow-[0_8px_30px_rgba(15,35,95,0.08)] transition-all duration-300 cursor-pointer"
-                  :style="{ backgroundImage: `url(${item.imageUrl})` }"
-                  @click="() => handleBannerClick(item)"
-                >
-                  <div class="flex h-full flex-col justify-center pl-15%">
-                    <div class="flex text-32px font-bold">
-                      <div class="bg-gradient-to-r from-#004898 via-#2f74ff to-#05D7F6 bg-clip-text text-transparent">
-                        {{ item.bannerName }}
-                      </div>
-                    </div>
-                    <div class="text-#999999 text-20px pt-16px">
-                      {{ item.bannerDesc }}
-                    </div>
-                  </div>
+
+        <!-- banner list -->
+        <div class="grid grid-cols-1 max-lg:grid-cols-1">
+          <div
+            v-for="(item, index) in BANNER_LIST"
+            :key="item.id"
+            class="group relative bg-cover h-260px overflow-hidden hover:shadow-[0_8px_30px_rgba(15,35,95,0.08)] transition-all duration-300 hover:-translate-y-1.5"
+            data-aos="fade-up"
+            :data-aos-delay="index * 150"
+            :style="{
+              backgroundImage: `url(${item.image})`
+            }"
+          >
+            <!-- <div class="h-210px w-full">
+              <img
+                :src="item.image"
+                :alt="item.title"
+                class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+              />
+            </div> -->
+            <div class="flex h-full flex-col justify-center pl-15%">
+              <div class="flex text-32px font-bold">
+                <div class="bg-gradient-to-r from-#004898 via-#2f74ff to-#05D7F6 bg-clip-text text-transparent">
+                  {{ item.title }}
                 </div>
-              </el-carousel-item>
-            </el-carousel>
-          </template>
-        </el-skeleton>
+              </div>
+
+              <div class="text-#999999 text-20px pt-16px">
+                {{ item.desc }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- dot -->
+      <div class="mt-20px flex items-center justify-center gap-8px">
+        <div
+          v-for="(_, index) in [1,2]"
+          :key="index"
+          class="h-8px w-8px cursor-pointer rounded-full bg-#D8D8D8 transition-all duration-300"
+          :class="{ 'bg-brandColor!': currentBanner === index }"
+          @click="currentBanner = index"
+        ></div>
       </div>
     </div>
 
     <!-- 分类 -->
     <section class="bg-#fff py-32px">
-      <el-skeleton :loading="loading.tagFilter" animated :throttle="{ leading: 300 }">
-        <template #template>
-          <div class="grid gap-12px max-w-1440px mx-auto" style="grid-template-columns: repeat(7, minmax(0, 1fr))">
+      <!-- <div
+        class="py-32px text-center text-30px font-600"
+        data-aos="zoom-in"
+      >
+        应用标签
+      </div> -->
+
+      <!-- <div class="flex flex-wrap items-center justify-center gap-12px"> -->
+        <div
+          class="grid gap-12px max-w-1440px mx-auto"
+          :style="{
+            gridTemplateColumns: `repeat(${CATEGORY_LIST.length}, minmax(0, 1fr))`
+          }"
+        >
+        <div
+          v-for="(item) in CATEGORY_LIST"
+          :key="item.value"
+          class="group relative flex h-100px w-full cursor-pointer flex-col items-center justify-center overflow-hidden rounded-8px border border-transparent transition-all duration-300"
+          :class="[
+            activeCategory === item.value
+              ? 'bg-brandColor'
+              : 'hover:-translate-y-1 hover:border-#DBEAFE hover:shadow-[0_12px_32px_rgba(37,99,235,0.12)] bg-[rgba(191,191,191,0.10)]',
+          ]"
+          @click="activeCategory = item.value"
+        >
+          <div class="relative mb-8px flex-center h-20px w-20px">
             <div
-              v-for="i in 6"
-              :key="i"
-              class="h-100px rounded-8px bg-[rgba(0,0,0,0.04)]"
+              :class="item.icon"
+              class="text-20px!"
+              :style="{
+                color: activeCategory === item.value ? '#fff' : item.color
+              }"
             />
           </div>
-        </template>
-        <template #default>
+
           <div
-            class="grid gap-12px max-w-1440px mx-auto"
-            :style="{
-              gridTemplateColumns: `repeat(${CATEGORY_LIST.length}, minmax(0, 1fr))`
-            }"
+            class="text-14px"
+            :class="activeCategory === item.value ? 'text-white' : 'text-#333'"
           >
-            <div
-              v-for="(item) in CATEGORY_LIST"
-              :key="item.value"
-              class="group relative flex h-100px w-full cursor-pointer flex-col items-center justify-center overflow-hidden rounded-8px border border-transparent transition-all duration-300"
-              :class="[
-                activeCategory === item.value
-                  ? 'bg-brandColor'
-                  : 'hover:-translate-y-1 hover:border-#DBEAFE hover:shadow-[0_12px_32px_rgba(37,99,235,0.12)] bg-[rgba(191,191,191,0.10)]',
-              ]"
-              @click="activeCategory = item.value"
-            >
-              <div class="relative mb-8px flex-center h-20px w-20px">
-                <div
-                  :class="item.icon"
-                  class="text-20px!"
-                  :style="{
-                    color: activeCategory === item.value ? '#fff' : item.color
-                  }"
-                />
-              </div>
-              <div
-                class="text-14px"
-                :class="activeCategory === item.value ? 'text-white' : 'text-#333'"
-              >
-                {{ item.label }}
-              </div>
-            </div>
+            {{ item.label }}
           </div>
-        </template>
-      </el-skeleton>
+        </div>
+      </div>
     </section>
 
     <!-- 热门推荐 -->
@@ -470,16 +379,15 @@ const getTagType = (type?: string) => {
                 '--el-input-bg-color': '#fff'
               }"
               size="large"
-              v-model="keyword"
             />
-            <!-- <el-radio-group v-model="val" style="--el-text-color-regular: #666;--el-fill-color-blank:#fff;" size="large" class="ml-20px" fill="var(--brand-color)">
+            <el-radio-group v-model="val" style="--el-text-color-regular: #666;--el-fill-color-blank:#fff;" size="large" class="ml-20px" fill="var(--brand-color)">
                 <el-radio-button
               v-for="item in categoryOptions"
               :key="item.value"
               :label="item.label"
               :value="item.value"
             />
-            </el-radio-group> -->
+            </el-radio-group>
           </div>
 
           <div>
@@ -499,7 +407,9 @@ const getTagType = (type?: string) => {
         >
           热门推荐
         </div> -->
+
        
+
 
 
         <!-- <div class="ml-auto w-280px max-md:w-full" data-aos="fade-left">
@@ -524,61 +434,28 @@ const getTagType = (type?: string) => {
         </div> -->
       </div>
 
-      <!-- 应用卡片骨架屏区域 -->
-      <el-skeleton :loading="loading.appList" animated :throttle="{ leading: 300 }">
-        <template #template>
-          <div class="grid grid-cols-3 gap-20px max-xl:grid-cols-2 max-md:grid-cols-1">
-            <div v-for="n in 6" :key="n" class="rounded-8px bg-white p-20px">
-              <!-- 标题 + badge -->
-              <div class="flex items-center justify-between mb-16px">
-                <el-skeleton-item variant="text" style="width: 55%; height: 24px" />
-                <el-skeleton-item variant="text" style="width: 56px; height: 20px" />
-              </div>
-              <!-- 描述 -->
-              <el-skeleton-item variant="text" style="width: 95%; margin-bottom: 8px" />
-              <el-skeleton-item variant="text" style="width: 55%; margin-bottom: 20px" />
-              <!-- 标签 -->
-              <div class="flex flex-wrap gap-8px">
-                <el-skeleton-item variant="text" style="width: 48px; height: 24px" />
-                <el-skeleton-item variant="text" style="width: 56px; height: 24px" />
-                <el-skeleton-item variant="text" style="width: 40px; height: 24px" />
-              </div>
-            </div>
-        </div>
-        </template>
-        <template #default>
-          <!-- :class="paginationTotal >= 9 ? 'h-420px max-xl:h-auto max-md:h-auto' : ''" -->
-          <div v-if="appList.length" class="w-full" >
-            <div class="grid grid-cols-3 gap-20px max-xl:grid-cols-2 max-md:grid-cols-1">
-              <AppCard
-                  v-for="(item) in appList"
-                  :key="item.id"
-                  :title="item.appName"
-                  :badge="'免费试用'"
-                  :badge-type="getTagType('primary')"
-                  :desc="item.appDesc"
-                  :tags="item.tagInfos?.map(t => ({ name: t.tagName, color: t.color })) || []"
-                  @click="() => router.push(`/apps/details/${item.id}`)"
-                />
-            </div>
-          </div>
+      <div class="grid grid-cols-3 gap-20px max-xl:grid-cols-2 max-md:grid-cols-1">
+        <AppCard
+            v-for="(item, index) in filterSections"
+            :key="item.id"
+            :title="item.name"
+            :badge="'免费试用'"
+            :badge-type="getTagType('primary')"
+            :desc="item.shortDescription"
+            :tags="item.tags"
+            :data-aos="index >= 3 ? 'fade-up' : null"
+            :data-aos-delay="index >= 3 ? (index - 3) * 80 : 0"
+            @click="() => router.push(`/apps/details/${item.id}`)"
+          />
+      </div>
 
-          <Empty v-else>暂无应用</Empty>
-        </template>
-      </el-skeleton>
-
-      <!-- 分页（切换页码时保持可见，避免高度突变导致的页面跳动） -->
-      <div v-if="appList.length" class="flex justify-center py-32px">
+      <!-- <div class="flex justify-center py-32px">
         <el-pagination
           background
-          :total="paginationTotal"
-          :layout="pagination.paginationConfig!.layout"
-          :page-size="pagination.paginationConfig!.pageSize"
-          :current-page="pagination.paginationConfig!.currentPage"
-          @current-change="currentChange"
-          @size-change="sizeChange"
+          layout="prev, pager, next"
+          :total="50"
         />
-      </div>
+      </div> -->
     </section>
   </div>
 </template>

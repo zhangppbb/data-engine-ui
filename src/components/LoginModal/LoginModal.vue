@@ -75,7 +75,6 @@
           class="w-full h-[44px] rounded-[8px] text-[16px] font-medium bg-gradient-to-br from-[#667eea] to-[#764ba2] border-none hover:opacity-90 disabled:opacity-50 disabled:bg-gray-400"
           @click="handleLogin"
           :disabled="!canLogin"
-          :loading="loginLoading"
         >
           登 录
         </el-button>
@@ -210,12 +209,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, onUnmounted } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { ElMessage, ElIcon } from 'element-plus'
 import type { FormInstance, FormItemRule } from 'element-plus'
 import { User, Phone, Lock, Key } from '@element-plus/icons-vue'
-import { useUserStore } from '@/store/modules/user'
-import { sendSmsCode, smsLogin } from '@/api/auth'
+import { useUserStoreWithOut } from '@/store/modules/user'
+import * as LoginApi from '@/api/login'
 import * as authUtil from '@/utils/auth'
 import logo from '@/assets/imgs/logo.png'
 import { usePermissionStore } from '@/store/modules/permission'
@@ -223,7 +222,7 @@ import { usePermissionStore } from '@/store/modules/permission'
 const permissionStore = usePermissionStore()
 
 
-const userStore = useUserStore()
+const userStore = useUserStoreWithOut()
 
 const showRegisterDialog = computed(() => userStore.getShowRegisterDialog)
 
@@ -242,7 +241,6 @@ const passwordReg = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d~!@#$%^&*()_+\-=]{8,20}$/
 const loginFormRef = ref<FormInstance>()
 const loginForm = ref({ phone: '', code: '' })
 const loginCountdown = ref(0)
-const loginLoading = ref(false)
 let loginTimer: ReturnType<typeof setInterval> | undefined
 
 const loginRules = {
@@ -269,51 +267,49 @@ const sendLoginCode = async () => {
     ElMessage.warning('请输入正确的手机号')
     return
   }
-  try {
-    const result = await sendSmsCode({ phone: loginForm.value.phone })
-    if (result) {
-      loginCountdown.value = 60
-      if (loginTimer) clearInterval(loginTimer)
-      loginTimer = setInterval(() => {
-        loginCountdown.value--
-        if (loginCountdown.value <= 0 && loginTimer) clearInterval(loginTimer)
-      }, 1000)
-      ElMessage.success(`验证码已发送至 ${loginForm.value.phone}`)
-    } else {
-      ElMessage.error('验证码发送失败，请稍后重试')
-    }
-  } catch (error) {
-    ElMessage.error('验证码发送失败，请稍后重试')
-  }
+  await LoginApi.sendSmsCode({
+    mobile: loginForm.value.phone,
+    scene: 31
+  })
+  loginCountdown.value = 60
+  if (loginTimer) clearInterval(loginTimer)
+  loginTimer = setInterval(() => {
+    loginCountdown.value--
+    if (loginCountdown.value <= 0 && loginTimer) clearInterval(loginTimer)
+  }, 1000)
+  ElMessage.success(`验证码已发送至 ${loginForm.value.phone}`)
 }
 
 const handleLogin = async () => {
   if (!loginFormRef.value) return
-  await loginFormRef.value.validate()
-  loginLoading.value = true
   try {
-    const res = await smsLogin({
-      phone: loginForm.value.phone,
-      code: loginForm.value.code
+    await loginFormRef.value.validate()
+    const res = await LoginApi.smsLogin({
+      mobile: loginForm.value.phone,
+      code: loginForm.value.code,
+      scene: 31
     })
-    authUtil.setToken(res?.token || '')
-
-    await userStore.fetchClientUserInfoAction()
+    console.log(res)
+    authUtil.setTenantId(res.tenantId)
+    authUtil.setUserTenants(res.userTenants)
+    authUtil.setManagedTenantId(res.managedTenantIds)
+    authUtil.setToken(res)
 
     if (!redirect.value) {
       redirect.value = '/'
     }
+
 
     userStore.setShowLoginDialog(false)
 
     if (redirect.value.indexOf('sso') !== -1) {
       window.location.href = window.location.href.replace('/login?redirect=', '')
     } else {
-      window.location.href = redirect.value || permissionStore.addRouters[0].path
+      await push({ path: redirect.value || permissionStore.addRouters[0].path })
     }
     ElMessage.success('登录成功')
   } catch {
-    loginLoading.value = false
+    ElMessage.warning('登录失败，请检查手机号或验证码')
   }
 }
 
@@ -375,42 +371,39 @@ const sendRegisterCode = async () => {
     ElMessage.warning('请输入正确的手机号')
     return
   }
-  try {
-    const result = await sendSmsCode({ phone: registerForm.value.phone })
-    if (result) {
-      registerCountdown.value = 60
-      if (registerTimer) clearInterval(registerTimer)
-      registerTimer = setInterval(() => {
-        registerCountdown.value--
-        if (registerCountdown.value <= 0 && registerTimer) clearInterval(registerTimer)
-      }, 1000)
-      ElMessage.success(`验证码已发送至 ${registerForm.value.phone}`)
-    } else {
-      ElMessage.error('验证码发送失败，请稍后重试')
-    }
-  } catch (error) {
-    ElMessage.error('验证码发送失败，请稍后重试')
-  }
+  await LoginApi.sendSmsCode({
+    mobile: registerForm.value.phone,
+    scene: 2
+  })
+  registerCountdown.value = 60
+  if (registerTimer) clearInterval(registerTimer)
+  registerTimer = setInterval(() => {
+    registerCountdown.value--
+    if (registerCountdown.value <= 0 && registerTimer) clearInterval(registerTimer)
+  }, 1000)
+  ElMessage.success(`验证码已发送至 ${registerForm.value.phone}`)
 }
 
 const handleRegister = async () => {
   if (!registerFormRef.value) return
   try {
     await registerFormRef.value.validate()
-    const res = await smsLogin({
-      phone: registerForm.value.phone,
-      code: registerForm.value.code
+    const token = await LoginApi.register({
+      mobile: registerForm.value.phone,
+      code: registerForm.value.code,
+      nickname: registerForm.value.username,
+      password: registerForm.value.password
     })
-    authUtil.setToken(res.token)
+    authUtil.setToken(token)
+    await userStore.setUserInfoAction()
     userStore.registerAction({
-      nickname: res.nickname || res.username || registerForm.value.username,
-      avatar: res.avatar
+      nickname: userStore.getUser.nickname || registerForm.value.username,
+      avatar: userStore.getUser.avatar
     })
     registerForm.value = { username: '', phone: '', code: '', password: '', confirmPassword: '' }
-    userStore.closeRegisterDialog()
     ElMessage.success('注册成功')
   } catch {
-    // ElMessage.warning('注册失败，请检查填写信息')
+    ElMessage.warning('注册失败，请检查填写信息')
   }
 }
 
@@ -419,45 +412,20 @@ const switchToLogin = () => {
   userStore.openLoginDialog()
 }
 
-const clearLoginTimer = () => {
-  if (loginTimer) {
-    clearInterval(loginTimer)
-    loginTimer = undefined
-  }
-  loginCountdown.value = 0
-}
-
-const clearRegisterTimer = () => {
-  if (registerTimer) {
-    clearInterval(registerTimer)
-    registerTimer = undefined
-  }
-  registerCountdown.value = 0
-}
-
 watch(showLoginDialog, (val) => {
-  if (!val) {
-    clearLoginTimer()
-    if (loginFormRef.value) {
-      loginFormRef.value.resetFields()
-      loginForm.value = { phone: '', code: '' }
-    }
+  if (!val && loginFormRef.value) {
+    loginFormRef.value.resetFields()
+    loginForm.value = { phone: '', code: '' }
   }
 })
+
+
 
 watch(showRegisterDialog, (val) => {
-  if (!val) {
-    clearRegisterTimer()
-    if (registerFormRef.value) {
-      registerFormRef.value.resetFields()
-      registerForm.value = { username: '', phone: '', code: '', password: '', confirmPassword: '' }
-    }
+  if (!val && registerFormRef.value) {
+    registerFormRef.value.resetFields()
+    registerForm.value = { username: '', phone: '', code: '', password: '', confirmPassword: '' }
   }
-})
-
-onUnmounted(() => {
-  clearLoginTimer()
-  clearRegisterTimer()
 })
 </script>
 

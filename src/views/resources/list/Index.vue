@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen">
+  <div class="min-h-screen overflow-x-hidden">
     <!-- 页面容器 -->
     <div class="bg-white py-20px pb-32px">
       <div class="max-w-1440px mx-auto">
@@ -8,7 +8,6 @@
         <div class="text-center mt-20px">
           <div
             class="flex flex-col items-center justify-center gap-8px text-24px font-600 leading-tight md:flex-row md:text-46px"
-            data-aos="fade-down"
           >
             <span>资源馆 ·</span>
             <span
@@ -20,8 +19,6 @@
 
           <div
             class="mx-auto mt-18px max-w-960px px-12px text-12px text-#8F99B7 md:text-16px"
-            data-aos="fade-up"
-            data-aos-delay="150"
           >
             4大核心服务模块，覆盖企业全维度数据能力，统一接入标准，企业 / Agent 一键调用
           </div>
@@ -32,12 +29,10 @@
           class="mt-32px grid grid-cols-1 gap-20px md:grid-cols-2 xl:grid-cols-4"
         >
           <div
-            v-for="(item, index) in topModules"
+            v-for="item in topModules"
             :key="item.title"
-            class="group relative cursor-pointer rounded-8px border border-solid border-#F7F8FA p-20px transition-all duration-300 hover:-translate-y-2px hover:shadow-[0_18px_40px_rgba(31,41,55,0.12)]"
+            class="group relative cursor-pointer overflow-hidden rounded-8px border border-solid border-#F7F8FA p-20px transition-all duration-300 hover:-translate-y-2px hover:shadow-[0_18px_40px_rgba(31,41,55,0.12)]"
             :class="item.bg"
-            :data-aos="'fade-up'"
-            :data-aos-delay="index * 100"
             @click="() => {
               if (item.route) {
                 router.push(item.route)
@@ -86,57 +81,43 @@
           <div
             class="mt-28px grid grid-cols-1 gap-16px md:grid-cols-2 xl:grid-cols-3"
           >
-            <div
-              v-for="(item, index) in hotResources"
+            <ResourceCard
+              v-for="item in hotResources"
               :key="item.title"
-              :data-aos="'fade-up'"
-              :data-aos-delay="index * 80"
+              :type="item.type"
+              :type-class="item.typeClass"
+              :title="item.title"
+              :desc="item.desc"
+              :action="item.action"
+              :count="item.count"
               @click="() => {
                 if (item.route) {
                   router.push(item.route)
                 }
               }"
-            >
-              <!-- @vue-ignore -->
-              <AppCard
-                :type="item.type"
-                :type-type="item.typeColor"
-                :title="item.title"
-                :desc="item.desc"
-                :action="item.action"
-                :count="item.count"
-              />
-            </div>
+            />
           </div>
 
           <!-- 箭头 -->
-          <div
-            class="
+          <div class="
             w-40px
             h-40px
             bg-[rgba(191,191,191,0.1)]
             border
             border-solid
             border-[rgba(0,0,0,0.2)] rounded-full right--80px absolute flex-center text-#BFBFBF cursor-pointer top-50%
-          "
-            data-aos="fade"
-            data-aos-delay="300"
-          >
+          ">
             <Icon icon="ep:arrow-right" class="text-16px! font-bold" />
           </div>
 
-          <div
-            class="
+          <div class="
             w-40px
             h-40px
             bg-[rgba(191,191,191,0.1)]
             border
             border-solid
             border-[rgba(0,0,0,0.2)] rounded-full left--80px absolute flex-center text-#BFBFBF cursor-pointer top-50%
-          "
-            data-aos="fade"
-            data-aos-delay="300"
-          >
+          ">
             <Icon icon="ep:arrow-left" class="text-16px! font-bold" />
           </div>
         </div>
@@ -153,14 +134,12 @@
             </div>
 
           <div
-            class="mt-32px flex flex-col gap-28px xl:flex-row xl:items-center xl:justify-between overflow-hidden"
+            class="mt-32px flex flex-col gap-28px xl:flex-row xl:items-center xl:justify-between"
           >
             <div
               v-for="(item, index) in guideList"
               :key="item.title"
               class="relative flex flex-1 flex-col items-center text-center"
-              :data-aos="'fade-up'"
-              :data-aos-delay="index * 120"
             >
               <div class="flex-center">
                 <div
@@ -190,8 +169,6 @@
           <!-- 开发支持 -->
           <div
             class="mt-32px flex flex-col md:flex-row md:justify-between bg-[rgba(191,191,191,0.1)] p-20px md:p-20px  rounded-20px"
-            data-aos="fade-up"
-            data-aos-delay="200"
           >
             <div>
               <div class="text-20px font-700  mb-12px font-500">
@@ -205,8 +182,6 @@
 
             <div
               class="flex cursor-pointer items-center w-168px h-58px justify-center gap-8px self-start rounded-full border border-solid border-[var(--brand-color)] bg-white text-22px font-400 text-[var(--brand-color)] transition-all duration-300 hover:bg-#2348a5 hover:text-white md:self-center"
-              data-aos="fade-up"
-              data-aos-delay="350"
             >
               接入指南
               <Icon icon="ep:compass" class="text-22px!" />
@@ -218,7 +193,7 @@
 </template>
 
 <script setup lang="ts">
-import AppCard from '@/components/AppCard/AppCard.vue'
+import { ResourceCard } from '@/components/ResourceCard'
 import icon1 from './assets/images/icon1.png'
 import icon2 from './assets/images/icon2.png'
 import icon3 from './assets/images/icon3.png'
@@ -314,22 +289,10 @@ const topModules = [
 /**
  * 热门资源
  */
-interface HotResource {
-  type: string
-  typeClass: string
-  typeColor: string
-  title: string
-  desc: string
-  action: string
-  count: string
-  route?: string
-}
-
-const hotResources: HotResource[] = [
+const hotResources = [
   {
     type: 'API',
     typeClass: 'bg-#dcfce7 text-#16a34a',
-    typeColor: '#16a34a',
     title: '企业模糊搜索API',
     desc: '通过企业名称关键词模糊搜索企业列表，返回基础工商信息',
     action: '免费测试',
@@ -339,7 +302,6 @@ const hotResources: HotResource[] = [
   {
     type: 'MCP',
     typeClass: 'bg-#ffedd5 text-#ea580c',
-    typeColor: '#ea580c',
     title: '企业风险分析MCP',
     desc: 'AI Agent 插件，支持自然语言查询企业风险信息，生成分析报告',
     action: '免费测试',
@@ -348,7 +310,6 @@ const hotResources: HotResource[] = [
   {
     type: 'Skill',
     typeClass: 'bg-#dbeafe text-#2563eb',
-    typeColor: '#2563eb',
     title: '舆情监控Skill',
     desc: '智能舆情监控技能，自动识别负面舆情，生成监控日报',
     action: '立即体验',
@@ -357,7 +318,6 @@ const hotResources: HotResource[] = [
   {
     type: '数据集',
     typeClass: 'bg-#fce7f3 text-#db2777',
-    typeColor: '#db2777',
     title: '中国企业工商信息数据集',
     desc: '包含全国亿+企业工商信息，每日更新，支持 API 订阅批量下载',
     action: '查看详情',
@@ -366,7 +326,6 @@ const hotResources: HotResource[] = [
   {
     type: 'API',
     typeClass: 'bg-#dcfce7 text-#16a34a',
-    typeColor: '#16a34a',
     title: '司法诉讼查询API',
     desc: 'AI Agent 插件，支持自然语言查询企业风险信息，生成分析报告',
     action: '免费测试',
@@ -375,7 +334,6 @@ const hotResources: HotResource[] = [
   {
     type: 'MCP',
     typeClass: 'bg-#ffedd5 text-#ea580c',
-    typeColor: '#ea580c',
     title: '产业链分析MCP',
     desc: '分析产业链上下游关系，识别关键节点企业，可视化展示',
     action: '免费测试',
@@ -402,4 +360,8 @@ const guideList = [
 ]
 </script>
 
-
+<style scoped>
+body {
+  margin: 0;
+}
+</style>

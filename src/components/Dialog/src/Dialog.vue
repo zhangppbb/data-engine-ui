@@ -1,82 +1,73 @@
 <script lang="ts" setup>
-import { computed, ref, watch, nextTick, useSlots, useAttrs } from 'vue'
 import { propTypes } from '@/utils/propTypes'
 import { isNumber } from '@/utils/is'
-
 defineOptions({ name: 'Dialog' })
 
 const slots = useSlots()
-const attrs = useAttrs()
 
 const props = defineProps({
   modelValue: propTypes.bool.def(false),
   title: propTypes.string.def('Dialog'),
   fullscreen: propTypes.bool.def(true),
   width: propTypes.oneOfType([String, Number]).def('40%'),
-  scroll: propTypes.bool.def(false),
-  maxHeight: propTypes.oneOfType([String, Number]).def('500px'),
-  lockScroll: propTypes.bool.def(false)
+  scroll: propTypes.bool.def(false), // 是否开启滚动条。如果是的话，按照 maxHeight 设置最大高度
+  maxHeight: propTypes.oneOfType([String, Number]).def('500px')
 })
 
-const emit = defineEmits<{
-  'update:modelValue': [value: boolean]
-}>()
-
-// ---- 透传 attrs（排除内部处理的 prop） ----
-const EXCLUDE_KEYS = new Set(['fullscreen', 'title', 'maxHeight', 'appendToBody', 'lockScroll'])
-
-const bindAttrs = computed(() => {
-  const merged = { ...attrs, ...props }
-  for (const key of EXCLUDE_KEYS) {
-    delete merged[key]
+const getBindValue = computed(() => {
+  const delArr: string[] = ['fullscreen', 'title', 'maxHeight', 'appendToBody']
+  const attrs = useAttrs()
+  const obj = { ...attrs, ...props }
+  for (const key in obj) {
+    if (delArr.indexOf(key) !== -1) {
+      delete obj[key]
+    }
   }
-  return merged
+  return obj
 })
 
-// ---- 全屏切换 ----
 const isFullscreen = ref(false)
 
 const toggleFull = () => {
-  isFullscreen.value = !isFullscreen.value
+  isFullscreen.value = !unref(isFullscreen)
 }
 
-// ---- 滚动区域高度 ----
-// 全屏时：窗口高度 - header(54px) - body-padding(60px) - footer(63px, 可选)
-function formatHeight(val: string | number): string {
-  return isNumber(val) ? `${val}px` : String(val)
-}
+const dialogHeight = ref(isNumber(props.maxHeight) ? `${props.maxHeight}px` : props.maxHeight)
 
-const headerH = 54
-const bodyPad = 60
-const footerH = 63
+watch(
+  () => isFullscreen.value,
+  async (val: boolean) => {
+    await nextTick()
+    if (val) {
+      const windowHeight = document.documentElement.offsetHeight
+      dialogHeight.value = `${windowHeight - 55 - 60 - (slots.footer ? 63 : 0)}px`
+    } else {
+      dialogHeight.value = isNumber(props.maxHeight) ? `${props.maxHeight}px` : props.maxHeight
+    }
+  },
+  {
+    immediate: true
+  }
+)
 
-const dialogHeight = ref(formatHeight(props.maxHeight))
-
-watch(isFullscreen, async (full) => {
-  await nextTick()
-  if (full) {
-    dialogHeight.value = `${document.documentElement.offsetHeight - headerH - bodyPad - (slots.footer ? footerH : 0)}px`
-  } else {
-    dialogHeight.value = formatHeight(props.maxHeight)
+const dialogStyle = computed(() => {
+  return {
+    height: unref(dialogHeight)
   }
 })
-
-const dialogStyle = computed(() => ({ height: dialogHeight.value }))
 </script>
 
 <template>
   <ElDialog
-    v-bind="bindAttrs"
+    v-bind="getBindValue"
     :close-on-click-modal="false"
     :fullscreen="isFullscreen"
     :width="width"
     destroy-on-close
-    :lock-scroll="lockScroll"
-    align-center
+    lock-scroll
     draggable
     class="com-dialog"
     :show-close="false"
-    append-to-body
     @close="$emit('update:modelValue', false)"
   >
     <template #header="{ close }">
